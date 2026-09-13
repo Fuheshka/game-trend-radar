@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Trend Radar | Радар Трендов и Ниш Игр</title>
+  <meta name="description" content="Автономный радар трендов геймдева: анализ Roblox, Яндекс Игр, Poki и вирусных мемов YouTube Shorts со скорингом Opportunity Score и поиском арбитражных ниш." />
+  <meta name="theme-color" content="#0a0b10" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- SITE HEADER -->
+    <header class="site-header">
+      <div class="brand-section">
+        <div class="brand-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+            <path d="M2 12h20"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="jp-kicker">ゲーム・トレンド・レーダー</div>
+          <h1>GAME TREND RADAR</h1>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="server-status-pill" id="server-status-indicator">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="server-status-text">Локальный сервер :4200</span>
+        </div>
+
+        <button class="btn-scan" id="btn-live-scan">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 0a6 6 0 0 0-12 0"></path>
+            <circle cx="12" cy="12" r="1"></circle>
+            <line x1="12" y1="12" x2="19" y2="5"></line>
+          </svg>
+          <span>Запустить живое сканирование</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- GLOBAL METRICS BAR -->
+    <section class="metrics-grid">
+      <div class="metric-card green">
+        <span class="metric-label">Всего игр в каталоге</span>
+        <span class="metric-value" id="metric-total-games">0</span>
+        <span class="metric-hint" id="metric-platforms-hint">Roblox, Yandex, Poki</span>
+      </div>
+
+      <div class="metric-card cyan">
+        <span class="metric-label">Суммарный онлайн (CCU)</span>
+        <span class="metric-value" id="metric-total-ccu">0</span>
+        <span class="metric-hint">Игроков прямо сейчас</span>
+      </div>
+
+      <div class="metric-card purple">
+        <span class="metric-label">Топ Opportunity Score</span>
+        <span class="metric-value" id="metric-top-score">0</span>
+        <span class="metric-hint" id="metric-top-genre">Расчет по формуле</span>
+      </div>
+
+      <div class="metric-card orange">
+        <span class="metric-label">Арбитражных ниш</span>
+        <span class="metric-value" id="metric-arbitrage-count">0</span>
+        <span class="metric-hint">Спрос без клонов в РФ</span>
+      </div>
+    </section>
+
+    <!-- RADAR & ANALYTICAL HUB -->
+    <section class="radar-hub-card">
+      <div class="radar-header">
+        <div class="radar-title-group">
+          <h2>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="2" x2="12" y2="22"></line>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+            </svg>
+            Диаграмма распределения спроса и долей рынка
+          </h2>
+          <div class="radar-subtitle">Сравнение жанровых архетипов по онлайну, виральности и скорингу</div>
+        </div>
+
+        <div class="chart-mode-toggles">
+          <button class="toggle-btn active" id="toggle-spider">Многоосевой радар</button>
+          <button class="toggle-btn" id="toggle-polar">Доли рынка CCU</button>
+        </div>
+      </div>
+
+      <div class="radar-content-layout">
+        <!-- SVG Canvas Chart Stage -->
+        <div class="radar-chart-stage" id="radar-chart-container"></div>
+
+        <!-- Sidebar legend & instructions -->
+        <div class="radar-sidebar-info">
+          <div class="radar-info-box">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              Интерактивная навигация
+            </h3>
+            <p>Кликните по любому сегменту диаграммы или карточке легенды, чтобы отфильтровать список вердиктов по выбранному архетипу.</p>
+          </div>
+
+          <div class="legend-list" id="radar-legend-container">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTERS & SEARCH CONTROLS TOOLBAR -->
+    <section class="filters-toolbar">
+      <div class="filter-row-primary">
+        <div class="search-input-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="search" class="search-input" id="search-input" placeholder="Поиск по названию игры, жанру или тегам (Ctrl+K)..." />
+        </div>
+
+        <div class="sort-select-wrapper">
+          <span class="sort-label">Сортировка:</span>
+          <select class="sort-select" id="sort-select">
+            <option value="score_desc">Opportunity Score (убыв.)</option>
+            <option value="score_asc">Opportunity Score (возр.)</option>
+            <option value="ccu_desc">Аудитория CCU (убыв.)</option>
+            <option value="velocity_desc">Динамика / Скорость</option>
+            <option value="title_asc">Название (А-Я)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Platform and status filter pills -->
+      <div class="filter-pills-row">
+        <span style="font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-muted); text-transform: uppercase;">Платформы:</span>
+        <button class="filter-pill active" data-platform="all">Все витрины</button>
+        <button class="filter-pill" data-platform="roblox">Roblox</button>
+        <button class="filter-pill" data-platform="yandex_games">Яндекс Игры</button>
+        <button class="filter-pill" data-platform="poki">Poki</button>
+        <button class="filter-pill" data-platform="youtube_trends">YouTube Shorts</button>
+      </div>
+
+      <div class="filter-pills-row">
+        <span style="font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-muted); text-transform: uppercase;">Статус:</span>
+        <button class="filter-pill active" data-status="all">Все статусы</button>
+        <button class="filter-pill green" data-status="GREEN_LIGHT">🟢 Green Light</button>
+        <button class="filter-pill yellow" data-status="YELLOW_LIGHT">🟡 Yellow Light</button>
+        <button class="filter-pill red" data-status="RED_LIGHT">🔴 Red Light</button>
+        <button class="filter-pill arbitrage" data-status="arbitrage">⚡ Только арбитраж</button>
+      </div>
+    </section>
+
+    <!-- VERDICTS SECTION -->
+    <section class="verdicts-section">
+      <div class="verdicts-header">
+        <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">
+          Вердикты и Стратегии по Архетипам
+        </h2>
+        <div class="verdicts-count-badge" id="verdicts-count-text">Отображается 0 из 0</div>
+      </div>
+
+      <div class="verdicts-grid" id="verdicts-container">
+        <!-- Rendered dynamically by VerdictCardsComponent -->
+      </div>
+    </section>
+  </div>
+
+  <!-- SCAN PROGRESS MODAL OVERLAY -->
+  <div class="scan-overlay" id="scan-overlay">
+    <div class="scan-modal-card">
+      <div class="radar-scan-anim">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--status-green)" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+        </svg>
+      </div>
+
+      <h3>Живое сканирование рынка</h3>
+      <div class="scan-phase-text" id="scan-phase-text">Инициализация мониторинга...</div>
+
+      <div class="scan-progress-bar">
+        <div class="scan-progress-inner" id="scan-progress-inner"></div>
+      </div>
+
+      <p style="font-size: 0.78rem; color: var(--text-muted);">
+        Опрашиваем Roblox Explore API, витрину Яндекс Игр, чарты Poki и вирусные тренды YouTube Shorts
+      </p>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-notification" id="toast-notification">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--status-green)" stroke-width="2">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toast-text">Снимок рынка обновлен</span>
+  </div>
+
+  <!-- APPLICATION SCRIPT -->
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

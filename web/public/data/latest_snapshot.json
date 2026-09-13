@@ -1,0 +1,6567 @@
+{
+  "id": "9b6fae3f-650b-4d67-b530-4414139c7024",
+  "timestamp": "2026-09-13T16:26:05.991Z",
+  "totalGamesScanned": 319,
+  "platformCounts": {
+    "roblox": 213,
+    "yandex_games": 1,
+    "poki": 100,
+    "youtube_trends": 5
+  },
+  "robloxTotalCCU": 9845631,
+  "games": [
+    {
+      "id": "roblox_10563114921",
+      "platform": "roblox",
+      "title": "Steal An Egg",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 2257883,
+      "metricType": "ccu",
+      "likeRatio": 0.9277375508948844,
+      "url": "https://www.roblox.com/games/107778070777162",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_1686885941",
+      "platform": "roblox",
+      "title": "Brookhaven 🏡RP",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 692379,
+      "metricType": "ccu",
+      "likeRatio": 0.8589654992790771,
+      "url": "https://www.roblox.com/games/4924922222",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_994732206",
+      "platform": "roblox",
+      "title": "[🧲] Blox Fruits",
+      "genre": "RPG",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 484589,
+      "metricType": "ccu",
+      "likeRatio": 0.9228240804426185,
+      "url": "https://www.roblox.com/games/2753915549",
+      "tags": [
+        "top-playing-now",
+        "RPG",
+        "Maturity: Mild",
+        "top-trending",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_66654135",
+      "platform": "roblox",
+      "title": "Murder Mystery 2",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 431508,
+      "metricType": "ccu",
+      "likeRatio": 0.9083438414323775,
+      "url": "https://www.roblox.com/games/142823291",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Moderate",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6035872082",
+      "platform": "roblox",
+      "title": "[😾] RIVALS",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 302327,
+      "metricType": "ccu",
+      "likeRatio": 0.9374731178546114,
+      "url": "https://www.roblox.com/games/17625359962",
+      "tags": [
+        "top-playing-now",
+        "Shooter",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7326934954",
+      "platform": "roblox",
+      "title": "99 Nights in the Forest 🔦",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 290196,
+      "metricType": "ccu",
+      "likeRatio": 0.9047941671416093,
+      "url": "https://www.roblox.com/games/79546208627805",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_383310974",
+      "platform": "roblox",
+      "title": "[2X NOW!🎉] Adopt Me!",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 256642,
+      "metricType": "ccu",
+      "likeRatio": 0.8620761337814213,
+      "url": "https://www.roblox.com/games/920587237",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9584852943",
+      "platform": "roblox",
+      "title": "[X10] +1 Speed Keyboard Escape | Candy & Chocolate",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 233025,
+      "metricType": "ccu",
+      "likeRatio": 0.9702777648494821,
+      "url": "https://www.roblox.com/games/95082159892680",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_3508322461",
+      "platform": "roblox",
+      "title": "[SKY ASSASSIN] Jujutsu Shenanigans",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 214828,
+      "metricType": "ccu",
+      "likeRatio": 0.8629030468380657,
+      "url": "https://www.roblox.com/games/9391468976",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild",
+        "top-trending",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10148749921",
+      "platform": "roblox",
+      "title": "Animal Hospital (Anomaly) 🧪",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 132214,
+      "metricType": "ccu",
+      "likeRatio": 0.9401292680330681,
+      "url": "https://www.roblox.com/games/78515283254292",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Minimal",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_5750914919",
+      "platform": "roblox",
+      "title": "Fisch 🌸 [BUDLING]",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 130983,
+      "metricType": "ccu",
+      "likeRatio": 0.9070328284849626,
+      "url": "https://www.roblox.com/games/16732694052",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7709344486",
+      "platform": "roblox",
+      "title": "Steal a Brainrot",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 129537,
+      "metricType": "ccu",
+      "likeRatio": 0.8523257335188688,
+      "url": "https://www.roblox.com/games/109983668079237",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_5203828273",
+      "platform": "roblox",
+      "title": "[🎂] Dress To Impress",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 119247,
+      "metricType": "ccu",
+      "likeRatio": 0.9056337543840951,
+      "url": "https://www.roblox.com/games/15101393044",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10539411000",
+      "platform": "roblox",
+      "title": "🍂 Clean all the leaves!",
+      "genre": "Adventure",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 114015,
+      "metricType": "ccu",
+      "likeRatio": 0.8660765183966643,
+      "url": "https://www.roblox.com/games/92637789841354",
+      "tags": [
+        "top-playing-now",
+        "Adventure",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6701277882",
+      "platform": "roblox",
+      "title": "[NOW] Fish It! 🐟",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 102814,
+      "metricType": "ccu",
+      "likeRatio": 0.8286141745799561,
+      "url": "https://www.roblox.com/games/121864768012064",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_2711375305",
+      "platform": "roblox",
+      "title": "Catalog Avatar Creator",
+      "genre": "Shopping",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 98648,
+      "metricType": "ccu",
+      "likeRatio": 0.9371878117165812,
+      "url": "https://www.roblox.com/games/7041939546",
+      "tags": [
+        "top-playing-now",
+        "Shopping",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6331902150",
+      "platform": "roblox",
+      "title": "[WEEK 3 ⛱️] Forsaken",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 96902,
+      "metricType": "ccu",
+      "likeRatio": 0.8451592784836682,
+      "url": "https://www.roblox.com/games/18687417158",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_2440500124",
+      "platform": "roblox",
+      "title": "DOORS 👔",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 94685,
+      "metricType": "ccu",
+      "likeRatio": 0.9299022274343175,
+      "url": "https://www.roblox.com/games/6516141723",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_3240075297",
+      "platform": "roblox",
+      "title": "Berry Avenue 🏠 RP",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 85153,
+      "metricType": "ccu",
+      "likeRatio": 0.8601837782535382,
+      "url": "https://www.roblox.com/games/8481844229",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10756011174",
+      "platform": "roblox",
+      "title": "[🐶] Search For The Needle",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 81316,
+      "metricType": "ccu",
+      "likeRatio": 0.9499350978189375,
+      "url": "https://www.roblox.com/games/77108422251420",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7219654364",
+      "platform": "roblox",
+      "title": "[🌌DUELS] Murderers VS Sheriffs",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 79212,
+      "metricType": "ccu",
+      "likeRatio": 0.8732959045389747,
+      "url": "https://www.roblox.com/games/135856908115931",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_4839802560",
+      "platform": "roblox",
+      "title": "LifeTogether 🏠 RP",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 78568,
+      "metricType": "ccu",
+      "likeRatio": 0.9043392992757651,
+      "url": "https://www.roblox.com/games/13967668166",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_3808081382",
+      "platform": "roblox",
+      "title": "The Strongest Battlegrounds",
+      "genre": "Action",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 72376,
+      "metricType": "ccu",
+      "likeRatio": 0.8381458183433703,
+      "url": "https://www.roblox.com/games/10449761463",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_3317771874",
+      "platform": "roblox",
+      "title": "🕹️ [ARCADE] Pet Simulator 99! 💰",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 71614,
+      "metricType": "ccu",
+      "likeRatio": 0.947424786522497,
+      "url": "https://www.roblox.com/games/8737899170",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6739698191",
+      "platform": "roblox",
+      "title": "[CURE] Violence District",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 63562,
+      "metricType": "ccu",
+      "likeRatio": 0.9319284127155927,
+      "url": "https://www.roblox.com/games/93978595733734",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10155360168",
+      "platform": "roblox",
+      "title": "[REPLAYS!] Illegal Soccer",
+      "genre": "Sports & Racing",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 60928,
+      "metricType": "ccu",
+      "likeRatio": 0.8624770249515321,
+      "url": "https://www.roblox.com/games/126987974021910",
+      "tags": [
+        "top-playing-now",
+        "Sports & Racing",
+        "Maturity: Mild",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_703124385",
+      "platform": "roblox",
+      "title": "Tower of Hell",
+      "genre": "Obby & Platformer",
+      "archetype": "OBBY_PARKOUR",
+      "metricValue": 60497,
+      "metricType": "ccu",
+      "likeRatio": 0.7357968340704796,
+      "url": "https://www.roblox.com/games/1962086868",
+      "tags": [
+        "top-playing-now",
+        "Obby & Platformer",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_1202096104",
+      "platform": "roblox",
+      "title": "Driving Empire [DODGE UPDATE✨] ",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 59902,
+      "metricType": "ccu",
+      "likeRatio": 0.9304053929332197,
+      "url": "https://www.roblox.com/games/3351674303",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10681914462",
+      "platform": "roblox",
+      "title": "[🔮UPDATE!] +1 Tongue Escape 😛",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 56743,
+      "metricType": "ccu",
+      "likeRatio": 0.9396101854762653,
+      "url": "https://www.roblox.com/games/122245938604556",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6931042565",
+      "platform": "roblox",
+      "title": "[UPD] Volleyball Legends",
+      "genre": "Sports & Racing",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 56205,
+      "metricType": "ccu",
+      "likeRatio": 0.9523267793233762,
+      "url": "https://www.roblox.com/games/73956553001240",
+      "tags": [
+        "top-playing-now",
+        "Sports & Racing",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10690360998",
+      "platform": "roblox",
+      "title": "Jump for Animals!",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 54948,
+      "metricType": "ccu",
+      "likeRatio": 0.939973799943857,
+      "url": "https://www.roblox.com/games/126870639873289",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10144280947",
+      "platform": "roblox",
+      "title": "[X2]🐒 +1 Speed Monkey Escape",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 53316,
+      "metricType": "ccu",
+      "likeRatio": 0.9791093993883226,
+      "url": "https://www.roblox.com/games/114697347887839",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_2668101271",
+      "platform": "roblox",
+      "title": "Fling Things and People",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 49330,
+      "metricType": "ccu",
+      "likeRatio": 0.8033185293147068,
+      "url": "https://www.roblox.com/games/6961824067",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Mild",
+        "top-trending",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_2619619496",
+      "platform": "roblox",
+      "title": "BedWars [⚡ RANKED BLITZ]",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 48384,
+      "metricType": "ccu",
+      "likeRatio": 0.82277187905136,
+      "url": "https://www.roblox.com/games/6872265039",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10761687472",
+      "platform": "roblox",
+      "title": "Scream And Run [UPD 2]",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 48107,
+      "metricType": "ccu",
+      "likeRatio": 0.8706474391926625,
+      "url": "https://www.roblox.com/games/113481077323469",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Moderate",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7585140258",
+      "platform": "roblox",
+      "title": "RUNAWAYS [beta]",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 47271,
+      "metricType": "ccu",
+      "likeRatio": 0.9617855688400732,
+      "url": "https://www.roblox.com/games/118418618261207",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_372226183",
+      "platform": "roblox",
+      "title": "🎂Flee the Facility🎪",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 47107,
+      "metricType": "ccu",
+      "likeRatio": 0.9209624661336153,
+      "url": "https://www.roblox.com/games/893973440",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10708913337",
+      "platform": "roblox",
+      "title": "[✨UPD 4] Anime Dice",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 46374,
+      "metricType": "ccu",
+      "likeRatio": 0.9939006480561441,
+      "url": "https://www.roblox.com/games/113290951185459",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_3647333358",
+      "platform": "roblox",
+      "title": "Evade ",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 44375,
+      "metricType": "ccu",
+      "likeRatio": 0.9390029860272161,
+      "url": "https://www.roblox.com/games/9872472334",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_5569032992",
+      "platform": "roblox",
+      "title": "🌻 Dandy's World [ALPHA]",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 43764,
+      "metricType": "ccu",
+      "likeRatio": 0.8662278912864124,
+      "url": "https://www.roblox.com/games/16116270224",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9167377564",
+      "platform": "roblox",
+      "title": "100 Days At Sea",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 43108,
+      "metricType": "ccu",
+      "likeRatio": 0.9716766162304483,
+      "url": "https://www.roblox.com/games/70411440483149",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_5361032378",
+      "platform": "roblox",
+      "title": "Sol's RNG [ Summer Event 🏖️]",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 43107,
+      "metricType": "ccu",
+      "likeRatio": 0.9137097867998011,
+      "url": "https://www.roblox.com/games/15532962292",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_5578556129",
+      "platform": "roblox",
+      "title": "Anime Vanguards: Wrathful Assault",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 42894,
+      "metricType": "ccu",
+      "likeRatio": 0.9673493489440571,
+      "url": "https://www.roblox.com/games/16146832113",
+      "tags": [
+        "top-playing-now",
+        "Strategy",
+        "Maturity: Minimal",
+        "top-trending",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_4949420752",
+      "platform": "roblox",
+      "title": "Realistic Street Soccer",
+      "genre": "Sports & Racing",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 41641,
+      "metricType": "ccu",
+      "likeRatio": 0.8464404719417953,
+      "url": "https://www.roblox.com/games/14315258385",
+      "tags": [
+        "top-playing-now",
+        "Sports & Racing",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10258991999",
+      "platform": "roblox",
+      "title": "[⚔️NEW UNITS] Command An Army",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 40622,
+      "metricType": "ccu",
+      "likeRatio": 0.9717122517796928,
+      "url": "https://www.roblox.com/games/101770480176177",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_1831550657",
+      "platform": "roblox",
+      "title": "✨ Creatures of Sonaria 📜 Survive Kaiju Animals",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 37764,
+      "metricType": "ccu",
+      "likeRatio": 0.9242900673208055,
+      "url": "https://www.roblox.com/games/5233782396",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9978329815",
+      "platform": "roblox",
+      "title": "Mukbang Game [Testing]🍊🍓🌯!",
+      "genre": "General",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 36760,
+      "metricType": "ccu",
+      "likeRatio": 0.9300052128819113,
+      "url": "https://www.roblox.com/games/74188431054457",
+      "tags": [
+        "top-playing-now",
+        "General",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_5995470825",
+      "platform": "roblox",
+      "title": "[🔥REMIX CHEST] Hypershot",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 35886,
+      "metricType": "ccu",
+      "likeRatio": 0.9455558711736937,
+      "url": "https://www.roblox.com/games/17516596118",
+      "tags": [
+        "top-playing-now",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10759337137",
+      "platform": "roblox",
+      "title": "Last Stop [Beta]",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 34804,
+      "metricType": "ccu",
+      "likeRatio": 0.9675888085507702,
+      "url": "https://www.roblox.com/games/85967844112283",
+      "tags": [
+        "top-playing-now",
+        "Survival",
+        "Maturity: Mild",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9931749389",
+      "platform": "roblox",
+      "title": "[+1 DROP + 2x LUCK] Dungeon Quest Reborn",
+      "genre": "RPG",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 34076,
+      "metricType": "ccu",
+      "likeRatio": 0.941966945431276,
+      "url": "https://www.roblox.com/games/77649408247578",
+      "tags": [
+        "top-playing-now",
+        "RPG",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7436755782",
+      "platform": "roblox",
+      "title": "[🧺] Grow a Garden 🌶️",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 33626,
+      "metricType": "ccu",
+      "likeRatio": 0.8994487508612223,
+      "url": "https://www.roblox.com/games/126884695634066",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10648820673",
+      "platform": "roblox",
+      "title": "[🔥] Karinderya!",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 33322,
+      "metricType": "ccu",
+      "likeRatio": 0.9750222744208651,
+      "url": "https://www.roblox.com/games/116497287371701",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9294074907",
+      "platform": "roblox",
+      "title": "[FPS] One Tap",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 32119,
+      "metricType": "ccu",
+      "likeRatio": 0.8805017222782784,
+      "url": "https://www.roblox.com/games/90568084448279",
+      "tags": [
+        "top-playing-now",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10004244222",
+      "platform": "roblox",
+      "title": "Kick a Lucky Block",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 32115,
+      "metricType": "ccu",
+      "likeRatio": 0.950890243839264,
+      "url": "https://www.roblox.com/games/89469502395769",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10399136326",
+      "platform": "roblox",
+      "title": "Anime Ability Arena",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 31213,
+      "metricType": "ccu",
+      "likeRatio": 0.8882579161125688,
+      "url": "https://www.roblox.com/games/108567435288296",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10261267004",
+      "platform": "roblox",
+      "title": "[🌵UPD] Storage Hunters: Open World",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 31042,
+      "metricType": "ccu",
+      "likeRatio": 0.9460224899329981,
+      "url": "https://www.roblox.com/games/98800969324557",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9855761734",
+      "platform": "roblox",
+      "title": "San Diego Roleplay",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 30554,
+      "metricType": "ccu",
+      "likeRatio": 0.8562783085296692,
+      "url": "https://www.roblox.com/games/136020512003847",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_88070565",
+      "platform": "roblox",
+      "title": "[🍽] Welcome to Bloxburg ",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 30250,
+      "metricType": "ccu",
+      "likeRatio": 0.8846743305256477,
+      "url": "https://www.roblox.com/games/185655149",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_2936053166",
+      "platform": "roblox",
+      "title": "[🦑] Squid Game X",
+      "genre": "Party & Casual",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 29553,
+      "metricType": "ccu",
+      "likeRatio": 0.937212054809772,
+      "url": "https://www.roblox.com/games/7554888362",
+      "tags": [
+        "top-playing-now",
+        "Party & Casual",
+        "Maturity: Mild",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10759860151",
+      "platform": "roblox",
+      "title": "Lift a Cube",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 28688,
+      "metricType": "ccu",
+      "likeRatio": 0.8739807264640475,
+      "url": "https://www.roblox.com/games/109530157755211",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10460801145",
+      "platform": "roblox",
+      "title": "TROLL Hug Tower",
+      "genre": "Obby & Platformer",
+      "archetype": "OBBY_PARKOUR",
+      "metricValue": 27973,
+      "metricType": "ccu",
+      "likeRatio": 0.8636869141555897,
+      "url": "https://www.roblox.com/games/103037106396302",
+      "tags": [
+        "top-playing-now",
+        "Obby & Platformer",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10577588270",
+      "platform": "roblox",
+      "title": "🦸 +1 Superhero Evolution",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 27921,
+      "metricType": "ccu",
+      "likeRatio": 0.9780995459867418,
+      "url": "https://www.roblox.com/games/97824450589417",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Mild",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6774320049",
+      "platform": "roblox",
+      "title": "Dubai 🏡RP [Kids! 👶]",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 27877,
+      "metricType": "ccu",
+      "likeRatio": 0.8821129172133152,
+      "url": "https://www.roblox.com/games/122485613019196",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7613921865",
+      "platform": "roblox",
+      "title": "[🌘] Anime Expeditions ",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 27775,
+      "metricType": "ccu",
+      "likeRatio": 0.958539222017275,
+      "url": "https://www.roblox.com/games/84515722934860",
+      "tags": [
+        "top-playing-now",
+        "Strategy",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_648454481",
+      "platform": "roblox",
+      "title": "[🐆LEOPARD🐆] Grand Piece Online",
+      "genre": "RPG",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 27464,
+      "metricType": "ccu",
+      "likeRatio": 0.8981989142181909,
+      "url": "https://www.roblox.com/games/1730877806",
+      "tags": [
+        "top-playing-now",
+        "RPG",
+        "Maturity: Moderate",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6325068386",
+      "platform": "roblox",
+      "title": "[NIKO 👁️] Blue Lock: Rivals",
+      "genre": "Sports & Racing",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 27110,
+      "metricType": "ccu",
+      "likeRatio": 0.9663141772536431,
+      "url": "https://www.roblox.com/games/18668065416",
+      "tags": [
+        "top-playing-now",
+        "Sports & Racing",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6521100398",
+      "platform": "roblox",
+      "title": "Dreamville 🏡 RP",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 26947,
+      "metricType": "ccu",
+      "likeRatio": 0.9504675259034622,
+      "url": "https://www.roblox.com/games/74395953411817",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_4777817887",
+      "platform": "roblox",
+      "title": "Blade Ball",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 26489,
+      "metricType": "ccu",
+      "likeRatio": 0.9349895612294742,
+      "url": "https://www.roblox.com/games/13772394625",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7108384194",
+      "platform": "roblox",
+      "title": "[👽NOW] Knife VS Gun DUELS",
+      "genre": "Action",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 26469,
+      "metricType": "ccu",
+      "likeRatio": 0.8556700321879557,
+      "url": "https://www.roblox.com/games/120700541929930",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_601130232",
+      "platform": "roblox",
+      "title": "Bee Swarm Simulator",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 26462,
+      "metricType": "ccu",
+      "likeRatio": 0.955830880371796,
+      "url": "https://www.roblox.com/games/1537690962",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_210851291",
+      "platform": "roblox",
+      "title": "Build A Boat For Treasure",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 26252,
+      "metricType": "ccu",
+      "likeRatio": 0.9337959989146507,
+      "url": "https://www.roblox.com/games/537413528",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_8719555347",
+      "platform": "roblox",
+      "title": "[⛰️4x4 Crawlers] Southern Mudding 🚜 OffRoading",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 25343,
+      "metricType": "ccu",
+      "likeRatio": 0.9269499847912049,
+      "url": "https://www.roblox.com/games/79480724066456",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7008097940",
+      "platform": "roblox",
+      "title": "[🥇] Ink Game",
+      "genre": "Party & Casual",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 24569,
+      "metricType": "ccu",
+      "likeRatio": 0.7925396953477322,
+      "url": "https://www.roblox.com/games/99567941238278",
+      "tags": [
+        "top-playing-now",
+        "Party & Casual",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7554119808",
+      "platform": "roblox",
+      "title": "🛍️ My Avatar!",
+      "genre": "Shopping",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 24541,
+      "metricType": "ccu",
+      "likeRatio": 0.9091570411042091,
+      "url": "https://www.roblox.com/games/75387700043737",
+      "tags": [
+        "top-playing-now",
+        "Shopping",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10391461348",
+      "platform": "roblox",
+      "title": "[UP] Keyboard Slide +1 Speed",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 24369,
+      "metricType": "ccu",
+      "likeRatio": 0.9855983604287257,
+      "url": "https://www.roblox.com/games/74581423482101",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10649255304",
+      "platform": "roblox",
+      "title": "Pull An Egg",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 24354,
+      "metricType": "ccu",
+      "likeRatio": 0.8804839439167798,
+      "url": "https://www.roblox.com/games/70640255604878",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_2783797267",
+      "platform": "roblox",
+      "title": "[🎨INTERIORS] American Plains Mudding",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 24195,
+      "metricType": "ccu",
+      "likeRatio": 0.8985001872013038,
+      "url": "https://www.roblox.com/games/7171174521",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6765805766",
+      "platform": "roblox",
+      "title": "BlockSpin 🔪 ",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 24075,
+      "metricType": "ccu",
+      "likeRatio": 0.7853062309020858,
+      "url": "https://www.roblox.com/games/104715542330896",
+      "tags": [
+        "top-playing-now",
+        "Action",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_7018190066",
+      "platform": "roblox",
+      "title": "Dead Rails",
+      "genre": "Adventure",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 23420,
+      "metricType": "ccu",
+      "likeRatio": 0.9258334497756545,
+      "url": "https://www.roblox.com/games/116495829188952",
+      "tags": [
+        "top-playing-now",
+        "Adventure",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10475794799",
+      "platform": "roblox",
+      "title": "[UPD] Dig & Clean 🧼",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 23104,
+      "metricType": "ccu",
+      "likeRatio": 0.96480334082295,
+      "url": "https://www.roblox.com/games/83038462357724",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_6760085372",
+      "platform": "roblox",
+      "title": "[♾️NOW] Jujutsu: Zero",
+      "genre": "RPG",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 22959,
+      "metricType": "ccu",
+      "likeRatio": 0.9537335981993807,
+      "url": "https://www.roblox.com/games/128451689942376",
+      "tags": [
+        "top-playing-now",
+        "RPG",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9906378607",
+      "platform": "roblox",
+      "title": "[NOW] Hole Fishing",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 22700,
+      "metricType": "ccu",
+      "likeRatio": 0.9803558436404524,
+      "url": "https://www.roblox.com/games/80158232099900",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10685282333",
+      "platform": "roblox",
+      "title": "Ball VS Ball",
+      "genre": "Party & Casual",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 22350,
+      "metricType": "ccu",
+      "likeRatio": 0.8551872728459814,
+      "url": "https://www.roblox.com/games/96510596525082",
+      "tags": [
+        "top-playing-now",
+        "Party & Casual",
+        "Maturity: Minimal",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_4723764956",
+      "platform": "roblox",
+      "title": "🎥My Movie",
+      "genre": "Entertainment",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 21875,
+      "metricType": "ccu",
+      "likeRatio": 0.937246982145316,
+      "url": "https://www.roblox.com/games/13600218266",
+      "tags": [
+        "top-playing-now",
+        "Entertainment",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10551595617",
+      "platform": "roblox",
+      "title": "⚽ Jump To Steal Soccer Players ⚽",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 21766,
+      "metricType": "ccu",
+      "likeRatio": 0.8484927159959613,
+      "url": "https://www.roblox.com/games/133294838637122",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10634461028",
+      "platform": "roblox",
+      "title": "(BETA RELEASE) Drive A Kukirin!",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 21712,
+      "metricType": "ccu",
+      "likeRatio": 0.9067491234904558,
+      "url": "https://www.roblox.com/games/71704434889758",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10440833423",
+      "platform": "roblox",
+      "title": "Greedy Growers 🌱",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 21434,
+      "metricType": "ccu",
+      "likeRatio": 0.9786626982722403,
+      "url": "https://www.roblox.com/games/74102906764176",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10624691669",
+      "platform": "roblox",
+      "title": "MONOCHROME👁️",
+      "genre": "Puzzle",
+      "archetype": "WORD_PUZZLE",
+      "metricValue": 21410,
+      "metricType": "ccu",
+      "likeRatio": 0.8482545805207329,
+      "url": "https://www.roblox.com/games/134208374070897",
+      "tags": [
+        "top-playing-now",
+        "Puzzle",
+        "Maturity: Mild",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10336278580",
+      "platform": "roblox",
+      "title": "[💎] Sell Ores ⛏️",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 21403,
+      "metricType": "ccu",
+      "likeRatio": 0.9899285262613294,
+      "url": "https://www.roblox.com/games/122572082932179",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9561553764",
+      "platform": "roblox",
+      "title": "[NEW] Murder Duels",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 21101,
+      "metricType": "ccu",
+      "likeRatio": 0.9402204501850779,
+      "url": "https://www.roblox.com/games/120851538706364",
+      "tags": [
+        "top-playing-now",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_1852226622",
+      "platform": "roblox",
+      "title": "Gacha Online ✨ RP",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 21082,
+      "metricType": "ccu",
+      "likeRatio": 0.7854051929745548,
+      "url": "https://www.roblox.com/games/5289509545",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_2992873140",
+      "platform": "roblox",
+      "title": "Emergency Hamburg",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "MERGE_IDLE",
+      "metricValue": 21059,
+      "metricType": "ccu",
+      "likeRatio": 0.8564047852245698,
+      "url": "https://www.roblox.com/games/7711635737",
+      "tags": [
+        "top-playing-now",
+        "Roleplay & Avatar Sim",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10764479526",
+      "platform": "roblox",
+      "title": "[W2] +1 Mog Evolution",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 20994,
+      "metricType": "ccu",
+      "likeRatio": 0.9788629175345214,
+      "url": "https://www.roblox.com/games/92648272637932",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-trending",
+        "up-and-coming"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_10544327471",
+      "platform": "roblox",
+      "title": "+1 Phonk Evolution",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 20960,
+      "metricType": "ccu",
+      "likeRatio": 0.9792680128499311,
+      "url": "https://www.roblox.com/games/104809044319701",
+      "tags": [
+        "top-playing-now",
+        "Simulation",
+        "Maturity: Mild",
+        "top-trending"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_4293374620",
+      "platform": "roblox",
+      "title": "FIFA Super Soccer",
+      "genre": "Sports & Racing",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 20650,
+      "metricType": "ccu",
+      "likeRatio": 0.814802668129048,
+      "url": "https://www.roblox.com/games/12177325772",
+      "tags": [
+        "top-playing-now",
+        "Sports & Racing",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-playing-now",
+      "timestamp": "2026-09-13T16:25:53.625Z"
+    },
+    {
+      "id": "roblox_9641502068",
+      "platform": "roblox",
+      "title": "[BRIDGE 🌉] KNIFE DUELS",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 17838,
+      "metricType": "ccu",
+      "likeRatio": 0.9344237096812931,
+      "url": "https://www.roblox.com/games/112731528776884",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_4750561026",
+      "platform": "roblox",
+      "title": "Cold War [NEW GAMEMODES]",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 13387,
+      "metricType": "ccu",
+      "likeRatio": 0.8679131576914162,
+      "url": "https://www.roblox.com/games/13687899540",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_1176784616",
+      "platform": "roblox",
+      "title": "[⚡️ NEW TOWER] Tower Defense Simulator",
+      "genre": "Strategy",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 17694,
+      "metricType": "ccu",
+      "likeRatio": 0.9415421079205113,
+      "url": "https://www.roblox.com/games/3260590327",
+      "tags": [
+        "top-trending",
+        "Strategy",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10758034175",
+      "platform": "roblox",
+      "title": "🌋How to Really Fish",
+      "genre": "Adventure",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 13381,
+      "metricType": "ccu",
+      "likeRatio": 0.895643613093773,
+      "url": "https://www.roblox.com/games/112778631702542",
+      "tags": [
+        "top-trending",
+        "Adventure",
+        "Maturity: Minimal",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_7935634976",
+      "platform": "roblox",
+      "title": "The Lost Front",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 4397,
+      "metricType": "ccu",
+      "likeRatio": 0.8237800368665629,
+      "url": "https://www.roblox.com/games/102871156420149",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_7395930870",
+      "platform": "roblox",
+      "title": "Sell Lemons 🍋",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 18028,
+      "metricType": "ccu",
+      "likeRatio": 0.9470728066780917,
+      "url": "https://www.roblox.com/games/79268393072444",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10418224975",
+      "platform": "roblox",
+      "title": "+1 TNT Mining",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 12616,
+      "metricType": "ccu",
+      "likeRatio": 0.9499467518636848,
+      "url": "https://www.roblox.com/games/101304595834078",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9837612476",
+      "platform": "roblox",
+      "title": "[UPD] Mini War",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 16369,
+      "metricType": "ccu",
+      "likeRatio": 0.9670853259947695,
+      "url": "https://www.roblox.com/games/131346454575416",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10529067596",
+      "platform": "roblox",
+      "title": "⛳ Hit a Golf Ball",
+      "genre": "Simulation",
+      "archetype": "PHYSICS_SANDBOX",
+      "metricValue": 11602,
+      "metricType": "ccu",
+      "likeRatio": 0.8895390416747936,
+      "url": "https://www.roblox.com/games/138363592957250",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_5233689103",
+      "platform": "roblox",
+      "title": "[ 📦 🏍️ BikeLife ] Northline RP",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3854,
+      "metricType": "ccu",
+      "likeRatio": 0.8803786574870912,
+      "url": "https://www.roblox.com/games/15182389440",
+      "tags": [
+        "top-trending",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_4983034985",
+      "platform": "roblox",
+      "title": "Conquer The World WW2 [🛡️]",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 12205,
+      "metricType": "ccu",
+      "likeRatio": 0.8075833687685133,
+      "url": "https://www.roblox.com/games/14422394494",
+      "tags": [
+        "top-trending",
+        "Strategy",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9765324104",
+      "platform": "roblox",
+      "title": "[AI COPS + MORE👮] Wheelie District 🏍️",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 7958,
+      "metricType": "ccu",
+      "likeRatio": 0.9165437302423604,
+      "url": "https://www.roblox.com/games/89490838554710",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9210599831",
+      "platform": "roblox",
+      "title": "💢 AIMBOT",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 3061,
+      "metricType": "ccu",
+      "likeRatio": 0.9580511073253833,
+      "url": "https://www.roblox.com/games/80139795758532",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_4730278139",
+      "platform": "roblox",
+      "title": "[DEIMOS👹] untitled boxing game 🥊",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 16788,
+      "metricType": "ccu",
+      "likeRatio": 0.8709280307805575,
+      "url": "https://www.roblox.com/games/13621938427",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_8744978097",
+      "platform": "roblox",
+      "title": "Dronefront [BALLISTIC]",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2043,
+      "metricType": "ccu",
+      "likeRatio": 0.9445140839997118,
+      "url": "https://www.roblox.com/games/130782443587508",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9051406594",
+      "platform": "roblox",
+      "title": "Dueling Grounds ⚔️ ",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 17788,
+      "metricType": "ccu",
+      "likeRatio": 0.964156732015013,
+      "url": "https://www.roblox.com/games/94217045453265",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10001039611",
+      "platform": "roblox",
+      "title": "just an innocent game",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 18870,
+      "metricType": "ccu",
+      "likeRatio": 0.7275600505689002,
+      "url": "https://www.roblox.com/games/76838459031868",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_6749060816",
+      "platform": "roblox",
+      "title": "[UPD] Asylum Life 🔊",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 12784,
+      "metricType": "ccu",
+      "likeRatio": 0.8336679506195119,
+      "url": "https://www.roblox.com/games/132352755769957",
+      "tags": [
+        "top-trending",
+        "Roleplay & Avatar Sim",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9063977758",
+      "platform": "roblox",
+      "title": "[UPDATE 2] Debt Hunt 🐺",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 1828,
+      "metricType": "ccu",
+      "likeRatio": 0.8167885754092651,
+      "url": "https://www.roblox.com/games/119116892854064",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9472441390",
+      "platform": "roblox",
+      "title": "💎 ROB IT",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 9440,
+      "metricType": "ccu",
+      "likeRatio": 0.9602224938079992,
+      "url": "https://www.roblox.com/games/96168869671905",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9065022692",
+      "platform": "roblox",
+      "title": "🍂 Школа 102 РП",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1146,
+      "metricType": "ccu",
+      "likeRatio": 0.8335650446871897,
+      "url": "https://www.roblox.com/games/73413968610508",
+      "tags": [
+        "top-trending",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10253235584",
+      "platform": "roblox",
+      "title": "Build a base RNG 🎲",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 8072,
+      "metricType": "ccu",
+      "likeRatio": 0.9851106967986331,
+      "url": "https://www.roblox.com/games/99108783264633",
+      "tags": [
+        "top-trending",
+        "Strategy",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_6583326485",
+      "platform": "roblox",
+      "title": "Ground War",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 6130,
+      "metricType": "ccu",
+      "likeRatio": 0.7933685220729366,
+      "url": "https://www.roblox.com/games/118367369949006",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10090256806",
+      "platform": "roblox",
+      "title": "TTK Testing [HARDPOINT]",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 3637,
+      "metricType": "ccu",
+      "likeRatio": 0.9142306233742649,
+      "url": "https://www.roblox.com/games/120189115846709",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10415694629",
+      "platform": "roblox",
+      "title": "Carry the Glass Together! [2 Player Obby]",
+      "genre": "Obby & Platformer",
+      "archetype": "OBBY_PARKOUR",
+      "metricValue": 12604,
+      "metricType": "ccu",
+      "likeRatio": 0.8869576581285938,
+      "url": "https://www.roblox.com/games/81734857983173",
+      "tags": [
+        "top-trending",
+        "Obby & Platformer",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10031505426",
+      "platform": "roblox",
+      "title": "FPS🔥AirDrop Arena [S4]🔥",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 8511,
+      "metricType": "ccu",
+      "likeRatio": 0.9693595830323046,
+      "url": "https://www.roblox.com/games/93091759101123",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9780429221",
+      "platform": "roblox",
+      "title": "Cheating During Testing [BETA]",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 13411,
+      "metricType": "ccu",
+      "likeRatio": 0.8203691915977085,
+      "url": "https://www.roblox.com/games/98894876188248",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10195997258",
+      "platform": "roblox",
+      "title": "[🏦] Pull a Lucky Fish",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 13161,
+      "metricType": "ccu",
+      "likeRatio": 0.9526354008248045,
+      "url": "https://www.roblox.com/games/112781315318195",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10403820097",
+      "platform": "roblox",
+      "title": "Hot Potato 🥔💥",
+      "genre": "Party & Casual",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 7111,
+      "metricType": "ccu",
+      "likeRatio": 0.7504876915931259,
+      "url": "https://www.roblox.com/games/72001091182267",
+      "tags": [
+        "top-trending",
+        "Party & Casual",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_7691800287",
+      "platform": "roblox",
+      "title": "STICK BATTLES 🍢",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2298,
+      "metricType": "ccu",
+      "likeRatio": 0.7740984587759988,
+      "url": "https://www.roblox.com/games/136372246050123",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10399524075",
+      "platform": "roblox",
+      "title": "Build A Golem! ⛏️",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 6488,
+      "metricType": "ccu",
+      "likeRatio": 0.9721471785700696,
+      "url": "https://www.roblox.com/games/78091651370612",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_7265339759",
+      "platform": "roblox",
+      "title": "REDLINER [⚡UZI]",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 1859,
+      "metricType": "ccu",
+      "likeRatio": 0.8970699365509375,
+      "url": "https://www.roblox.com/games/94987506187454",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10667006841",
+      "platform": "roblox",
+      "title": "Guess the Anime Color",
+      "genre": "Party & Casual",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 6824,
+      "metricType": "ccu",
+      "likeRatio": 0.7604235605559232,
+      "url": "https://www.roblox.com/games/97506470800237",
+      "tags": [
+        "top-trending",
+        "Party & Casual",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10112019404",
+      "platform": "roblox",
+      "title": "(SEASON 2) KILLSTREAK",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 6537,
+      "metricType": "ccu",
+      "likeRatio": 0.7843504099488252,
+      "url": "https://www.roblox.com/games/90184287580174",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_7780633647",
+      "platform": "roblox",
+      "title": "MX WORLD",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 8476,
+      "metricType": "ccu",
+      "likeRatio": 0.8340067219679634,
+      "url": "https://www.roblox.com/games/135155039067698",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10765158336",
+      "platform": "roblox",
+      "title": "[RELEASE] BloxNote",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 3003,
+      "metricType": "ccu",
+      "likeRatio": 0.8955613577023499,
+      "url": "https://www.roblox.com/games/113832557150558",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Minimal",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9419242500",
+      "platform": "roblox",
+      "title": "[😾] Cat Invasion",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 3362,
+      "metricType": "ccu",
+      "likeRatio": 0.9819863639078753,
+      "url": "https://www.roblox.com/games/78496323189083",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_7274244096",
+      "platform": "roblox",
+      "title": "[NEW UPDATE!] Toilet World Roleplay 2",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 7698,
+      "metricType": "ccu",
+      "likeRatio": 0.9165927331999092,
+      "url": "https://www.roblox.com/games/135717153770519",
+      "tags": [
+        "top-trending",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10741654282",
+      "platform": "roblox",
+      "title": "[🏴‍☠️] Build and Kill Zombies",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 18104,
+      "metricType": "ccu",
+      "likeRatio": 0.9524444868007242,
+      "url": "https://www.roblox.com/games/105011592530400",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Mild",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10550134865",
+      "platform": "roblox",
+      "title": "Симулятор падения в Канаву 2",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 1235,
+      "metricType": "ccu",
+      "likeRatio": 0.7463414634146341,
+      "url": "https://www.roblox.com/games/93680841936870",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10013052337",
+      "platform": "roblox",
+      "title": "[UTSM3.0!] Titans ultra boss rush",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 9103,
+      "metricType": "ccu",
+      "likeRatio": 0.8623862915168182,
+      "url": "https://www.roblox.com/games/90198315559220",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_4658598196",
+      "platform": "roblox",
+      "title": "Attack on Titan Revolution",
+      "genre": "RPG",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 18927,
+      "metricType": "ccu",
+      "likeRatio": 0.9598773709603706,
+      "url": "https://www.roblox.com/games/13379208636",
+      "tags": [
+        "top-trending",
+        "RPG",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10340721921",
+      "platform": "roblox",
+      "title": "⚡Power a City",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2600,
+      "metricType": "ccu",
+      "likeRatio": 0.9499630964268658,
+      "url": "https://www.roblox.com/games/127475054933484",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_8160348242",
+      "platform": "roblox",
+      "title": "MM2 Aim Trainer 2",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 9782,
+      "metricType": "ccu",
+      "likeRatio": 0.904632512370045,
+      "url": "https://www.roblox.com/games/135193469413243",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10759485670",
+      "platform": "roblox",
+      "title": "Tower Reborn",
+      "genre": "Obby & Platformer",
+      "archetype": "OBBY_PARKOUR",
+      "metricValue": 1273,
+      "metricType": "ccu",
+      "likeRatio": 0.8817876021143681,
+      "url": "https://www.roblox.com/games/106717722249176",
+      "tags": [
+        "top-trending",
+        "Obby & Platformer",
+        "Maturity: Minimal",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10764926550",
+      "platform": "roblox",
+      "title": "survive simulator",
+      "genre": "Survival",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 11202,
+      "metricType": "ccu",
+      "likeRatio": 0.9663467690339091,
+      "url": "https://www.roblox.com/games/117951390082378",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Moderate",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_7264587281",
+      "platform": "roblox",
+      "title": "SNIPER DUELS",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 5652,
+      "metricType": "ccu",
+      "likeRatio": 0.7673534917742155,
+      "url": "https://www.roblox.com/games/109397169461300",
+      "tags": [
+        "top-trending",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_1235188606",
+      "platform": "roblox",
+      "title": "[NEW🐲] Dragon Adventures 🐉",
+      "genre": "RPG",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 10928,
+      "metricType": "ccu",
+      "likeRatio": 0.9341492198819848,
+      "url": "https://www.roblox.com/games/3475397644",
+      "tags": [
+        "top-trending",
+        "RPG",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10718240577",
+      "platform": "roblox",
+      "title": "Steal Fish Eggs",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 13017,
+      "metricType": "ccu",
+      "likeRatio": 0.9829172481521683,
+      "url": "https://www.roblox.com/games/99183404085821",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_2979369058",
+      "platform": "roblox",
+      "title": "Pummu Talladega",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 5168,
+      "metricType": "ccu",
+      "likeRatio": 0.8239524180677728,
+      "url": "https://www.roblox.com/games/7670825572",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10700505394",
+      "platform": "roblox",
+      "title": "[W2] +1 Long Arm Toy Escape!",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 18498,
+      "metricType": "ccu",
+      "likeRatio": 0.9566804992811397,
+      "url": "https://www.roblox.com/games/74341114342499",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_4181957649",
+      "platform": "roblox",
+      "title": "Ultimate Battlegrounds",
+      "genre": "Action",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 3643,
+      "metricType": "ccu",
+      "likeRatio": 0.827080140592532,
+      "url": "https://www.roblox.com/games/11815767793",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_2491559356",
+      "platform": "roblox",
+      "title": "Cursed Tank Simulator【HOLD THE LINE】",
+      "genre": "Action",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 2097,
+      "metricType": "ccu",
+      "likeRatio": 0.7743478770971569,
+      "url": "https://www.roblox.com/games/6608498361",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9338511689",
+      "platform": "roblox",
+      "title": "👾 NFT Battle",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 922,
+      "metricType": "ccu",
+      "likeRatio": 0.847972171713179,
+      "url": "https://www.roblox.com/games/76603753346534",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10520751574",
+      "platform": "roblox",
+      "title": "💎 UPGRADER: Skins, Stickers, Music Kits & Agents!",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 538,
+      "metricType": "ccu",
+      "likeRatio": 0.9278996865203761,
+      "url": "https://www.roblox.com/games/130590729045913",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_4864117649",
+      "platform": "roblox",
+      "title": "untitled tag game",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3516,
+      "metricType": "ccu",
+      "likeRatio": 0.9034907969897543,
+      "url": "https://www.roblox.com/games/14044547200",
+      "tags": [
+        "top-trending",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9730938626",
+      "platform": "roblox",
+      "title": "FPV Drone Warfare",
+      "genre": "General",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 279,
+      "metricType": "ccu",
+      "likeRatio": 0.7131242740998839,
+      "url": "https://www.roblox.com/games/123515238300866",
+      "tags": [
+        "top-trending",
+        "General",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_9878210988",
+      "platform": "roblox",
+      "title": "Overhang",
+      "genre": "Obby & Platformer",
+      "archetype": "OBBY_PARKOUR",
+      "metricValue": 2236,
+      "metricType": "ccu",
+      "likeRatio": 0.8378330995792427,
+      "url": "https://www.roblox.com/games/125633828844867",
+      "tags": [
+        "top-trending",
+        "Obby & Platformer",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10683945170",
+      "platform": "roblox",
+      "title": "💀Jump To Steal SCP Monsters!💀",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 14667,
+      "metricType": "ccu",
+      "likeRatio": 0.8292221744735712,
+      "url": "https://www.roblox.com/games/123724279728430",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10742019356",
+      "platform": "roblox",
+      "title": "[UPD 2]💥 Blow Up The City",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 9140,
+      "metricType": "ccu",
+      "likeRatio": 0.8204117389399912,
+      "url": "https://www.roblox.com/games/97270827479665",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_5039839070",
+      "platform": "roblox",
+      "title": "(ANNIVERSARY) Outcome Memories v0.2",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 12205,
+      "metricType": "ccu",
+      "likeRatio": 0.8827636995244005,
+      "url": "https://www.roblox.com/games/14608970270",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Moderate",
+        "top-revisited"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10003868811",
+      "platform": "roblox",
+      "title": "Skate For Brainrots 🛹",
+      "genre": "Simulation",
+      "archetype": "WORD_PUZZLE",
+      "metricValue": 2117,
+      "metricType": "ccu",
+      "likeRatio": 0.8450057405281286,
+      "url": "https://www.roblox.com/games/133743722520024",
+      "tags": [
+        "top-trending",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10605173611",
+      "platform": "roblox",
+      "title": "Bloxrooms [Beta]",
+      "genre": "Adventure",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1921,
+      "metricType": "ccu",
+      "likeRatio": 0.8768185451638689,
+      "url": "https://www.roblox.com/games/127943464865693",
+      "tags": [
+        "top-trending",
+        "Adventure",
+        "Maturity: Moderate",
+        "up-and-coming"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10345286503",
+      "platform": "roblox",
+      "title": "🤔 Killer or Not",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 10209,
+      "metricType": "ccu",
+      "likeRatio": 0.8465703971119134,
+      "url": "https://www.roblox.com/games/137427654696272",
+      "tags": [
+        "top-trending",
+        "Survival",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-trending",
+      "timestamp": "2026-09-13T16:25:53.536Z"
+    },
+    {
+      "id": "roblox_10757690102",
+      "platform": "roblox",
+      "title": "🐟 How to Fisch!",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 18162,
+      "metricType": "ccu",
+      "likeRatio": 0.9542668123330905,
+      "url": "https://www.roblox.com/games/119870009085173",
+      "tags": [
+        "up-and-coming",
+        "Survival",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "up-and-coming",
+      "timestamp": "2026-09-13T16:25:53.531Z"
+    },
+    {
+      "id": "roblox_10765121931",
+      "platform": "roblox",
+      "title": "[2x KEYS] MM2 of The Locust",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 13000,
+      "metricType": "ccu",
+      "likeRatio": 0.8659814192528168,
+      "url": "https://www.roblox.com/games/111578926396859",
+      "tags": [
+        "up-and-coming",
+        "Survival",
+        "Maturity: Mild"
+      ],
+      "sortSource": "up-and-coming",
+      "timestamp": "2026-09-13T16:25:53.531Z"
+    },
+    {
+      "id": "roblox_10514330086",
+      "platform": "roblox",
+      "title": "[KNIVES] Deagle Duels",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 587,
+      "metricType": "ccu",
+      "likeRatio": 0.7138927097661623,
+      "url": "https://www.roblox.com/games/93377485784638",
+      "tags": [
+        "up-and-coming",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "up-and-coming",
+      "timestamp": "2026-09-13T16:25:53.531Z"
+    },
+    {
+      "id": "roblox_10654199482",
+      "platform": "roblox",
+      "title": "[Artifacts] Fruit Zombie Survival 🍇",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 6728,
+      "metricType": "ccu",
+      "likeRatio": 0.9437063205590969,
+      "url": "https://www.roblox.com/games/75290583112878",
+      "tags": [
+        "up-and-coming",
+        "Survival",
+        "Maturity: Mild"
+      ],
+      "sortSource": "up-and-coming",
+      "timestamp": "2026-09-13T16:25:53.531Z"
+    },
+    {
+      "id": "roblox_6945584306",
+      "platform": "roblox",
+      "title": "[⚙️QOL😈] Azure Latch",
+      "genre": "Sports & Racing",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 16555,
+      "metricType": "ccu",
+      "likeRatio": 0.9681246783530952,
+      "url": "https://www.roblox.com/games/94647229517154",
+      "tags": [
+        "top-revisited",
+        "Sports & Racing",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_10008450782",
+      "platform": "roblox",
+      "title": "🎉 Multiverse Tower Defense",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 595,
+      "metricType": "ccu",
+      "likeRatio": 0.7851705237515225,
+      "url": "https://www.roblox.com/games/130172344017004",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_6190071862",
+      "platform": "roblox",
+      "title": "Grave/Digger",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 3023,
+      "metricType": "ccu",
+      "likeRatio": 0.8791243209383202,
+      "url": "https://www.roblox.com/games/18259975825",
+      "tags": [
+        "top-revisited",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_10732236937",
+      "platform": "roblox",
+      "title": "[ Zilla 2004 ] Kaiju Alpha",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 10352,
+      "metricType": "ccu",
+      "likeRatio": 0.922151055323905,
+      "url": "https://www.roblox.com/games/127403135954624",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_9297438743",
+      "platform": "roblox",
+      "title": "[81] SKIBIDI TOILET : OMEGA TITANS ROLEPLAY",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1596,
+      "metricType": "ccu",
+      "likeRatio": 0.8626632556887034,
+      "url": "https://www.roblox.com/games/140600426937477",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_3047037061",
+      "platform": "roblox",
+      "title": "bLockerman's Minesweeper",
+      "genre": "Puzzle",
+      "archetype": "WORD_PUZZLE",
+      "metricValue": 3411,
+      "metricType": "ccu",
+      "likeRatio": 0.8644098061046572,
+      "url": "https://www.roblox.com/games/7871169780",
+      "tags": [
+        "top-revisited",
+        "Puzzle",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_4938220315",
+      "platform": "roblox",
+      "title": "[ASTRO COLLOSSAL SPEAKERGUY] Skibi Defense",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2947,
+      "metricType": "ccu",
+      "likeRatio": 0.9236720237044014,
+      "url": "https://www.roblox.com/games/14279693118",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_3110388936",
+      "platform": "roblox",
+      "title": "[⚡Indra Clan] Ninja Time",
+      "genre": "RPG",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 5459,
+      "metricType": "ccu",
+      "likeRatio": 0.9024648902434002,
+      "url": "https://www.roblox.com/games/8075399143",
+      "tags": [
+        "top-revisited",
+        "RPG",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_321778215",
+      "platform": "roblox",
+      "title": "Royale🌺High",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 9343,
+      "metricType": "ccu",
+      "likeRatio": 0.8589973152964838,
+      "url": "https://www.roblox.com/games/735030788",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_3913007563",
+      "platform": "roblox",
+      "title": "The Battle Bricks",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 4672,
+      "metricType": "ccu",
+      "likeRatio": 0.8453728829418921,
+      "url": "https://www.roblox.com/games/10834586502",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_6280758286",
+      "platform": "roblox",
+      "title": "Армия Роблокса РП",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2246,
+      "metricType": "ccu",
+      "likeRatio": 0.8772228000304406,
+      "url": "https://www.roblox.com/games/18537079992",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_4342047058",
+      "platform": "roblox",
+      "title": "Guts & Blackpowder",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 8220,
+      "metricType": "ccu",
+      "likeRatio": 0.9414111049039107,
+      "url": "https://www.roblox.com/games/12334109280",
+      "tags": [
+        "top-revisited",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_6375110339",
+      "platform": "roblox",
+      "title": "[ Mafia ] ST : Blockade Battlefront",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2586,
+      "metricType": "ccu",
+      "likeRatio": 0.9201509293581517,
+      "url": "https://www.roblox.com/games/18816315817",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_10502841145",
+      "platform": "roblox",
+      "title": "[NINJA EXAM] Anime Astral Simulator",
+      "genre": "Simulation",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 20674,
+      "metricType": "ccu",
+      "likeRatio": 0.9674460737134122,
+      "url": "https://www.roblox.com/games/102072869879193",
+      "tags": [
+        "top-revisited",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_5422546686",
+      "platform": "roblox",
+      "title": "[👑] Horse Life",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3724,
+      "metricType": "ccu",
+      "likeRatio": 0.9568401312519431,
+      "url": "https://www.roblox.com/games/15696848933",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_3168615253",
+      "platform": "roblox",
+      "title": "[DEATH ABILITY] Ability Wars",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3204,
+      "metricType": "ccu",
+      "likeRatio": 0.7975750462014884,
+      "url": "https://www.roblox.com/games/8260276694",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_9803970239",
+      "platform": "roblox",
+      "title": "Forsaken Combat",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 5220,
+      "metricType": "ccu",
+      "likeRatio": 0.7042801556420234,
+      "url": "https://www.roblox.com/games/126815230666914",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_10393438342",
+      "platform": "roblox",
+      "title": "[♾️ PATCH] Alliance Tower Defense! ⚔️",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2537,
+      "metricType": "ccu",
+      "likeRatio": 0.9348644578313253,
+      "url": "https://www.roblox.com/games/99703116573266",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_9948575164",
+      "platform": "roblox",
+      "title": "[🔮] Merge Shop",
+      "genre": "Puzzle",
+      "archetype": "MERGE_IDLE",
+      "metricValue": 2896,
+      "metricType": "ccu",
+      "likeRatio": 0.9604619017450902,
+      "url": "https://www.roblox.com/games/120841752776030",
+      "tags": [
+        "top-revisited",
+        "Puzzle",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_1016936714",
+      "platform": "roblox",
+      "title": "[QOL] Your Bizarre Adventure",
+      "genre": "RPG",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 4284,
+      "metricType": "ccu",
+      "likeRatio": 0.8888250239595942,
+      "url": "https://www.roblox.com/games/2809202155",
+      "tags": [
+        "top-revisited",
+        "RPG",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_2380077519",
+      "platform": "roblox",
+      "title": "[UPDATE🐚] Slap Battles👏",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 14909,
+      "metricType": "ccu",
+      "likeRatio": 0.8605309069815211,
+      "url": "https://www.roblox.com/games/6403373529",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_7934320560",
+      "platform": "roblox",
+      "title": "Five Nights TD 2 [SLUMBER]",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 4370,
+      "metricType": "ccu",
+      "likeRatio": 0.9535149719916708,
+      "url": "https://www.roblox.com/games/70400654680508",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_1278035280",
+      "platform": "roblox",
+      "title": "Warrior Cats: Ultimate Edition",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 15016,
+      "metricType": "ccu",
+      "likeRatio": 0.9306870693035499,
+      "url": "https://www.roblox.com/games/3663340706",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_9328305853",
+      "platform": "roblox",
+      "title": "[ ✨ ] Winx - The Fairy Guardians",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2802,
+      "metricType": "ccu",
+      "likeRatio": 0.9474114998976877,
+      "url": "https://www.roblox.com/games/76737571462455",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_1054526971",
+      "platform": "roblox",
+      "title": "Blackhawk Rescue Mission 5",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 7756,
+      "metricType": "ccu",
+      "likeRatio": 0.90123262669398,
+      "url": "https://www.roblox.com/games/2916899287",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_6069634717",
+      "platform": "roblox",
+      "title": "Sorcerer Tower Defense [NAOYA]",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3679,
+      "metricType": "ccu",
+      "likeRatio": 0.9722380303144048,
+      "url": "https://www.roblox.com/games/17720162456",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_7921879545",
+      "platform": "roblox",
+      "title": "LCS: EQuest",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3074,
+      "metricType": "ccu",
+      "likeRatio": 0.9062954148149708,
+      "url": "https://www.roblox.com/games/75178747054941",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_2251388500",
+      "platform": "roblox",
+      "title": "Twisted [BETA]",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3680,
+      "metricType": "ccu",
+      "likeRatio": 0.9035552660595766,
+      "url": "https://www.roblox.com/games/6161235818",
+      "tags": [
+        "top-revisited",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_5207621753",
+      "platform": "roblox",
+      "title": "[⌛15 MIN] Skibidi Masters Tower Defense",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 5447,
+      "metricType": "ccu",
+      "likeRatio": 0.9734222190951946,
+      "url": "https://www.roblox.com/games/15111895255",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_2765784373",
+      "platform": "roblox",
+      "title": "PHIGHTING! [ALPHA]",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1928,
+      "metricType": "ccu",
+      "likeRatio": 0.9376505254707342,
+      "url": "https://www.roblox.com/games/7138009149",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_1782832995",
+      "platform": "roblox",
+      "title": "[UPDATE+2X XP] A Universal Time",
+      "genre": "RPG",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2616,
+      "metricType": "ccu",
+      "likeRatio": 0.8607372893229176,
+      "url": "https://www.roblox.com/games/5130598377",
+      "tags": [
+        "top-revisited",
+        "RPG",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_3730079862",
+      "platform": "roblox",
+      "title": "Examination",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 8851,
+      "metricType": "ccu",
+      "likeRatio": 0.922431157572667,
+      "url": "https://www.roblox.com/games/10165583746",
+      "tags": [
+        "top-revisited",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_1494262959",
+      "platform": "roblox",
+      "title": "Criminality",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2570,
+      "metricType": "ccu",
+      "likeRatio": 0.7528588388402273,
+      "url": "https://www.roblox.com/games/4588604953",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_3541611379",
+      "platform": "roblox",
+      "title": "⚔️PVP MODE Tower Defense X: BETA",
+      "genre": "Strategy",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1253,
+      "metricType": "ccu",
+      "likeRatio": 0.9434587312094962,
+      "url": "https://www.roblox.com/games/9503261072",
+      "tags": [
+        "top-revisited",
+        "Strategy",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_5829613337",
+      "platform": "roblox",
+      "title": "[🔮] 2omething evil will happen",
+      "genre": "Survival",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 4473,
+      "metricType": "ccu",
+      "likeRatio": 0.9262242041990535,
+      "url": "https://www.roblox.com/games/16991287194",
+      "tags": [
+        "top-revisited",
+        "Survival",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_8546873728",
+      "platform": "roblox",
+      "title": "Apocalyptic Toilet Roleplay",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1998,
+      "metricType": "ccu",
+      "likeRatio": 0.8864675494329315,
+      "url": "https://www.roblox.com/games/102917792916356",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_7247232515",
+      "platform": "roblox",
+      "title": "(ASTRO UPDATE) Reinald Toilet Roleplay",
+      "genre": "Roleplay & Avatar Sim",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 874,
+      "metricType": "ccu",
+      "likeRatio": 0.8825102990744208,
+      "url": "https://www.roblox.com/games/111779414681728",
+      "tags": [
+        "top-revisited",
+        "Roleplay & Avatar Sim",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_2082205150",
+      "platform": "roblox",
+      "title": "RetroStudio 🔨",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1172,
+      "metricType": "ccu",
+      "likeRatio": 0.9415254237288135,
+      "url": "https://www.roblox.com/games/5846386835",
+      "tags": [
+        "top-revisited",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_1390601379",
+      "platform": "roblox",
+      "title": "Combat Warriors",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2475,
+      "metricType": "ccu",
+      "likeRatio": 0.8347602336606613,
+      "url": "https://www.roblox.com/games/4282985734",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_4676287985",
+      "platform": "roblox",
+      "title": "Decaying Winter",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 1232,
+      "metricType": "ccu",
+      "likeRatio": 0.9158496979998179,
+      "url": "https://www.roblox.com/games/13438553315",
+      "tags": [
+        "top-revisited",
+        "Shooter",
+        "Maturity: Moderate"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_4557322431",
+      "platform": "roblox",
+      "title": "Project: Afternight",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1524,
+      "metricType": "ccu",
+      "likeRatio": 0.9128582682525943,
+      "url": "https://www.roblox.com/games/13042495892",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_3264581003",
+      "platform": "roblox",
+      "title": "Eternal Towers of Hell",
+      "genre": "Obby & Platformer",
+      "archetype": "OBBY_PARKOUR",
+      "metricValue": 2172,
+      "metricType": "ccu",
+      "likeRatio": 0.7982115055117864,
+      "url": "https://www.roblox.com/games/8562822414",
+      "tags": [
+        "top-revisited",
+        "Obby & Platformer",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_6083162964",
+      "platform": "roblox",
+      "title": "Helicity",
+      "genre": "Simulation",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1516,
+      "metricType": "ccu",
+      "likeRatio": 0.9044000884439888,
+      "url": "https://www.roblox.com/games/17759606919",
+      "tags": [
+        "top-revisited",
+        "Simulation",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_113491250",
+      "platform": "roblox",
+      "title": "Phantom Forces",
+      "genre": "Shooter",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 2793,
+      "metricType": "ccu",
+      "likeRatio": 0.907543156588841,
+      "url": "https://www.roblox.com/games/292439477",
+      "tags": [
+        "top-revisited",
+        "Shooter",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_1709917610",
+      "platform": "roblox",
+      "title": "Regretevator [ ELEVATOR SIMULATOR ]",
+      "genre": "Party & Casual",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 3511,
+      "metricType": "ccu",
+      "likeRatio": 0.899861333428453,
+      "url": "https://www.roblox.com/games/4972273297",
+      "tags": [
+        "top-revisited",
+        "Party & Casual",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_2443177453",
+      "platform": "roblox",
+      "title": "Basically FNF: Remix",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2568,
+      "metricType": "ccu",
+      "likeRatio": 0.89361412608459,
+      "url": "https://www.roblox.com/games/6520999642",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_6737261595",
+      "platform": "roblox",
+      "title": "Super Toilet Fight",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1670,
+      "metricType": "ccu",
+      "likeRatio": 0.9195394779878328,
+      "url": "https://www.roblox.com/games/128322973896382",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_5265857965",
+      "platform": "roblox",
+      "title": "Legends Battlegrounds",
+      "genre": "Action",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 5715,
+      "metricType": "ccu",
+      "likeRatio": 0.86805686363586,
+      "url": "https://www.roblox.com/games/15269951959",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_7414497778",
+      "platform": "roblox",
+      "title": "[MTC] Multicrew Tank Combat",
+      "genre": "Action",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 4205,
+      "metricType": "ccu",
+      "likeRatio": 0.8386401346785035,
+      "url": "https://www.roblox.com/games/95721658376580",
+      "tags": [
+        "top-revisited",
+        "Action",
+        "Maturity: Mild"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "roblox_8223345519",
+      "platform": "roblox",
+      "title": "[✨LA PEACE] alzzmy's DANCES",
+      "genre": "Social",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1741,
+      "metricType": "ccu",
+      "likeRatio": 0.9107971169628203,
+      "url": "https://www.roblox.com/games/84692574040798",
+      "tags": [
+        "top-revisited",
+        "Social",
+        "Maturity: Minimal"
+      ],
+      "sortSource": "top-revisited",
+      "timestamp": "2026-09-13T16:25:53.631Z"
+    },
+    {
+      "id": "yandex_12076609107086592869",
+      "platform": "yandex_games",
+      "title": "Счастливчик Игровые автоматы",
+      "genre": "Web Casual",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 70,
+      "metricType": "rating",
+      "url": "https://yandex.ru/games/app/472580",
+      "tags": [
+        "yandex_catalog",
+        "webgl"
+      ],
+      "timestamp": "2026-09-13T16:25:53.915Z"
+    },
+    {
+      "id": "poki_master-chess",
+      "platform": "poki",
+      "title": "Master Chess",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 1,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/master-chess",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_subway-surfers",
+      "platform": "poki",
+      "title": "Subway Surfers",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 2,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/subway-surfers",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_hole-io",
+      "platform": "poki",
+      "title": "Hole Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 3,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/hole-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_minefun-io",
+      "platform": "poki",
+      "title": "Minefun Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 4,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/minefun-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_tag",
+      "platform": "poki",
+      "title": "Tag",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 5,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/tag",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_smash-karts",
+      "platform": "poki",
+      "title": "Smash Karts",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 6,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/smash-karts",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_drift-boss",
+      "platform": "poki",
+      "title": "Drift Boss",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 7,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/drift-boss",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_retro-bowl",
+      "platform": "poki",
+      "title": "Retro Bowl",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 8,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/retro-bowl",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_stickman-hook",
+      "platform": "poki",
+      "title": "Stickman Hook",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 9,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/stickman-hook",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_monkey-mart",
+      "platform": "poki",
+      "title": "Monkey Mart",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 10,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/monkey-mart",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_blocky-blast-puzzle",
+      "platform": "poki",
+      "title": "Blocky Blast Puzzle",
+      "genre": "Web Arcade",
+      "archetype": "WORD_PUZZLE",
+      "metricValue": 11,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/blocky-blast-puzzle",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_level-devil",
+      "platform": "poki",
+      "title": "Level Devil",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 12,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/level-devil",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_brain-test-tricky-puzzles",
+      "platform": "poki",
+      "title": "Brain Test Tricky Puzzles",
+      "genre": "Web Arcade",
+      "archetype": "WORD_PUZZLE",
+      "metricValue": 13,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/brain-test-tricky-puzzles",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_flyordie-io",
+      "platform": "poki",
+      "title": "Flyordie Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 14,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/flyordie-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_blast-buddies",
+      "platform": "poki",
+      "title": "Blast Buddies",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 15,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/blast-buddies",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_super-dress",
+      "platform": "poki",
+      "title": "Super Dress",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 16,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/super-dress",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_harvest-loop",
+      "platform": "poki",
+      "title": "Harvest Loop",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 17,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/harvest-loop",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_hills-of-steel",
+      "platform": "poki",
+      "title": "Hills Of Steel",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 18,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/hills-of-steel",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_punchy-guy",
+      "platform": "poki",
+      "title": "Punchy Guy",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 19,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/punchy-guy",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_goods-master",
+      "platform": "poki",
+      "title": "Goods Master",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 20,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/goods-master",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_my-perfect-hotel",
+      "platform": "poki",
+      "title": "My Perfect Hotel",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 21,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/my-perfect-hotel",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_neon-challenge-legends",
+      "platform": "poki",
+      "title": "Neon Challenge Legends",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 22,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/neon-challenge-legends",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_count-control-legends",
+      "platform": "poki",
+      "title": "Count Control Legends",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 23,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/count-control-legends",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_stickman-battle",
+      "platform": "poki",
+      "title": "Stickman Battle",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 24,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/stickman-battle",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_ragdoll-hit",
+      "platform": "poki",
+      "title": "Ragdoll Hit",
+      "genre": "Web Arcade",
+      "archetype": "PHYSICS_SANDBOX",
+      "metricValue": 25,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/ragdoll-hit",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_talking-tom-gold-run",
+      "platform": "poki",
+      "title": "Talking Tom Gold Run",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 26,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/talking-tom-gold-run",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_count-war",
+      "platform": "poki",
+      "title": "Count War",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 27,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/count-war",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_hide-and-paint",
+      "platform": "poki",
+      "title": "Hide And Paint",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 28,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/hide-and-paint",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_satisbox-mini-games",
+      "platform": "poki",
+      "title": "Satisbox Mini Games",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 29,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/satisbox-mini-games",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_karate-fighter",
+      "platform": "poki",
+      "title": "Karate Fighter",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 30,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/karate-fighter",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_rainbow-obby",
+      "platform": "poki",
+      "title": "Rainbow Obby",
+      "genre": "Web Arcade",
+      "archetype": "OBBY_PARKOUR",
+      "metricValue": 31,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/rainbow-obby",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_temple-run-2",
+      "platform": "poki",
+      "title": "Temple Run 2",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 32,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/temple-run-2",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_guns-guns-guns",
+      "platform": "poki",
+      "title": "Guns Guns Guns",
+      "genre": "Web Arcade",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 33,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/guns-guns-guns",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_escape-from-school",
+      "platform": "poki",
+      "title": "Escape From School",
+      "genre": "Web Arcade",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 34,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/escape-from-school",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_carnado-stunt-car",
+      "platform": "poki",
+      "title": "Carnado Stunt Car",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 35,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/carnado-stunt-car",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_longcat",
+      "platform": "poki",
+      "title": "Longcat",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 36,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/longcat",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_slime-keyboard-escape",
+      "platform": "poki",
+      "title": "Slime Keyboard Escape",
+      "genre": "Web Arcade",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 37,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/slime-keyboard-escape",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_robo-cleaner-simulator",
+      "platform": "poki",
+      "title": "Robo Cleaner Simulator",
+      "genre": "Web Arcade",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 38,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/robo-cleaner-simulator",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_paperio-2",
+      "platform": "poki",
+      "title": "Paperio 2",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 39,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/paperio-2",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_hill-climb-racing-lite",
+      "platform": "poki",
+      "title": "Hill Climb Racing Lite",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 40,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/hill-climb-racing-lite",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_murder",
+      "platform": "poki",
+      "title": "Murder",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 41,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/murder",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_shenzhen-mahjong",
+      "platform": "poki",
+      "title": "Shenzhen Mahjong",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 42,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/shenzhen-mahjong",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_hexellent",
+      "platform": "poki",
+      "title": "Hexellent",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 43,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/hexellent",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_nails-diy-manicure-master",
+      "platform": "poki",
+      "title": "Nails Diy Manicure Master",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 44,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/nails-diy-manicure-master",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_blacktop-police-chase",
+      "platform": "poki",
+      "title": "Blacktop Police Chase",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 45,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/blacktop-police-chase",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_anycolor",
+      "platform": "poki",
+      "title": "Anycolor",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 46,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/anycolor",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_world-of-yarn",
+      "platform": "poki",
+      "title": "World Of Yarn",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 47,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/world-of-yarn",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_supercar-legends",
+      "platform": "poki",
+      "title": "Supercar Legends",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 48,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/supercar-legends",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_bubble-storm",
+      "platform": "poki",
+      "title": "Bubble Storm",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 49,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/bubble-storm",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_beauty-salon",
+      "platform": "poki",
+      "title": "Beauty Salon",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 50,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/beauty-salon",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_snapstyle-dress-up",
+      "platform": "poki",
+      "title": "Snapstyle Dress Up",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 51,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/snapstyle-dress-up",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_capitalist-bus-driver",
+      "platform": "poki",
+      "title": "Capitalist Bus Driver",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 52,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/capitalist-bus-driver",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_real-city-bikes",
+      "platform": "poki",
+      "title": "Real City Bikes",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 53,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/real-city-bikes",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_soccer-league",
+      "platform": "poki",
+      "title": "Soccer League",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 54,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/soccer-league",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_stunt-bike-extreme",
+      "platform": "poki",
+      "title": "Stunt Bike Extreme",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 55,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/stunt-bike-extreme",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_tear-blocks-down",
+      "platform": "poki",
+      "title": "Tear Blocks Down",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 56,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/tear-blocks-down",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_you-monster",
+      "platform": "poki",
+      "title": "You Monster",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 57,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/you-monster",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_steal-a-brainrot",
+      "platform": "poki",
+      "title": "Steal A Brainrot",
+      "genre": "Web Arcade",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 58,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/steal-a-brainrot",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_fashion-legends",
+      "platform": "poki",
+      "title": "Fashion Legends",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 59,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/fashion-legends",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_ragdoll-chaos",
+      "platform": "poki",
+      "title": "Ragdoll Chaos",
+      "genre": "Web Arcade",
+      "archetype": "PHYSICS_SANDBOX",
+      "metricValue": 60,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/ragdoll-chaos",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_perfect-landing-plane-pilot",
+      "platform": "poki",
+      "title": "Perfect Landing Plane Pilot",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 61,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/perfect-landing-plane-pilot",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_decor-life",
+      "platform": "poki",
+      "title": "Decor Life",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 62,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/decor-life",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_penalty-shooters-2",
+      "platform": "poki",
+      "title": "Penalty Shooters 2",
+      "genre": "Web Arcade",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 63,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/penalty-shooters-2",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_phone-case-diy",
+      "platform": "poki",
+      "title": "Phone Case Diy",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 64,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/phone-case-diy",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_sprint-league",
+      "platform": "poki",
+      "title": "Sprint League",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 65,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/sprint-league",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_cryzen-io",
+      "platform": "poki",
+      "title": "Cryzen Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 66,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/cryzen-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_party-time",
+      "platform": "poki",
+      "title": "Party Time",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 67,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/party-time",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_scary-teacher-hide-seek-games",
+      "platform": "poki",
+      "title": "Scary Teacher Hide Seek Games",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 68,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/scary-teacher-hide-seek-games",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_stickman-crazy-box",
+      "platform": "poki",
+      "title": "Stickman Crazy Box",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 69,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/stickman-crazy-box",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_diva-hair-salon",
+      "platform": "poki",
+      "title": "Diva Hair Salon",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 70,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/diva-hair-salon",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_dino-simulator",
+      "platform": "poki",
+      "title": "Dino Simulator",
+      "genre": "Web Arcade",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 71,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/dino-simulator",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_disaster-arena",
+      "platform": "poki",
+      "title": "Disaster Arena",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 72,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/disaster-arena",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_petnest-io",
+      "platform": "poki",
+      "title": "Petnest Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 73,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/petnest-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_rail-in-the-air",
+      "platform": "poki",
+      "title": "Rail In The Air",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 74,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/rail-in-the-air",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_perfect-shape",
+      "platform": "poki",
+      "title": "Perfect Shape",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 75,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/perfect-shape",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_soccer-real",
+      "platform": "poki",
+      "title": "Soccer Real",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 76,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/soccer-real",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_cuboy-adventure",
+      "platform": "poki",
+      "title": "Cuboy Adventure",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 77,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/cuboy-adventure",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_plonky",
+      "platform": "poki",
+      "title": "Plonky",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 78,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/plonky",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_kick-the-buddy",
+      "platform": "poki",
+      "title": "Kick The Buddy",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 79,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/kick-the-buddy",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_going-up-rooftop",
+      "platform": "poki",
+      "title": "Going Up Rooftop",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 80,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/going-up-rooftop",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_car-circle",
+      "platform": "poki",
+      "title": "Car Circle",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 81,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/car-circle",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_slice-master",
+      "platform": "poki",
+      "title": "Slice Master",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 82,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/slice-master",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_vectaria-io",
+      "platform": "poki",
+      "title": "Vectaria Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 83,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/vectaria-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_vortellas-dress-up",
+      "platform": "poki",
+      "title": "Vortellas Dress Up",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 84,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/vortellas-dress-up",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_bullet-bros",
+      "platform": "poki",
+      "title": "Bullet Bros",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 85,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/bullet-bros",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_harvest-simulator",
+      "platform": "poki",
+      "title": "Harvest Simulator",
+      "genre": "Web Arcade",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 86,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/harvest-simulator",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_magic-battleground",
+      "platform": "poki",
+      "title": "Magic Battleground",
+      "genre": "Web Arcade",
+      "archetype": "ACTION_SHOOTER",
+      "metricValue": 87,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/magic-battleground",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_drive-mad",
+      "platform": "poki",
+      "title": "Drive Mad",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 88,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/drive-mad",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_family-life-simulator",
+      "platform": "poki",
+      "title": "Family Life Simulator",
+      "genre": "Web Arcade",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 89,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/family-life-simulator",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_school-cleaning",
+      "platform": "poki",
+      "title": "School Cleaning",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 90,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/school-cleaning",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_soccer-skills-2-world-cup",
+      "platform": "poki",
+      "title": "Soccer Skills 2 World Cup",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 91,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/soccer-skills-2-world-cup",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_scary-teacher-3d",
+      "platform": "poki",
+      "title": "Scary Teacher 3d",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 92,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/scary-teacher-3d",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_repuls-io",
+      "platform": "poki",
+      "title": "Repuls Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 93,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/repuls-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_monkey-tag-io",
+      "platform": "poki",
+      "title": "Monkey Tag Io",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 94,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/monkey-tag-io",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_ping-pong-go",
+      "platform": "poki",
+      "title": "Ping Pong Go",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 95,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/ping-pong-go",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_mr-racer-car-racing",
+      "platform": "poki",
+      "title": "Mr Racer Car Racing",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 96,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/mr-racer-car-racing",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_red-ball-4",
+      "platform": "poki",
+      "title": "Red Ball 4",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 97,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/red-ball-4",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_tank-stars",
+      "platform": "poki",
+      "title": "Tank Stars",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 98,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/tank-stars",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_backrooms-recovery",
+      "platform": "poki",
+      "title": "Backrooms Recovery",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 99,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/backrooms-recovery",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "poki_stickman-dragon-fight",
+      "platform": "poki",
+      "title": "Stickman Dragon Fight",
+      "genre": "Web Arcade",
+      "archetype": "OTHER_CASUAL",
+      "metricValue": 100,
+      "metricType": "rank",
+      "url": "https://poki.com/en/g/stickman-dragon-fight",
+      "tags": [
+        "poki_popular",
+        "html5"
+      ],
+      "timestamp": "2026-09-13T16:25:53.554Z"
+    },
+    {
+      "id": "yt_shorts_1",
+      "platform": "youtube_trends",
+      "title": "Steal An Egg / Catch & Run",
+      "genre": "Viral Short Format",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 98,
+      "metricType": "viral_score",
+      "tags": [
+        "youtube_shorts",
+        "viral",
+        "100M+"
+      ],
+      "url": "https://www.youtube.com/hashtag/steal",
+      "timestamp": "2026-09-13T16:25:53.063Z"
+    },
+    {
+      "id": "yt_shorts_2",
+      "platform": "youtube_trends",
+      "title": "Ragdoll Dismount / Break Bones",
+      "genre": "Viral Short Format",
+      "archetype": "PHYSICS_SANDBOX",
+      "metricValue": 94,
+      "metricType": "viral_score",
+      "tags": [
+        "youtube_shorts",
+        "viral",
+        "100M+"
+      ],
+      "url": "https://www.youtube.com/hashtag/ragdoll",
+      "timestamp": "2026-09-13T16:25:53.063Z"
+    },
+    {
+      "id": "yt_shorts_3",
+      "platform": "youtube_trends",
+      "title": "+1 Size / Power Evolution Every Second",
+      "genre": "Viral Short Format",
+      "archetype": "SIMULATION_INCREMENTAL",
+      "metricValue": 91,
+      "metricType": "viral_score",
+      "tags": [
+        "youtube_shorts",
+        "viral",
+        "50M+"
+      ],
+      "url": "https://www.youtube.com/hashtag/%2B1",
+      "timestamp": "2026-09-13T16:25:53.063Z"
+    },
+    {
+      "id": "yt_shorts_4",
+      "platform": "youtube_trends",
+      "title": "99 Nights in the Dark Forest",
+      "genre": "Viral Short Format",
+      "archetype": "SURVIVAL_HORROR",
+      "metricValue": 88,
+      "metricType": "viral_score",
+      "tags": [
+        "youtube_shorts",
+        "viral",
+        "50M+"
+      ],
+      "url": "https://www.youtube.com/hashtag/99",
+      "timestamp": "2026-09-13T16:25:53.063Z"
+    },
+    {
+      "id": "yt_shorts_5",
+      "platform": "youtube_trends",
+      "title": "Satisfying Sorting & Merge",
+      "genre": "Viral Short Format",
+      "archetype": "MERGE_IDLE",
+      "metricValue": 82,
+      "metricType": "viral_score",
+      "tags": [
+        "youtube_shorts",
+        "viral",
+        "50M+"
+      ],
+      "url": "https://www.youtube.com/hashtag/satisfying",
+      "timestamp": "2026-09-13T16:25:53.063Z"
+    }
+  ],
+  "verdicts": [
+    {
+      "archetype": "SIMULATION_INCREMENTAL",
+      "titleRu": "+1 Симулятор и Эволюция",
+      "status": "GREEN_LIGHT",
+      "opportunityScore": {
+        "overallScore": 96,
+        "demandScore": 98,
+        "velocityScore": 100,
+        "monetizationScore": 92,
+        "saturationIndex": 2.7,
+        "productionEffort": 1.5,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 3112804,
+      "marketSharePercent": 32,
+      "sampleTitles": [
+        "Steal An Egg",
+        "[X10] +1 Speed Keyboard Escape | Candy & Chocolate",
+        "Steal a Brainrot",
+        "🕹️ [ARCADE] Pet Simulator 99! 💰",
+        "[🔮UPDATE!] +1 Tongue Escape 😛",
+        "[X2]🐒 +1 Speed Monkey Escape",
+        "[+1 DROP + 2x LUCK] Dungeon Quest Reborn",
+        "🦸 +1 Superhero Evolution",
+        "Bee Swarm Simulator",
+        "[UP] Keyboard Slide +1 Speed",
+        "⚽ Jump To Steal Soccer Players ⚽",
+        "[W2] +1 Mog Evolution",
+        "+1 Phonk Evolution",
+        "[⚡️ NEW TOWER] Tower Defense Simulator",
+        "+1 TNT Mining",
+        "Симулятор падения в Канаву 2",
+        "Attack on Titan Revolution",
+        "survive simulator",
+        "Steal Fish Eggs",
+        "[W2] +1 Long Arm Toy Escape!",
+        "Cursed Tank Simulator【HOLD THE LINE】",
+        "💀Jump To Steal SCP Monsters!💀",
+        "[NINJA EXAM] Anime Astral Simulator",
+        "Regretevator [ ELEVATOR SIMULATOR ]",
+        "Robo Cleaner Simulator",
+        "Steal A Brainrot",
+        "Dino Simulator",
+        "Harvest Simulator",
+        "Family Life Simulator",
+        "Steal An Egg / Catch & Run",
+        "+1 Size / Power Evolution Every Second"
+      ],
+      "actionRecommendation": "Брать в разработку в первую очередь. Сверхвысокий виральный потенциал в Shorts и Roblox, простейший кор-код и идеальная конверсия в просмотры Rewarded Video.",
+      "coreLoopBlueprint": "Сбор ресурса (+1 каждую секунду / за тап) -> Преодоление весового барьера -> Победа над боссом или открытие новой двери -> Rebirth (престиж x2) -> Питомцы/бустеры.",
+      "monetizationStrategy": "Rewarded: открытие редкого яйца, бустер x3 на 5 минут, автокликер. Interstitial: при рестарте или новом перерождении раз в 90-120 сек.",
+      "avoidPitfalls": "Не затягивать старт игры. Первое ощущение прогресса и x2 рост должны наступать уже на 15-й секунде.",
+      "hasArbitrageOpportunity": true
+    },
+    {
+      "archetype": "PHYSICS_SANDBOX",
+      "titleRu": "Рэгдолл-сендбокс и Физика",
+      "status": "GREEN_LIGHT",
+      "opportunityScore": {
+        "overallScore": 76,
+        "demandScore": 40,
+        "velocityScore": 100,
+        "monetizationScore": 88,
+        "saturationIndex": 1.8,
+        "productionEffort": 2.4,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 11602,
+      "marketSharePercent": 0,
+      "sampleTitles": [
+        "⛳ Hit a Golf Ball",
+        "Ragdoll Hit",
+        "Ragdoll Chaos",
+        "Ragdoll Dismount / Break Bones"
+      ],
+      "actionRecommendation": "Приоритет №1 для Яндекс Игр и веба. Melon Sandbox и Ragdoll игры стабильно удерживают топ-1 по вовлечению. Огромный простор для UGC и контента в Shorts.",
+      "coreLoopBlueprint": "Спавн манекена на арену -> Выбор оружия / взрывчатки / механизмов -> Запуск физической реакции -> Получение монет за переломы и урон -> Разблокировка новых предметов в мастерской.",
+      "monetizationStrategy": "Rewarded: доступ к ядерной бомбе, лазерной пушке или секретному скину. Interstitial: при очистке арены / респавне.",
+      "avoidPitfalls": "Не делать деревянную физику. Манекен обязан быть эластичным (10+ сегментов на HingeJoint2D/3D), а разрушения сочными (частицы, экранотряс)."
+    },
+    {
+      "archetype": "MERGE_IDLE",
+      "titleRu": "Мёрдж, Сортировка и Idle",
+      "status": "YELLOW_LIGHT",
+      "opportunityScore": {
+        "overallScore": 71,
+        "demandScore": 60,
+        "velocityScore": 85,
+        "monetizationScore": 85,
+        "saturationIndex": 2.5,
+        "productionEffort": 2,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 23955,
+      "marketSharePercent": 0,
+      "sampleTitles": [
+        "Emergency Hamburg",
+        "[🔮] Merge Shop",
+        "Satisfying Sorting & Merge"
+      ],
+      "actionRecommendation": "Отличный выбор для стабильного долгосрочного дохода. Широкая аудитория (от детей до взрослых), высокая глубина сессий (Time Spent).",
+      "coreLoopBlueprint": "Покупка предметов ур. 1 -> Мёрдж пар (1+1=2) -> Авто-добыча ресурсов -> Продажа -> Расширение сетки и покупка помощников.",
+      "monetizationStrategy": "Rewarded: мгновенный парашют с предметом максимального уровня, удвоение накоплений за время отсутствия (Idle bonus x2). Sticky Banner не перекрывает сетку.",
+      "avoidPitfalls": "Не перегружать интерфейс сложными меню. Должно быть видно всю арену или торговый зал на одном экране без лишних вкладок."
+    },
+    {
+      "archetype": "WORD_PUZZLE",
+      "titleRu": "Словесные и Логические Пазлы",
+      "status": "YELLOW_LIGHT",
+      "opportunityScore": {
+        "overallScore": 66,
+        "demandScore": 60,
+        "velocityScore": 85,
+        "monetizationScore": 78,
+        "saturationIndex": 2.8,
+        "productionEffort": 1.8,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 26938,
+      "marketSharePercent": 0,
+      "sampleTitles": [
+        "MONOCHROME👁️",
+        "Skate For Brainrots 🛹",
+        "bLockerman's Minesweeper",
+        "Blocky Blast Puzzle",
+        "Brain Test Tricky Puzzles"
+      ],
+      "actionRecommendation": "Надежная ниша для Яндекс Игр. Взрослая аудитория 35+, играют годами, ценят классические чистые кроссворды и филворды.",
+      "coreLoopBlueprint": "Поиск слов на буквенной сетке -> Соединение линий -> Заполнение списка отгадок -> Открытие новой темы/города на карте уровней.",
+      "monetizationStrategy": "Rewarded: подсветка первой буквы, перемешивание поля, открытие слова целиком. Interstitial между уровнями раз в 2-3 минуты.",
+      "avoidPitfalls": "Не использовать мусорные словари. Каждое слово обязано быть общеупотребительным нарицательным существительным в именительном падеже."
+    },
+    {
+      "archetype": "SURVIVAL_HORROR",
+      "titleRu": "Хоррор и Выживание (Escape)",
+      "status": "YELLOW_LIGHT",
+      "opportunityScore": {
+        "overallScore": 65,
+        "demandScore": 98,
+        "velocityScore": 85,
+        "monetizationScore": 65,
+        "saturationIndex": 2,
+        "productionEffort": 4.2,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 1485023,
+      "marketSharePercent": 15,
+      "sampleTitles": [
+        "Murder Mystery 2",
+        "99 Nights in the Forest 🔦",
+        "Animal Hospital (Anomaly) 🧪",
+        "[WEEK 3 ⛱️] Forsaken",
+        "DOORS 👔",
+        "[CURE] Violence District",
+        "Scream And Run [UPD 2]",
+        "🎂Flee the Facility🎪",
+        "Evade ",
+        "🌻 Dandy's World [ALPHA]",
+        "100 Days At Sea",
+        "Last Stop [Beta]",
+        "just an innocent game",
+        "[UPDATE 2] Debt Hunt 🐺",
+        "💎 ROB IT",
+        "Cheating During Testing [BETA]",
+        "[RELEASE] BloxNote",
+        "[😾] Cat Invasion",
+        "(ANNIVERSARY) Outcome Memories v0.2",
+        "🤔 Killer or Not",
+        "🐟 How to Fisch!",
+        "[2x KEYS] MM2 of The Locust",
+        "[Artifacts] Fruit Zombie Survival 🍇",
+        "[🔮] 2omething evil will happen",
+        "Escape From School",
+        "Slime Keyboard Escape",
+        "99 Nights in the Dark Forest"
+      ],
+      "actionRecommendation": "Делать только в соло-формате без синхронного мультиплеера. Огромный хайп в Roblox (99 Nights), но разработка сетевого кода для инди слишком рискованна.",
+      "coreLoopBlueprint": "Поиск ресурсов в темной локации -> Сбор ключей и батареек для фонарика -> Прятки в шкафах от монстра -> Побег к выходу.",
+      "monetizationStrategy": "Rewarded: возрождение на контрольной точке, детектор приближения монстра, запасной фонарик.",
+      "avoidPitfalls": "Категорически избегать сетевого мультиплеера на старте. Делайте плотный атмосферный синглплеер.",
+      "hasArbitrageOpportunity": true
+    },
+    {
+      "archetype": "OTHER_CASUAL",
+      "titleRu": "Прочие казуальные аркады",
+      "status": "YELLOW_LIGHT",
+      "opportunityScore": {
+        "overallScore": 55,
+        "demandScore": 98,
+        "velocityScore": 85,
+        "monetizationScore": 60,
+        "saturationIndex": 4,
+        "productionEffort": 2.5,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 4482924,
+      "marketSharePercent": 46,
+      "sampleTitles": [
+        "Brookhaven 🏡RP",
+        "[🧲] Blox Fruits",
+        "[2X NOW!🎉] Adopt Me!",
+        "[SKY ASSASSIN] Jujutsu Shenanigans",
+        "Fisch 🌸 [BUDLING]",
+        "[🎂] Dress To Impress",
+        "🍂 Clean all the leaves!",
+        "[NOW] Fish It! 🐟",
+        "Catalog Avatar Creator",
+        "Berry Avenue 🏠 RP",
+        "[🐶] Search For The Needle",
+        "[🌌DUELS] Murderers VS Sheriffs",
+        "LifeTogether 🏠 RP",
+        "[REPLAYS!] Illegal Soccer",
+        "Driving Empire [DODGE UPDATE✨] ",
+        "[UPD] Volleyball Legends",
+        "Jump for Animals!",
+        "Fling Things and People",
+        "BedWars [⚡ RANKED BLITZ]",
+        "RUNAWAYS [beta]",
+        "[✨UPD 4] Anime Dice",
+        "Sol's RNG [ Summer Event 🏖️]",
+        "Anime Vanguards: Wrathful Assault",
+        "Realistic Street Soccer",
+        "[⚔️NEW UNITS] Command An Army",
+        "✨ Creatures of Sonaria 📜 Survive Kaiju Animals",
+        "Mukbang Game [Testing]🍊🍓🌯!",
+        "[🧺] Grow a Garden 🌶️",
+        "[🔥] Karinderya!",
+        "Kick a Lucky Block",
+        "Anime Ability Arena",
+        "[🌵UPD] Storage Hunters: Open World",
+        "San Diego Roleplay",
+        "[🍽] Welcome to Bloxburg ",
+        "[🦑] Squid Game X",
+        "Lift a Cube",
+        "Dubai 🏡RP [Kids! 👶]",
+        "[🌘] Anime Expeditions ",
+        "[🐆LEOPARD🐆] Grand Piece Online",
+        "[NIKO 👁️] Blue Lock: Rivals",
+        "Dreamville 🏡 RP",
+        "Blade Ball",
+        "Build A Boat For Treasure",
+        "[⛰️4x4 Crawlers] Southern Mudding 🚜 OffRoading",
+        "[🥇] Ink Game",
+        "🛍️ My Avatar!",
+        "Pull An Egg",
+        "[🎨INTERIORS] American Plains Mudding",
+        "BlockSpin 🔪 ",
+        "Dead Rails",
+        "[UPD] Dig & Clean 🧼",
+        "[♾️NOW] Jujutsu: Zero",
+        "[NOW] Hole Fishing",
+        "Ball VS Ball",
+        "🎥My Movie",
+        "(BETA RELEASE) Drive A Kukirin!",
+        "Greedy Growers 🌱",
+        "[💎] Sell Ores ⛏️",
+        "Gacha Online ✨ RP",
+        "FIFA Super Soccer",
+        "🌋How to Really Fish",
+        "Sell Lemons 🍋",
+        "[UPD] Mini War",
+        "[ 📦 🏍️ BikeLife ] Northline RP",
+        "Conquer The World WW2 [🛡️]",
+        "[AI COPS + MORE👮] Wheelie District 🏍️",
+        "[DEIMOS👹] untitled boxing game 🥊",
+        "Dronefront [BALLISTIC]",
+        "Dueling Grounds ⚔️ ",
+        "[UPD] Asylum Life 🔊",
+        "🍂 Школа 102 РП",
+        "Build a base RNG 🎲",
+        "[🏦] Pull a Lucky Fish",
+        "Hot Potato 🥔💥",
+        "STICK BATTLES 🍢",
+        "Build A Golem! ⛏️",
+        "Guess the Anime Color",
+        "MX WORLD",
+        "[NEW UPDATE!] Toilet World Roleplay 2",
+        "[🏴‍☠️] Build and Kill Zombies",
+        "[UTSM3.0!] Titans ultra boss rush",
+        "⚡Power a City",
+        "MM2 Aim Trainer 2",
+        "[NEW🐲] Dragon Adventures 🐉",
+        "Pummu Talladega",
+        "👾 NFT Battle",
+        "💎 UPGRADER: Skins, Stickers, Music Kits & Agents!",
+        "untitled tag game",
+        "[UPD 2]💥 Blow Up The City",
+        "Bloxrooms [Beta]",
+        "[⚙️QOL😈] Azure Latch",
+        "🎉 Multiverse Tower Defense",
+        "[ Zilla 2004 ] Kaiju Alpha",
+        "[81] SKIBIDI TOILET : OMEGA TITANS ROLEPLAY",
+        "[ASTRO COLLOSSAL SPEAKERGUY] Skibi Defense",
+        "[⚡Indra Clan] Ninja Time",
+        "Royale🌺High",
+        "The Battle Bricks",
+        "Армия Роблокса РП",
+        "[ Mafia ] ST : Blockade Battlefront",
+        "[👑] Horse Life",
+        "[DEATH ABILITY] Ability Wars",
+        "Forsaken Combat",
+        "[♾️ PATCH] Alliance Tower Defense! ⚔️",
+        "[QOL] Your Bizarre Adventure",
+        "[UPDATE🐚] Slap Battles👏",
+        "Five Nights TD 2 [SLUMBER]",
+        "Warrior Cats: Ultimate Edition",
+        "[ ✨ ] Winx - The Fairy Guardians",
+        "Blackhawk Rescue Mission 5",
+        "Sorcerer Tower Defense [NAOYA]",
+        "LCS: EQuest",
+        "Twisted [BETA]",
+        "[⌛15 MIN] Skibidi Masters Tower Defense",
+        "PHIGHTING! [ALPHA]",
+        "[UPDATE+2X XP] A Universal Time",
+        "Criminality",
+        "⚔️PVP MODE Tower Defense X: BETA",
+        "Apocalyptic Toilet Roleplay",
+        "(ASTRO UPDATE) Reinald Toilet Roleplay",
+        "RetroStudio 🔨",
+        "Combat Warriors",
+        "Project: Afternight",
+        "Helicity",
+        "Basically FNF: Remix",
+        "Super Toilet Fight",
+        "[MTC] Multicrew Tank Combat",
+        "[✨LA PEACE] alzzmy's DANCES",
+        "Счастливчик Игровые автоматы",
+        "Master Chess",
+        "Subway Surfers",
+        "Hole Io",
+        "Minefun Io",
+        "Tag",
+        "Smash Karts",
+        "Drift Boss",
+        "Retro Bowl",
+        "Stickman Hook",
+        "Monkey Mart",
+        "Level Devil",
+        "Flyordie Io",
+        "Blast Buddies",
+        "Super Dress",
+        "Harvest Loop",
+        "Hills Of Steel",
+        "Punchy Guy",
+        "Goods Master",
+        "My Perfect Hotel",
+        "Neon Challenge Legends",
+        "Count Control Legends",
+        "Stickman Battle",
+        "Talking Tom Gold Run",
+        "Count War",
+        "Hide And Paint",
+        "Satisbox Mini Games",
+        "Karate Fighter",
+        "Temple Run 2",
+        "Carnado Stunt Car",
+        "Longcat",
+        "Paperio 2",
+        "Hill Climb Racing Lite",
+        "Murder",
+        "Shenzhen Mahjong",
+        "Hexellent",
+        "Nails Diy Manicure Master",
+        "Blacktop Police Chase",
+        "Anycolor",
+        "World Of Yarn",
+        "Supercar Legends",
+        "Bubble Storm",
+        "Beauty Salon",
+        "Snapstyle Dress Up",
+        "Capitalist Bus Driver",
+        "Real City Bikes",
+        "Soccer League",
+        "Stunt Bike Extreme",
+        "Tear Blocks Down",
+        "You Monster",
+        "Fashion Legends",
+        "Perfect Landing Plane Pilot",
+        "Decor Life",
+        "Phone Case Diy",
+        "Sprint League",
+        "Cryzen Io",
+        "Party Time",
+        "Scary Teacher Hide Seek Games",
+        "Stickman Crazy Box",
+        "Diva Hair Salon",
+        "Disaster Arena",
+        "Petnest Io",
+        "Rail In The Air",
+        "Perfect Shape",
+        "Soccer Real",
+        "Cuboy Adventure",
+        "Plonky",
+        "Kick The Buddy",
+        "Going Up Rooftop",
+        "Car Circle",
+        "Slice Master",
+        "Vectaria Io",
+        "Vortellas Dress Up",
+        "Bullet Bros",
+        "Drive Mad",
+        "School Cleaning",
+        "Soccer Skills 2 World Cup",
+        "Scary Teacher 3d",
+        "Repuls Io",
+        "Monkey Tag Io",
+        "Ping Pong Go",
+        "Mr Racer Car Racing",
+        "Red Ball 4",
+        "Tank Stars",
+        "Backrooms Recovery",
+        "Stickman Dragon Fight"
+      ],
+      "actionRecommendation": "Тестировать механику короткими прототипами (1-2 дня) перед масштабированием.",
+      "coreLoopBlueprint": "Простая гиперказуальная петля действия.",
+      "monetizationStrategy": "Классическая баннерная и межстраничная сетка.",
+      "avoidPitfalls": "Не полировать игру до подтверждения первых метрик удержания.",
+      "hasArbitrageOpportunity": true
+    },
+    {
+      "archetype": "OBBY_PARKOUR",
+      "titleRu": "Обби и Паркур",
+      "status": "RED_LIGHT",
+      "opportunityScore": {
+        "overallScore": 49,
+        "demandScore": 75,
+        "velocityScore": 85,
+        "monetizationScore": 75,
+        "saturationIndex": 4.8,
+        "productionEffort": 1.5,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 106755,
+      "marketSharePercent": 1,
+      "sampleTitles": [
+        "Tower of Hell",
+        "TROLL Hug Tower",
+        "Carry the Glass Together! [2 Player Obby]",
+        "Tower Reborn",
+        "Overhang",
+        "Eternal Towers of Hell",
+        "Rainbow Obby"
+      ],
+      "actionRecommendation": "Перенасыщенный рынок в Roblox. В топе сотни бесплатных обби. Делать только при наличии мощного вирусного сеттинга (например, связка со свежим мемом).",
+      "coreLoopBlueprint": "Прыжки по блокам -> Прохождение чекпоинтов -> Достижение вершины.",
+      "monetizationStrategy": "Пропуск сложного этапа за Rewarded / монеты.",
+      "avoidPitfalls": "Не делайте стандартные разноцветные платформы. Нужен сюжет («Побег из зубов гигантского босса» и т.п.)."
+    },
+    {
+      "archetype": "ACTION_SHOOTER",
+      "titleRu": "Экшен и Шутеры",
+      "status": "RED_LIGHT",
+      "opportunityScore": {
+        "overallScore": 42,
+        "demandScore": 88,
+        "velocityScore": 85,
+        "monetizationScore": 70,
+        "saturationIndex": 4.2,
+        "productionEffort": 4.5,
+        "viralMultiplier": 1
+      },
+      "totalAudienceCCU": 595630,
+      "marketSharePercent": 6,
+      "sampleTitles": [
+        "[😾] RIVALS",
+        "The Strongest Battlegrounds",
+        "[🔥REMIX CHEST] Hypershot",
+        "[FPS] One Tap",
+        "[👽NOW] Knife VS Gun DUELS",
+        "[NEW] Murder Duels",
+        "[BRIDGE 🌉] KNIFE DUELS",
+        "Cold War [NEW GAMEMODES]",
+        "The Lost Front",
+        "💢 AIMBOT",
+        "Ground War",
+        "TTK Testing [HARDPOINT]",
+        "FPS🔥AirDrop Arena [S4]🔥",
+        "REDLINER [⚡UZI]",
+        "(SEASON 2) KILLSTREAK",
+        "SNIPER DUELS",
+        "Ultimate Battlegrounds",
+        "FPV Drone Warfare",
+        "[KNIVES] Deagle Duels",
+        "Grave/Digger",
+        "Guts & Blackpowder",
+        "Examination",
+        "Decaying Winter",
+        "Phantom Forces",
+        "Legends Battlegrounds",
+        "Guns Guns Guns",
+        "Penalty Shooters 2",
+        "Magic Battleground"
+      ],
+      "actionRecommendation": "Не рекомендуется для соло-разработчика (Красный океан). Высокая конкуренция со студиями, дорогая графика, жесткие требования к пингу и балансу оружия.",
+      "coreLoopBlueprint": "Матч на арене -> Стрельба -> Фраги -> Покупка скинов.",
+      "monetizationStrategy": "Сундуки со скинами, боевой пропуск.",
+      "avoidPitfalls": "Откажитесь от попыток сделать «свой CS:GO в браузере». Трафик без рекламного бюджета стремится к нулю.",
+      "hasArbitrageOpportunity": true
+    }
+  ],
+  "arbitrageOpportunities": [
+    {
+      "robloxGame": {
+        "id": "roblox_10563114921",
+        "platform": "roblox",
+        "title": "Steal An Egg",
+        "genre": "Simulation",
+        "archetype": "SIMULATION_INCREMENTAL",
+        "metricValue": 2257883,
+        "metricType": "ccu",
+        "likeRatio": 0.9277375508948844,
+        "url": "https://www.roblox.com/games/107778070777162",
+        "tags": [
+          "top-playing-now",
+          "Simulation",
+          "Maturity: Minimal",
+          "top-trending",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 2257883,
+      "archetype": "SIMULATION_INCREMENTAL",
+      "similarityWithNearestAnalog": 0,
+      "nearestAnalog": null,
+      "hasDirectAnalog": false,
+      "nicheKeywords": [
+        "steal_item",
+        "egg"
+      ],
+      "nicheDescription": "Хит Roblox «Steal An Egg» с онлайном 2,257,883 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+      "adaptationStrategy": "Сделать веб-раннер с видом от третьего лица: воровство яиц у босса, стелс-прятки в кустах, прокачка скорости и Rewarded-удвоение добычи.",
+      "suggestedRuTitle": "Укради Яйцо: Побег от Монстра",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "CRITICAL_FIRST_MOVER"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_1686885941",
+        "platform": "roblox",
+        "title": "Brookhaven 🏡RP",
+        "genre": "Roleplay & Avatar Sim",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 692379,
+        "metricType": "ccu",
+        "likeRatio": 0.8589654992790771,
+        "url": "https://www.roblox.com/games/4924922222",
+        "tags": [
+          "top-playing-now",
+          "Roleplay & Avatar Sim",
+          "Maturity: Minimal"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 692379,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «Brookhaven 🏡RP» с онлайном 692,379 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Brookhaven Rp (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "CRITICAL_FIRST_MOVER"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_994732206",
+        "platform": "roblox",
+        "title": "[🧲] Blox Fruits",
+        "genre": "RPG",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 484589,
+        "metricType": "ccu",
+        "likeRatio": 0.9228240804426185,
+        "url": "https://www.roblox.com/games/2753915549",
+        "tags": [
+          "top-playing-now",
+          "RPG",
+          "Maturity: Mild",
+          "top-trending",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 484589,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «[🧲] Blox Fruits» с онлайном 484,589 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Blox Fruits (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "VERY_HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_66654135",
+        "platform": "roblox",
+        "title": "Murder Mystery 2",
+        "genre": "Survival",
+        "archetype": "SURVIVAL_HORROR",
+        "metricValue": 431508,
+        "metricType": "ccu",
+        "likeRatio": 0.9083438414323775,
+        "url": "https://www.roblox.com/games/142823291",
+        "tags": [
+          "top-playing-now",
+          "Survival",
+          "Maturity: Moderate",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 431508,
+      "archetype": "SURVIVAL_HORROR",
+      "similarityWithNearestAnalog": 0,
+      "nearestAnalog": null,
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «Murder Mystery 2» с онлайном 431,508 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+      "adaptationStrategy": "Атмосферный синглплеерный хоррор без сложного сетевого кода: 100 комнат или выживание 99 ночей. Высокий виральный CTR превью в каталоге.",
+      "suggestedRuTitle": "Murder Mystery 2 (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "VERY_HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_6035872082",
+        "platform": "roblox",
+        "title": "[😾] RIVALS",
+        "genre": "Shooter",
+        "archetype": "ACTION_SHOOTER",
+        "metricValue": 302327,
+        "metricType": "ccu",
+        "likeRatio": 0.9374731178546114,
+        "url": "https://www.roblox.com/games/17625359962",
+        "tags": [
+          "top-playing-now",
+          "Shooter",
+          "Maturity: Mild",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 302327,
+      "archetype": "ACTION_SHOOTER",
+      "similarityWithNearestAnalog": 0,
+      "nearestAnalog": null,
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «[😾] RIVALS» с онлайном 302,327 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Rivals (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "VERY_HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_7326934954",
+        "platform": "roblox",
+        "title": "99 Nights in the Forest 🔦",
+        "genre": "Survival",
+        "archetype": "SURVIVAL_HORROR",
+        "metricValue": 290196,
+        "metricType": "ccu",
+        "likeRatio": 0.9047941671416093,
+        "url": "https://www.roblox.com/games/79546208627805",
+        "tags": [
+          "top-playing-now",
+          "Survival",
+          "Maturity: Minimal"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 290196,
+      "archetype": "SURVIVAL_HORROR",
+      "similarityWithNearestAnalog": 0,
+      "nearestAnalog": null,
+      "hasDirectAnalog": false,
+      "nicheKeywords": [
+        "night",
+        "forest"
+      ],
+      "nicheDescription": "Хит Roblox «99 Nights in the Forest 🔦» с онлайном 290,196 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+      "adaptationStrategy": "Атмосферный синглплеерный хоррор без сложного сетевого кода: 100 комнат или выживание 99 ночей. Высокий виральный CTR превью в каталоге.",
+      "suggestedRuTitle": "99 Ночей в Темном Лесу: Выживание",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "VERY_HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_383310974",
+        "platform": "roblox",
+        "title": "[2X NOW!🎉] Adopt Me!",
+        "genre": "Roleplay & Avatar Sim",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 256642,
+        "metricType": "ccu",
+        "likeRatio": 0.8620761337814213,
+        "url": "https://www.roblox.com/games/920587237",
+        "tags": [
+          "top-playing-now",
+          "Roleplay & Avatar Sim",
+          "Maturity: Minimal",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 256642,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «[2X NOW!🎉] Adopt Me!» с онлайном 256,642 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Adopt Me (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "VERY_HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_9584852943",
+        "platform": "roblox",
+        "title": "[X10] +1 Speed Keyboard Escape | Candy & Chocolate",
+        "genre": "Simulation",
+        "archetype": "SIMULATION_INCREMENTAL",
+        "metricValue": 233025,
+        "metricType": "ccu",
+        "likeRatio": 0.9702777648494821,
+        "url": "https://www.roblox.com/games/95082159892680",
+        "tags": [
+          "top-playing-now",
+          "Simulation",
+          "Maturity: Minimal"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 233025,
+      "archetype": "SIMULATION_INCREMENTAL",
+      "similarityWithNearestAnalog": 0,
+      "nearestAnalog": null,
+      "hasDirectAnalog": false,
+      "nicheKeywords": [
+        "speed_incremental",
+        "escape"
+      ],
+      "nicheDescription": "Хит Roblox «[X10] +1 Speed Keyboard Escape | Candy & Chocolate» с онлайном 233,025 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+      "adaptationStrategy": "Реализовать +1 симулятор с постоянным приростом скорости: каждые 10 секунд игрок преодолевает весовой рубеж и перерождается (Rebirth). Монетизация: автоклик и VIP-скорость за Rewarded Video.",
+      "suggestedRuTitle": "+1 к Скорости: Мега Побег",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "VERY_HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_3508322461",
+        "platform": "roblox",
+        "title": "[SKY ASSASSIN] Jujutsu Shenanigans",
+        "genre": "Action",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 214828,
+        "metricType": "ccu",
+        "likeRatio": 0.8629030468380657,
+        "url": "https://www.roblox.com/games/9391468976",
+        "tags": [
+          "top-playing-now",
+          "Action",
+          "Maturity: Mild",
+          "top-trending",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 214828,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «[SKY ASSASSIN] Jujutsu Shenanigans» с онлайном 214,828 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Jujutsu Shenanigans (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "VERY_HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_10148749921",
+        "platform": "roblox",
+        "title": "Animal Hospital (Anomaly) 🧪",
+        "genre": "Survival",
+        "archetype": "SURVIVAL_HORROR",
+        "metricValue": 132214,
+        "metricType": "ccu",
+        "likeRatio": 0.9401292680330681,
+        "url": "https://www.roblox.com/games/78515283254292",
+        "tags": [
+          "top-playing-now",
+          "Survival",
+          "Maturity: Minimal",
+          "top-trending"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 132214,
+      "archetype": "SURVIVAL_HORROR",
+      "similarityWithNearestAnalog": 0,
+      "nearestAnalog": null,
+      "hasDirectAnalog": false,
+      "nicheKeywords": [
+        "anomaly"
+      ],
+      "nicheDescription": "Хит Roblox «Animal Hospital (Anomaly) 🧪» с онлайном 132,214 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+      "adaptationStrategy": "Атмосферный синглплеерный хоррор без сложного сетевого кода: 100 комнат или выживание 99 ночей. Высокий виральный CTR превью в каталоге.",
+      "suggestedRuTitle": "Animal Hospital (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_5750914919",
+        "platform": "roblox",
+        "title": "Fisch 🌸 [BUDLING]",
+        "genre": "Simulation",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 130983,
+        "metricType": "ccu",
+        "likeRatio": 0.9070328284849626,
+        "url": "https://www.roblox.com/games/16732694052",
+        "tags": [
+          "top-playing-now",
+          "Simulation",
+          "Maturity: Minimal",
+          "top-trending",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 130983,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «Fisch 🌸 [BUDLING]» с онлайном 130,983 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Fisch (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_7709344486",
+        "platform": "roblox",
+        "title": "Steal a Brainrot",
+        "genre": "Simulation",
+        "archetype": "SIMULATION_INCREMENTAL",
+        "metricValue": 129537,
+        "metricType": "ccu",
+        "likeRatio": 0.8523257335188688,
+        "url": "https://www.roblox.com/games/109983668079237",
+        "tags": [
+          "top-playing-now",
+          "Simulation",
+          "Maturity: Minimal"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 129537,
+      "archetype": "SIMULATION_INCREMENTAL",
+      "similarityWithNearestAnalog": 0,
+      "nearestAnalog": null,
+      "hasDirectAnalog": false,
+      "nicheKeywords": [
+        "steal_item",
+        "brainrot"
+      ],
+      "nicheDescription": "Хит Roblox «Steal a Brainrot» с онлайном 129,537 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+      "adaptationStrategy": "Инкрементальный кликер-симулятор с питомцами и множителями перерождений. Внедрить Yandex Cloud Save для сохранения прогресса.",
+      "suggestedRuTitle": "Steal A Brainrot (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_5203828273",
+        "platform": "roblox",
+        "title": "[🎂] Dress To Impress",
+        "genre": "Roleplay & Avatar Sim",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 119247,
+        "metricType": "ccu",
+        "likeRatio": 0.9056337543840951,
+        "url": "https://www.roblox.com/games/15101393044",
+        "tags": [
+          "top-playing-now",
+          "Roleplay & Avatar Sim",
+          "Maturity: Minimal",
+          "top-revisited"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 119247,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «[🎂] Dress To Impress» с онлайном 119,247 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Dress To Impress (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_10539411000",
+        "platform": "roblox",
+        "title": "🍂 Clean all the leaves!",
+        "genre": "Adventure",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 114015,
+        "metricType": "ccu",
+        "likeRatio": 0.8660765183966643,
+        "url": "https://www.roblox.com/games/92637789841354",
+        "tags": [
+          "top-playing-now",
+          "Adventure",
+          "Maturity: Minimal"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 114015,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «🍂 Clean all the leaves!» с онлайном 114,015 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Clean All The (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "HIGH"
+    },
+    {
+      "robloxGame": {
+        "id": "roblox_6701277882",
+        "platform": "roblox",
+        "title": "[NOW] Fish It! 🐟",
+        "genre": "Simulation",
+        "archetype": "OTHER_CASUAL",
+        "metricValue": 102814,
+        "metricType": "ccu",
+        "likeRatio": 0.8286141745799561,
+        "url": "https://www.roblox.com/games/121864768012064",
+        "tags": [
+          "top-playing-now",
+          "Simulation",
+          "Maturity: Minimal"
+        ],
+        "sortSource": "top-playing-now",
+        "timestamp": "2026-09-13T16:25:53.625Z"
+      },
+      "robloxCCU": 102814,
+      "archetype": "OTHER_CASUAL",
+      "similarityWithNearestAnalog": 0.2,
+      "nearestAnalog": {
+        "id": "yandex_12076609107086592869",
+        "title": "Счастливчик Игровые автоматы",
+        "similarity": 0.2,
+        "archetype": "OTHER_CASUAL"
+      },
+      "hasDirectAnalog": false,
+      "nicheKeywords": [],
+      "nicheDescription": "Хит Roblox «[NOW] Fish It! 🐟» с онлайном 102,814 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 20%).",
+      "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+      "suggestedRuTitle": "Fish It (Веб-версия)",
+      "badge": "ARBITRAGE OPPORTUNITY",
+      "organicPotential": "HIGH"
+    }
+  ]
+}

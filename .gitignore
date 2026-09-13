@@ -1,5 +1,6 @@
 node_modules/
 dist/
+web/dist/
 data/snapshots/*.json
 !data/snapshots/.gitkeep
 .DS_Store

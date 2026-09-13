@@ -31,12 +31,19 @@ npm install
 # Scan all storefronts (Roblox, Yandex Games, Poki)
 npm run scan
 
+# Launch unified Web UI (automatically opens in your default browser)
+npm run ui
+
 # Generate comprehensive market report
 npm run report
 
 # Get top recommendations on what to build
 npm run recommend
 ```
+
+### Web Dashboard & GitHub Pages
+- **Local Dashboard:** `npm run ui` starts the HTTP server on port `:4200` and opens the browser.
+- **GitHub Pages:** Automated deployment configured via `.github/workflows/deploy-pages.yml`. Static build: `npm run pages:build`.
 
 ---
 

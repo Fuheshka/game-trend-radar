@@ -8,6 +8,13 @@
     "start": "tsx src/cli.ts",
     "radar": "tsx src/cli.ts",
     "scan": "tsx src/cli.ts scan",
+    "serve": "tsx src/server.ts",
+    "ui": "tsx src/server.ts",
+    "ui:open": "tsx scripts/open_ui.ts",
+    "dev": "tsx watch src/server.ts",
+    "web:dev": "vite",
+    "web:build": "vite build",
+    "pages:build": "vite build",
     "report": "tsx src/cli.ts report",
     "recommend": "tsx src/cli.ts recommend",
     "typecheck": "tsc --noEmit",
@@ -29,6 +36,7 @@
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.5.0",
+    "vite": "^8.3.0",
     "vitest": "^4.1.11"
   }
 }
