@@ -4,6 +4,7 @@ import { PokiCollector } from './collectors/poki.js';
 import { YouTubeShortsAnalyzer } from './collectors/youtube_shorts.js';
 import { OpportunityScorer } from './analyzer/scorer.js';
 import { VerdictEngine } from './analyzer/verdict.js';
+import { ArbitrageAnalyzer } from './analyzer/arbitrage.js';
 import { SnapshotStore } from './storage/snapshot_store.js';
 import { GameArchetype, MarketSnapshot, NormalizedGame, PlatformType } from './types/index.js';
 import { randomUUID } from 'node:crypto';
@@ -19,11 +20,12 @@ async function runScan() {
   const youtubeAnalyzer = new YouTubeShortsAnalyzer();
   const scorer = new OpportunityScorer();
   const verdictEngine = new VerdictEngine();
+  const arbitrageAnalyzer = new ArbitrageAnalyzer();
   const store = new SnapshotStore();
 
   console.log('⏳ Опрос витрин данных...');
 
-  const [robloxGames, yandexGames, pokiGames, ytTrends] = await Promise.all([
+  const [robloxGames, yandexGames, pokiGames, ytTrends, shortsVideos] = await Promise.all([
     robloxCollector.fetchAllKeySorts().then(res => {
       console.log(`  [+] Roblox: получено ${res.length} игр из ключевых чартов`);
       return res;
@@ -37,10 +39,22 @@ async function runScan() {
       return res;
     }),
     youtubeAnalyzer.getViralShortsTrends().then(res => {
-      console.log(`  [+] YouTube Shorts: получено ${res.length} вирусных тем`);
+      console.log(`  [+] YouTube Shorts: получено ${res.length} вирусных позиций`);
+      return res;
+    }),
+    youtubeAnalyzer.scanTrendingSlices(['#shorts', '#roblox', '#gamedev']).then(res => {
       return res;
     }),
   ]);
+
+  const detectedMemes = youtubeAnalyzer.detectViralMemes(shortsVideos);
+  const activeMemes = detectedMemes.filter(m => m.occurrences > 0);
+  if (activeMemes.length > 0) {
+    console.log('\n🔥 Детекция вирусных персонажей и мемов (Shorts):');
+    for (const m of activeMemes) {
+      console.log(`  [🔥] ${m.name}: ${m.occurrences} видео, ~${m.totalViews.toLocaleString()} просмотров (Ускорение: ${m.viralMultiplier}x)`);
+    }
+  }
 
   const allGames: NormalizedGame[] = [...robloxGames, ...yandexGames, ...pokiGames, ...ytTrends];
   console.log(`\n📊 Всего собрано: ${allGames.length} игровых позиций`);
@@ -92,11 +106,24 @@ async function runScan() {
     }
   }
 
+  // Arbitrage detection: Roblox hits (CCU > 100k) missing in Yandex Games catalog
+  const arbitrageOpportunities = arbitrageAnalyzer.findOpportunities(robloxGames, yandexGames);
+  const arbitrageArchetypes = new Set(arbitrageOpportunities.map(o => o.archetype));
+
+  if (arbitrageOpportunities.length > 0) {
+    console.log(`\n🎯 Найдено арбитражных ниш: ${arbitrageOpportunities.length} (Roblox CCU > 100k без аналогов на Яндекс Играх)`);
+  }
+
   // Calculate verdicts
   const verdicts = Array.from(archetypeStats.entries()).map(([archetype, stat]) => {
     const marketSharePercent = robloxTotalCCU > 0 ? Math.round((stat.totalCCU / robloxTotalCCU) * 100) : 0;
-    const score = scorer.calculateScore(archetype, stat.totalCCU, stat.count, stat.hasUpAndComing);
-    return verdictEngine.generateVerdict(archetype, score, stat.totalCCU, marketSharePercent, stat.titles);
+    const viralMultiplier = youtubeAnalyzer.calculateViralMultiplier(archetype, detectedMemes);
+    const score = scorer.calculateScore(archetype, stat.totalCCU, stat.count, stat.hasUpAndComing, viralMultiplier);
+    const verdict = verdictEngine.generateVerdict(archetype, score, stat.totalCCU, marketSharePercent, stat.titles);
+    if (arbitrageArchetypes.has(archetype)) {
+      verdict.hasArbitrageOpportunity = true;
+    }
+    return verdict;
   });
 
   // Sort verdicts by overall score descending
@@ -110,6 +137,7 @@ async function runScan() {
     robloxTotalCCU,
     games: allGames,
     verdicts,
+    arbitrageOpportunities,
   };
 
   const savedJsonPath = store.saveSnapshot(snapshot);
@@ -122,15 +150,34 @@ async function runScan() {
 }
 
 function printRecommendations(snapshot: MarketSnapshot) {
+  if (snapshot.arbitrageOpportunities && snapshot.arbitrageOpportunities.length > 0) {
+    console.log('------------------------------------------------------');
+    console.log('🎯 АРБИТРАЖНЫЕ НИШИ: ХИТ В ROBLOX ➔ ОТСУТСТВУЕТ НА ЯНДЕКС ИГРАХ');
+    console.log('------------------------------------------------------\n');
+
+    for (const opp of snapshot.arbitrageOpportunities) {
+      console.log(`[🚀 ${opp.badge}] ${opp.robloxGame.title}`);
+      console.log(`  - Подтвержденный спрос: ${opp.robloxCCU.toLocaleString()} CCU (Потенциал: ${opp.organicPotential})`);
+      const analogText = opp.nearestAnalog
+        ? `«${opp.nearestAnalog.title}» (${Math.round(opp.similarityWithNearestAnalog * 100)}%)`
+        : 'Отсутствует в каталоге';
+      console.log(`  - Ближайший аналог в каталоге: ${analogText}`);
+      console.log(`  - Рекомендуемое название для Яндекс Игр: «${opp.suggestedRuTitle}»`);
+      console.log(`  - Рецепт адаптации: ${opp.adaptationStrategy}\n`);
+    }
+  }
+
   console.log('------------------------------------------------------');
   console.log('🏆 ТОП РЕКОМЕНДАЦИЙ: ВО ЧТО ИГРАЮТ И ЧТО СТОИТ ДЕЛАТЬ');
   console.log('------------------------------------------------------\n');
 
   for (const v of snapshot.verdicts) {
+    const arbitrageTag = v.hasArbitrageOpportunity ? ' [ARBITRAGE OPPORTUNITY]' : '';
     const badge = v.status === 'GREEN_LIGHT' ? '🟢 GREEN LIGHT' : v.status === 'YELLOW_LIGHT' ? '🟡 YELLOW LIGHT' : '🔴 RED LIGHT';
-    console.log(`[${badge}] ${v.titleRu} (Score: ${v.opportunityScore.overallScore}/100)`);
+    console.log(`[${badge}] ${v.titleRu}${arbitrageTag} (Score: ${v.opportunityScore.overallScore}/100)`);
     console.log(`  - Аудитория (Roblox CCU): ${v.totalAudienceCCU.toLocaleString()} игроков`);
-    console.log(`  - Спрос: ${v.opportunityScore.demandScore}/100 | Скорость роста: ${v.opportunityScore.velocityScore}/100`);
+    const viralInfo = v.opportunityScore.viralMultiplier && v.opportunityScore.viralMultiplier > 1.0 ? ` (Shorts Multiplier: ${v.opportunityScore.viralMultiplier}x)` : '';
+    console.log(`  - Спрос: ${v.opportunityScore.demandScore}/100 | Скорость роста: ${v.opportunityScore.velocityScore}/100${viralInfo}`);
     console.log(`  - Насыщенность: ${v.opportunityScore.saturationIndex}/5.0 | Сложность: ${v.opportunityScore.productionEffort}/5.0`);
     console.log(`  - Примеры хитов: ${v.sampleTitles.slice(0, 3).join(', ')}`);
     console.log(`  - Рекомендация: ${v.actionRecommendation}`);

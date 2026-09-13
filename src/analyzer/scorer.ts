@@ -56,7 +56,8 @@ export class OpportunityScorer {
     archetype: GameArchetype,
     totalCCUInGenre: number,
     gamesCountInGenre: number,
-    hasUpAndComingTrend: boolean = false
+    hasUpAndComingTrend: boolean = false,
+    viralMultiplier: number = 1.0
   ): OpportunityScore {
     const profile = this.archetypeBaselines[archetype] || this.archetypeBaselines.OTHER_CASUAL;
 
@@ -68,10 +69,15 @@ export class OpportunityScorer {
     else if (totalCCUInGenre > 20_000) demandScore = 60;
 
     // 2. Growth Velocity
-    let velocityScore = 50;
-    if (hasUpAndComingTrend) velocityScore += 35;
+    let rawVelocity = 50;
+    if (hasUpAndComingTrend) rawVelocity += 35;
     if (archetype === 'SIMULATION_INCREMENTAL' || archetype === 'PHYSICS_SANDBOX') {
-      velocityScore += 15;
+      rawVelocity += 15;
+    }
+    // Apply viral multiplier to velocity score (amplifies momentum from YouTube Shorts)
+    let velocityScore = rawVelocity;
+    if (viralMultiplier > 1.0) {
+      velocityScore = Math.round(rawVelocity * viralMultiplier);
     }
     velocityScore = Math.min(100, velocityScore);
 
@@ -81,7 +87,10 @@ export class OpportunityScorer {
 
     // 4. Calculate Overall Score
     // Formula: (Demand * 0.35 + Velocity * 0.25 + Monetization * 0.20) / (Saturation * 0.12 + Effort * 0.08) * normalizer
-    const numerator = demandScore * 0.35 + velocityScore * 0.25 + profile.monetizationScore * 0.2;
+    let numerator = demandScore * 0.35 + velocityScore * 0.25 + profile.monetizationScore * 0.2;
+    if (viralMultiplier > 1.0) {
+      numerator *= 1 + Math.min(0.25, (viralMultiplier - 1.0) * 0.15);
+    }
     const denominator = saturationIndex * 0.12 + profile.productionEffort * 0.08;
 
     // Normalized to 0 - 100 scale
@@ -95,6 +104,7 @@ export class OpportunityScorer {
       monetizationScore: profile.monetizationScore,
       saturationIndex: Number(saturationIndex.toFixed(1)),
       productionEffort: Number(profile.productionEffort.toFixed(1)),
+      viralMultiplier: Number(viralMultiplier.toFixed(2)),
     };
   }
 }

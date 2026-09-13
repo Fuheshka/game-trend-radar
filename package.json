@@ -11,6 +11,7 @@
     "report": "tsx src/cli.ts report",
     "recommend": "tsx src/cli.ts recommend",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "build": "tsc"
   },
   "keywords": [
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "vitest": "^4.1.11"
   }
 }

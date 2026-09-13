@@ -1,4 +1,5 @@
 import { MarketSnapshot, MarketVerdict } from '../types/index.js';
+import { ArbitrageAnalyzer } from '../analyzer/arbitrage.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -49,9 +50,17 @@ export class SnapshotStore {
     md += `> - **Платформы:** Roblox (${snapshot.platformCounts.roblox || 0}), Яндекс Игры (${snapshot.platformCounts.yandex_games || 0}), Poki (${snapshot.platformCounts.poki || 0}), YouTube Shorts (${snapshot.platformCounts.youtube_trends || 0})\n\n`;
     md += `---\n\n`;
 
+    // Секция арбитражных ниш (Roblox -> Яндекс Игры)
+    if (snapshot.arbitrageOpportunities && snapshot.arbitrageOpportunities.length > 0) {
+      const arbitrageAnalyzer = new ArbitrageAnalyzer();
+      md += arbitrageAnalyzer.generateMarkdownSection(snapshot.arbitrageOpportunities);
+      md += `---\n\n`;
+    }
+
     md += `## 1. Топ рекомендаций для разработчика: Что делать прямо сейчас\n\n`;
     for (const v of greenLights) {
-      md += `### 🟢 ${v.titleRu} (Opportunity Score: ${v.opportunityScore.overallScore}/100)\n\n`;
+      const badgeArbitrage = v.hasArbitrageOpportunity ? ' [ARBITRAGE OPPORTUNITY]' : '';
+      md += `### 🟢 ${v.titleRu}${badgeArbitrage} (Opportunity Score: ${v.opportunityScore.overallScore}/100)\n\n`;
       md += `- **Доля аудитории:** ~${v.marketSharePercent}% (онлайн: ${v.totalAudienceCCU.toLocaleString()})\n`;
       md += `- **Хиты сегмента:** ${v.sampleTitles.slice(0, 4).join(', ')}\n`;
       md += `- **Действие:** ${v.actionRecommendation}\n`;
@@ -63,7 +72,8 @@ export class SnapshotStore {
     md += `---\n\n`;
     md += `## 2. Нишевые форматы: Требуется сильный USP\n\n`;
     for (const v of yellowLights) {
-      md += `### 🟡 ${v.titleRu} (Score: ${v.opportunityScore.overallScore}/100)\n\n`;
+      const badgeArbitrage = v.hasArbitrageOpportunity ? ' [ARBITRAGE OPPORTUNITY]' : '';
+      md += `### 🟡 ${v.titleRu}${badgeArbitrage} (Score: ${v.opportunityScore.overallScore}/100)\n\n`;
       md += `- **Хиты:** ${v.sampleTitles.slice(0, 3).join(', ')}\n`;
       md += `- **Вердикт:** ${v.actionRecommendation}\n`;
       md += `- **Ловушка:** ${v.avoidPitfalls}\n\n`;
@@ -79,12 +89,14 @@ export class SnapshotStore {
 
     md += `---\n\n`;
     md += `## 4. Сводная матрица скоринга по жанрам\n\n`;
-    md += `| Жанр / Архетип | Статус | Score | Спрос | Динамика | Насыщенность | Сложность |\n`;
-    md += `|---|---|---|---|---|---|---|\n`;
+    md += `| Жанр / Архетип | Статус | Score | Спрос | Динамика | Shorts Boost | Арбитраж | Насыщенность | Сложность |\n`;
+    md += `|---|---|---|---|---|---|---|---|---|\n`;
 
     for (const v of snapshot.verdicts) {
       const statusIcon = v.status === 'GREEN_LIGHT' ? '🟢 Зеленый' : v.status === 'YELLOW_LIGHT' ? '🟡 Желтый' : '🔴 Красный';
-      md += `| ${v.titleRu} | ${statusIcon} | **${v.opportunityScore.overallScore}** | ${v.opportunityScore.demandScore} | ${v.opportunityScore.velocityScore} | ${v.opportunityScore.saturationIndex} | ${v.opportunityScore.productionEffort} |\n`;
+      const multiplierStr = v.opportunityScore.viralMultiplier ? `${v.opportunityScore.viralMultiplier}x` : '1.0x';
+      const arbitrageBadge = v.hasArbitrageOpportunity ? '🚀 [ARBITRAGE OPPORTUNITY]' : '—';
+      md += `| ${v.titleRu} | ${statusIcon} | **${v.opportunityScore.overallScore}** | ${v.opportunityScore.demandScore} | ${v.opportunityScore.velocityScore} | ${multiplierStr} | ${arbitrageBadge} | ${v.opportunityScore.saturationIndex} | ${v.opportunityScore.productionEffort} |\n`;
     }
 
     const reportPath = path.join(this.reportsDir, `market_report_${dateStr}.md`);

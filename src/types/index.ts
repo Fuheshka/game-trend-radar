@@ -34,6 +34,29 @@ export interface OpportunityScore {
   monetizationScore: number; // 0 - 100
   saturationIndex: number; // 1.0 - 5.0 (higher = worse)
   productionEffort: number; // 1.0 - 5.0 (higher = harder)
+  viralMultiplier?: number; // 1.0 - 2.5 (acceleration multiplier from YouTube Shorts)
+}
+
+export interface ShortsVideoItem {
+  id: string;
+  title: string;
+  description: string;
+  viewCount: number;
+  publishedAt?: string;
+  url: string;
+  channelTitle?: string;
+  matchedTags?: string[];
+}
+
+export interface DetectedMemeTrend {
+  memeId: string;
+  name: string;
+  pattern: string;
+  occurrences: number;
+  totalViews: number;
+  avgViews: number;
+  viralMultiplier: number;
+  sampleTitles: string[];
 }
 
 export interface MarketVerdict {
@@ -48,6 +71,29 @@ export interface MarketVerdict {
   coreLoopBlueprint: string;
   monetizationStrategy: string;
   avoidPitfalls: string;
+  hasArbitrageOpportunity?: boolean;
+}
+
+export interface ArbitrageAnalogMatch {
+  id: string;
+  title: string;
+  similarity: number;
+  archetype: GameArchetype;
+}
+
+export interface ArbitrageOpportunity {
+  robloxGame: NormalizedGame;
+  robloxCCU: number;
+  archetype: GameArchetype;
+  similarityWithNearestAnalog: number;
+  nearestAnalog: ArbitrageAnalogMatch | null;
+  hasDirectAnalog: boolean;
+  nicheKeywords: string[];
+  nicheDescription: string;
+  adaptationStrategy: string;
+  suggestedRuTitle: string;
+  badge: 'ARBITRAGE OPPORTUNITY';
+  organicPotential: 'HIGH' | 'VERY_HIGH' | 'CRITICAL_FIRST_MOVER';
 }
 
 export interface MarketSnapshot {
@@ -58,6 +104,7 @@ export interface MarketSnapshot {
   robloxTotalCCU: number;
   games: NormalizedGame[];
   verdicts: MarketVerdict[];
+  arbitrageOpportunities?: ArbitrageOpportunity[];
 }
 
 export interface RawRobloxGame {
