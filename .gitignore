@@ -1,0 +1,8 @@
+node_modules/
+dist/
+data/snapshots/*.json
+!data/snapshots/.gitkeep
+.DS_Store
+*.log
+.env
+.env.local

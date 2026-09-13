@@ -1,0 +1,32 @@
+{
+  "name": "game-trend-radar",
+  "version": "1.0.0",
+  "description": "Cross-platform game market intelligence & trend analyzer for Roblox, Yandex Games, YouTube Shorts, and Web Portals",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsx src/cli.ts",
+    "radar": "tsx src/cli.ts",
+    "scan": "tsx src/cli.ts scan",
+    "report": "tsx src/cli.ts report",
+    "recommend": "tsx src/cli.ts recommend",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "keywords": [
+    "gamedev",
+    "market-research",
+    "roblox",
+    "yandex-games",
+    "poki",
+    "trends",
+    "analytics"
+  ],
+  "author": "fuheshka",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}
