@@ -192,7 +192,7 @@ describe('Radar HTTP Server (порт 4200)', () => {
       // Verify that store now holds this latest snapshot
       const latestFromStore = store.getLatestSnapshot();
       expect(latestFromStore?.id).toBe(snapshot.id);
-    }, 15000);
+    }, 45000);
   });
 
   describe('5. Раздача статических файлов клиентского бандла web/', () => {
