@@ -1,4 +1,6 @@
-import { GameArchetype, NormalizedGame, ShortsVideoItem, DetectedMemeTrend } from '../types/index.js';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import type { GameArchetype, NormalizedGame, ShortsVideoItem, DetectedMemeTrend, DynamicMeme, DynamicMemesData } from '../types/index.js';
 import { classifyArchetype } from '../analyzer/classifier.js';
 
 export interface ViralTrendTopic {
@@ -48,13 +50,18 @@ export interface YouTubeShortsAnalyzerOptions {
   invidiousInstances?: string[];
   fetchFn?: typeof fetch;
   timeoutMs?: number;
+  dynamicMemesPath?: string;
+  autoLoadDynamicMemes?: boolean;
 }
 
 export class YouTubeShortsAnalyzer {
+  private options: YouTubeShortsAnalyzerOptions;
   private apiKey?: string;
   private invidiousInstances: string[];
   private fetchFn: typeof fetch;
   private timeoutMs: number;
+  private memeDefinitions: MemeDefinition[] = [...VIRAL_MEME_DEFINITIONS];
+  private dynamicMemes: DynamicMeme[] = [];
 
   // Curated baseline topics (fallback when external API is unreachable or offline)
   private viralTopics: ViralTrendTopic[] = [
@@ -96,6 +103,7 @@ export class YouTubeShortsAnalyzer {
   ];
 
   constructor(options: YouTubeShortsAnalyzerOptions = {}) {
+    this.options = options;
     this.apiKey = options.apiKey || process.env.YOUTUBE_API_KEY;
     this.invidiousInstances = options.invidiousInstances || [
       'https://inv.tux.pizza',
@@ -105,7 +113,85 @@ export class YouTubeShortsAnalyzer {
     ];
     this.fetchFn = options.fetchFn || globalThis.fetch;
     this.timeoutMs = options.timeoutMs || 6000;
+
+    if (options.dynamicMemesPath) {
+      this.loadDynamicMemes(options.dynamicMemesPath);
+    } else if (options.autoLoadDynamicMemes) {
+      this.loadDynamicMemes();
+    }
   }
+
+  getMemeDefinitions(): MemeDefinition[] {
+    return [...this.memeDefinitions];
+  }
+
+  getDynamicMemes(): DynamicMeme[] {
+    return [...this.dynamicMemes];
+  }
+
+  /**
+   * Динамическая загрузка мемов из data/dynamic_memes.json с сохранением обратной совместимости.
+   */
+  loadDynamicMemes(filePath?: string): DynamicMeme[] {
+    const targetPath = filePath || this.options.dynamicMemesPath || path.resolve(process.cwd(), 'data', 'dynamic_memes.json');
+    if (!fs.existsSync(targetPath)) {
+      return [];
+    }
+
+    try {
+      const raw = fs.readFileSync(targetPath, 'utf-8');
+      const data = JSON.parse(raw) as DynamicMemesData;
+      const memes = Array.isArray(data?.memes) ? data.memes : [];
+
+      for (const dm of memes) {
+        if (!dm.id || !dm.name) continue;
+
+        let regex: RegExp;
+        try {
+          regex = dm.regexPattern
+            ? new RegExp(dm.regexPattern, 'i')
+            : new RegExp((dm.keywords || [dm.name]).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'i');
+        } catch {
+          regex = new RegExp(dm.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+        }
+
+        const newDef: MemeDefinition = {
+          id: dm.id,
+          name: dm.name,
+          regex,
+          associatedArchetypes: dm.associatedArchetypes && dm.associatedArchetypes.length > 0
+            ? dm.associatedArchetypes
+            : ['OTHER_CASUAL'],
+        };
+
+        const existingIdx = this.memeDefinitions.findIndex((d) => d.id === newDef.id);
+        if (existingIdx >= 0) {
+          this.memeDefinitions[existingIdx] = newDef;
+        } else {
+          this.memeDefinitions.push(newDef);
+        }
+
+        // Подмешиваем в viralTopics для getViralShortsTrends() при отсутствии прямого дубликата
+        const existingTopic = this.viralTopics.find((t) => t.keyword.toLowerCase() === dm.name.toLowerCase());
+        if (!existingTopic) {
+          this.viralTopics.push({
+            keyword: dm.name,
+            archetype: dm.associatedArchetypes?.[0] || 'OTHER_CASUAL',
+            viralScore: dm.confidenceScore || 85,
+            estimatedViewsTier: (dm.confidenceScore || 0) >= 80 ? '50M+' : '10M+',
+            hookDescription: `Вирусный динамический тренд: ${dm.name}`,
+          });
+        }
+      }
+
+      this.dynamicMemes = memes;
+      return this.dynamicMemes;
+    } catch (err) {
+      console.warn('[YouTubeShortsAnalyzer] Failed to parse dynamic memes:', err);
+      return [];
+    }
+  }
+
 
   /**
    * Сбор среза видео по тегу (#shorts, #roblox, #gamedev) через Invidious API или YouTube Data API v3.
@@ -273,7 +359,7 @@ export class YouTubeShortsAnalyzer {
   detectViralMemes(videos: ShortsVideoItem[]): DetectedMemeTrend[] {
     const totalScanned = Math.max(1, videos.length);
 
-    return VIRAL_MEME_DEFINITIONS.map((def) => {
+    return this.memeDefinitions.map((def) => {
       const matchingVideos = videos.filter((v) => {
         const text = `${v.title} ${v.description}`;
         return def.regex.test(text);
@@ -324,7 +410,7 @@ export class YouTubeShortsAnalyzer {
    */
   calculateViralMultiplier(archetype: GameArchetype, detectedMemes: DetectedMemeTrend[]): number {
     const relevantMemes = detectedMemes.filter((m) => {
-      const def = VIRAL_MEME_DEFINITIONS.find((d) => d.id === m.memeId);
+      const def = this.memeDefinitions.find((d) => d.id === m.memeId) || VIRAL_MEME_DEFINITIONS.find((d) => d.id === m.memeId);
       return def?.associatedArchetypes.includes(archetype) && m.occurrences > 0;
     });
 

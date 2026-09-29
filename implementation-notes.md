@@ -248,4 +248,47 @@
     - Расчет Buzz Score и сортировка сущностей по убыванию резонанса.
     - Сквозной сбор (`harvest`) с моками Reddit API.
 
+---
+
+## 11. Оркестрация авто-источников и самообновляемый словарь трендов (`TrendScheduler` & `data/dynamic_memes.json`)
+
+- **Модуль `TrendScheduler` (`src/cron/trend_scheduler.ts`):**
+  - Реализован центральный планировщик-оркестратор, объединяющий все автономные каналы сбора без участия человека:
+    1. *YouTube Search Autocomplete*: подсказки и поисковые суффиксы миллионов пользователей (`YouTubeAutocompleteHarvester`).
+    2. *Reddit Buzz Harvester*: вирусные сущности с высоким показателем вовлеченности (`RedditBuzzHarvester`).
+    3. *Roblox N-Gram Extractor*: аномалии взрывного роста частотности в чартах (`UnsupervisedTrendExtractor` + `RobloxCollector`).
+  - **Структура словаря и метаданные (`data/dynamic_memes.json`):**
+    - `id`: нормализованный slug-идентификатор мема (очистка от эмодзи, рекламы и скобок).
+    - `name`: исходное имя тренда.
+    - `keywords`: список поисковых фраз и синонимов.
+    - `regexPattern`: автогенерируемое регулярное выражение для поиска в описаниях и заголовках.
+    - `associatedArchetypes`: привязка к архетипам (`GameArchetype`) на базе `classifyArchetype`.
+    - `confidenceScore` (0-100): составной показатель надежности с учетом вклада каждого источника и бонуса за кросс-валидацию (2 источника: +25 баллов, 3 источника: +40 баллов).
+    - `firstSeen` & `lastSeen`: временные метки жизненного цикла. `firstSeen` сохраняется неизменным при повторных циклах сбора.
+    - `trendStatus`: статус эволюции мема:
+      - `VIRAL`: `confidenceScore >= 75` или подтверждение во всех 3 источниках.
+      - `EMERGING`: свежеобнаруженный тренд с `confidenceScore >= 40`.
+      - `STABLE`: подтвержденный удержанием тренд с `confidenceScore >= 50`.
+      - `FADING`: затухающий тренд (не замечен в текущем цикле, штраф `decayStep: 10`). При падении ниже `minConfidenceThreshold: 20` удаляется из словаря.
+    - `sources`: массив подтвержденных источников (`youtube_autocomplete`, `reddit_buzz`, `roblox_ngram`).
+    - `sampleTitles`: примеры заголовков роликов и игр.
+- **Интеграция с `YouTubeShortsAnalyzer` (`src/collectors/youtube_shorts.ts`):**
+  - Поддержка динамической подгрузки мемов через опцию конструктора `dynamicMemesPath` / `autoLoadDynamicMemes` или метод `loadDynamicMemes(filePath)`.
+  - Динамические мемы автоматически конвертируются в `MemeDefinition` с компиляцией RegExp и обогащают `this.memeDefinitions` и `this.viralTopics`.
+  - Строгое сохранение 100% обратной совместимости с 4 базовыми темами (Skibidi, Digital Circus, Brainrot, Steal An Egg).
+  - Защита от сбоев: при отсутствии файла или ошибках JSON анализатор прозрачно продолжает работу на базовых определениях.
+- **Интерфейс командной строки (`package.json`):**
+  - Добавлена команда запуска `"update-trends": "tsx src/cron/trend_scheduler.ts"`.
+- **Тестирование (TDD & Vitest):**
+  - Создан полный тестовый набор `tests/TrendScheduler.test.ts` (14 тестов, 100% pass):
+    - Дефолтная инициализация и кастомные зависимости.
+    - Агрегация сигналов всех 3 источников и устойчивость к сетевым сбоям отдельных каналов.
+    - Фиксация `firstSeen`, актуализация `lastSeen` и пересчет `confidenceScore`.
+    - Механизм затухания (Decay) и очистка устаревших трендов (`minConfidenceThreshold`).
+    - Динамическая подгрузка в `YouTubeShortsAnalyzer`, проверка детекции в Shorts и расчет `viralMultiplier`.
+    - 100% обратная совместимость с базовыми темами.
+    - Граничные случаи: нормализация id, генерация регулярных выражений, обработка поврежденных JSON файлов.
+  - Общий прогон тестов проекта: **84 теста (7 тест-сьютов), 100% pass**.
+
+
 

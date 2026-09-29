@@ -17,6 +17,7 @@
     "pages:build": "vite build",
     "report": "tsx src/cli.ts report",
     "recommend": "tsx src/cli.ts recommend",
+    "update-trends": "tsx src/cron/trend_scheduler.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build": "tsc"

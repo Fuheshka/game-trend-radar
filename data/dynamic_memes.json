@@ -1,0 +1,29 @@
+{
+  "updatedAt": "2026-09-29T21:40:29.809Z",
+  "totalMemes": 1,
+  "memes": [
+    {
+      "id": "на_bmw",
+      "name": "на bmw",
+      "keywords": [
+        "на bmw"
+      ],
+      "regexPattern": "на\\s+bmw",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 44,
+      "firstSeen": "2026-09-29T21:40:29.809Z",
+      "lastSeen": "2026-09-29T21:40:29.809Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "roblox_ngram"
+      ],
+      "sampleTitles": [
+        "ГТАРП: Дрифт на BMW M5 F90",
+        "ACR: Гонки и Дрифт в Городе на BMW",
+        "Суета на BMW M5"
+      ]
+    }
+  ]
+}

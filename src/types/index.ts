@@ -127,3 +127,28 @@ export interface RawYandexGame {
   tags: string[];
   category: string;
 }
+
+export type TrendStatus = 'EMERGING' | 'VIRAL' | 'STABLE' | 'FADING';
+export type MemeSourceType = 'youtube_autocomplete' | 'reddit_buzz' | 'roblox_ngram';
+
+export interface DynamicMeme {
+  id: string;
+  name: string;
+  keywords: string[];
+  regexPattern: string;
+  associatedArchetypes: GameArchetype[];
+  confidenceScore: number;
+  firstSeen: string;
+  lastSeen: string;
+  trendStatus: TrendStatus;
+  sources: MemeSourceType[];
+  velocityScore?: number;
+  sampleTitles?: string[];
+}
+
+export interface DynamicMemesData {
+  updatedAt: string;
+  totalMemes: number;
+  memes: DynamicMeme[];
+}
+
