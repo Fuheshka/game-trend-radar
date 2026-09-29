@@ -67,9 +67,9 @@
 > - Категорический запрет автокоммитов: не делай `git commit` без прямого текстового подтверждения.
 > ```
 
-- [ ] **Промпт 6.3: Reddit JSON API & Social Buzz Harvester**
+- [x] **Промпт 6.3: Reddit JSON API & Social Buzz Harvester**
 
-> [!note]+ Текст промпта 6.3
+> [!note]- Текст промпта 6.3
 > ```text
 > [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail) [/test-driven-development](slashCommand;test-driven-development)
 > 
