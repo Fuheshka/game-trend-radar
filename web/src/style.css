@@ -418,6 +418,58 @@ code, pre, .mono {
   overflow: visible;
 }
 
+.radar-scope-ring {
+  fill: none;
+  stroke: rgba(0, 242, 254, 0.22);
+  stroke-width: 1.5;
+}
+
+.radar-scope-dashed {
+  fill: none;
+  stroke: rgba(137, 220, 235, 0.14);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+/* Radar Sweep Beam */
+.radar-sweep-beam {
+  pointer-events: none;
+  transform-origin: 220px 220px;
+}
+
+.radar-sweep-line {
+  stroke: #00f2fe;
+  stroke-width: 2.2px;
+  stroke-linecap: round;
+}
+
+.radar-sweep-trail {
+  pointer-events: none;
+}
+
+.radar-center-hub {
+  fill: #00f2fe;
+  filter: drop-shadow(0 0 8px #00f2fe);
+}
+
+.radar-center-ring {
+  fill: none;
+  stroke: rgba(0, 242, 254, 0.6);
+  stroke-width: 1.5;
+  animation: radar-hub-pulse 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite alternate;
+}
+
+@keyframes radar-hub-pulse {
+  from {
+    r: 6px;
+    opacity: 0.4;
+  }
+  to {
+    r: 10px;
+    opacity: 0.85;
+  }
+}
+
 .radar-polygon {
   fill-opacity: 0.2;
   stroke-width: 2.5;
@@ -428,7 +480,7 @@ code, pre, .mono {
 .radar-polygon:hover {
   fill-opacity: 0.45;
   stroke-width: 3.5;
-  filter: drop-shadow(0 0 10px currentColor);
+  filter: drop-shadow(0 0 16px currentColor) !important;
 }
 
 .radar-axis-line {
@@ -448,6 +500,49 @@ code, pre, .mono {
   fill: var(--text-secondary);
   text-anchor: middle;
   dominant-baseline: central;
+}
+
+/* Radar Blip Points & Ripples */
+.radar-blips-layer {
+  pointer-events: auto;
+}
+
+.radar-blip {
+  transition: opacity 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.radar-blip-dot {
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), filter 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.radar-blip:hover .radar-blip-dot {
+  transform: scale(1.45);
+  filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 4px #ffffff) !important;
+}
+
+.radar-blip-ripple {
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.radar-blip-hitarea {
+  cursor: pointer;
+}
+
+/* Polar Donut Sector Hover */
+.radar-polar-sector {
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), filter 0.25s ease, opacity 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  cursor: pointer;
+}
+
+.radar-polar-sector:hover {
+  filter: drop-shadow(0 0 16px currentColor) !important;
+  opacity: 1 !important;
 }
 
 .radar-sidebar-info {
