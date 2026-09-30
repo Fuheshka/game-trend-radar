@@ -177,7 +177,13 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="search" class="search-input" id="search-input" placeholder="Поиск по названию игры, жанру или тегам (Ctrl+K)..." />
+          <input type="search" class="search-input" id="search-input" placeholder="Поиск по названию игры, жанру или тегам (Ctrl+K)..." autocomplete="off" />
+          <button type="button" class="search-clear-btn" id="search-clear-btn" aria-label="Очистить поиск" title="Очистить поиск (Esc)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
 
         <div class="sort-select-wrapper">
@@ -189,6 +195,19 @@
             <option value="velocity_desc">Динамика / Скорость</option>
             <option value="title_asc">Название (А-Я)</option>
           </select>
+        </div>
+      </div>
+
+      <!-- Dynamic Popular Search Tags Row -->
+      <div class="search-tags-row" id="search-tags-container" aria-label="Популярные жанры и механики">
+        <div class="search-tags-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>Тренды:</span>
+        </div>
+        <div class="search-tags-scroll" id="search-tags-scroll" role="list">
+          <!-- Populated dynamically via JS -->
         </div>
       </div>
 
@@ -282,7 +301,13 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <input type="search" class="search-input" id="catalog-search-input" placeholder="Поиск в каталоге (название, жанр, теги)..." />
+              <input type="search" class="search-input" id="catalog-search-input" placeholder="Поиск в каталоге (название, жанр, теги)..." autocomplete="off" />
+              <button type="button" class="search-clear-btn" id="catalog-search-clear-btn" aria-label="Очистить поиск по каталогу" title="Очистить поиск (Esc)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
             </div>
           </div>
         </div>

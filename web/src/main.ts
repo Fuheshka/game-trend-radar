@@ -8,6 +8,26 @@ import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './componen
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
 
+export interface PopularSearchTag {
+  id: string;
+  label: string;
+  query: string;
+}
+
+export const POPULAR_SEARCH_TAGS: PopularSearchTag[] = [
+  { id: 'simulators', label: 'Симуляторы', query: 'симулятор' },
+  { id: 'horror', label: 'Хоррор', query: 'хоррор' },
+  { id: 'obby', label: 'Обби', query: 'обби' },
+  { id: 'puzzles', label: 'Головоломки', query: 'головоломк' },
+  { id: 'sandbox', label: 'Песочница', query: 'песочниц' },
+  { id: 'clickers', label: 'Кликеры', query: 'кликер' },
+  { id: 'shorts', label: 'Мемы Shorts', query: 'shorts' },
+  { id: 'merge', label: 'Мёрдж', query: 'мёрдж' },
+  { id: 'shooters', label: 'Шутеры', query: 'шутер' },
+  { id: 'tycoons', label: 'Тайкуны', query: 'тайкун' },
+  { id: 'ragdoll', label: 'Рэгдолл', query: 'рэгдолл' },
+];
+
 class App {
   private snapshot: MarketSnapshot = FALLBACK_SNAPSHOT;
   private activePlatform: 'all' | PlatformType = 'all';
@@ -42,6 +62,7 @@ class App {
     this.setupComponents();
     this.updateGlobalMetrics();
     this.renderLegend();
+    this.renderSearchTags();
 
     // Fetch live data from backend
     await this.fetchLatestSnapshot();
@@ -94,10 +115,34 @@ class App {
       this.triggerLiveScan();
     });
 
-    // Search input
+    // Search input & quick clear button
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchClearBtn = document.getElementById('search-clear-btn');
+
+    const updateSearchClearVisibility = () => {
+      if (searchClearBtn) {
+        searchClearBtn.classList.toggle('visible', !!searchInput?.value.trim());
+      }
+    };
+
     searchInput?.addEventListener('input', e => {
       this.searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
+      updateSearchClearVisibility();
+      this.updateActiveSearchTagUI();
+      this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+      this.applyFiltersAndSort();
+    });
+
+    searchClearBtn?.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+      }
+      this.searchQuery = '';
+      updateSearchClearVisibility();
+      this.updateActiveSearchTagUI();
+      soundService.playClick();
+      this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
       this.applyFiltersAndSort();
     });
 
@@ -175,12 +220,34 @@ class App {
       });
     });
 
-    // Catalog Search Input
+    // Catalog Search Input & quick clear button
     const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
+    const catalogClearBtn = document.getElementById('catalog-search-clear-btn');
+
+    const updateCatalogClearVisibility = () => {
+      if (catalogClearBtn) {
+        catalogClearBtn.classList.toggle('visible', !!catalogSearchInput?.value.trim());
+      }
+    };
+
     catalogSearchInput?.addEventListener('input', e => {
       const query = (e.target as HTMLInputElement).value;
+      updateCatalogClearVisibility();
       if (this.gameCatalog) {
         this.gameCatalog.setSearchQuery(query);
+        this.updateCatalogCountUI();
+      }
+    });
+
+    catalogClearBtn?.addEventListener('click', () => {
+      if (catalogSearchInput) {
+        catalogSearchInput.value = '';
+        catalogSearchInput.focus();
+      }
+      updateCatalogClearVisibility();
+      soundService.playClick();
+      if (this.gameCatalog) {
+        this.gameCatalog.setSearchQuery('');
         this.updateCatalogCountUI();
       }
     });
@@ -238,15 +305,28 @@ class App {
         searchInput?.focus();
       }
 
-      // Escape to reset filters
+      // Escape to reset filters & clear search
       if (e.key === 'Escape') {
         const searchInput = document.getElementById('search-input') as HTMLInputElement;
+        const searchClearBtn = document.getElementById('search-clear-btn');
+        const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
+        const catalogClearBtn = document.getElementById('catalog-search-clear-btn');
+
         if (searchInput) searchInput.value = '';
+        if (searchClearBtn) searchClearBtn.classList.remove('visible');
+        if (catalogSearchInput) catalogSearchInput.value = '';
+        if (catalogClearBtn) catalogClearBtn.classList.remove('visible');
+
         this.searchQuery = '';
         this.activeArchetype = null;
+        this.updateActiveSearchTagUI();
         this.radarChart.updateData(this.getFilteredVerdicts(), null);
         this.applyFiltersAndSort();
         this.renderLegend();
+        if (this.gameCatalog) {
+          this.gameCatalog.setSearchQuery('');
+          this.updateCatalogCountUI();
+        }
       }
     });
   }
@@ -567,9 +647,13 @@ class App {
 
   private applyFilterFromSignal(query: string, archetype?: GameArchetype): void {
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchClearBtn = document.getElementById('search-clear-btn');
     if (searchInput) {
       searchInput.value = query;
       this.searchQuery = query.toLowerCase();
+    }
+    if (searchClearBtn) {
+      searchClearBtn.classList.toggle('visible', !!query.trim());
     }
     if (archetype) {
       this.activeArchetype = archetype;
@@ -583,6 +667,7 @@ class App {
     const statusPills = document.querySelectorAll<HTMLButtonElement>('[data-status]');
     statusPills.forEach(p => p.classList.toggle('active', p.getAttribute('data-status') === 'all'));
 
+    this.updateActiveSearchTagUI();
     this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
     this.applyFiltersAndSort();
     this.renderLegend();
@@ -608,6 +693,7 @@ class App {
 
     this.updateGlobalMetrics();
     this.renderLegend();
+    this.renderSearchTags();
     this.liveTicker?.updateData(this.snapshot);
     this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
     this.gameCatalog?.updateData(this.snapshot.games || []);
@@ -695,6 +781,7 @@ class App {
 
         this.updateGlobalMetrics();
         this.renderLegend();
+        this.renderSearchTags();
         this.liveTicker?.updateData(this.snapshot);
         this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
         this.gameCatalog?.updateData(this.snapshot.games || []);
@@ -864,17 +951,9 @@ class App {
         }
       }
 
-      // 4. Search query
+      // 4. Search query & dynamic tags
       if (this.searchQuery) {
-        const q = this.searchQuery;
-        const inTitle = v.titleRu.toLowerCase().includes(q);
-        const inArchetype = v.archetype.toLowerCase().includes(q);
-        const inSamples = v.sampleTitles.some(s => s.toLowerCase().includes(q));
-        const inRec = v.actionRecommendation.toLowerCase().includes(q);
-        const inLoop = v.coreLoopBlueprint.toLowerCase().includes(q);
-        const inAvoid = v.avoidPitfalls.toLowerCase().includes(q);
-
-        if (!inTitle && !inArchetype && !inSamples && !inRec && !inLoop && !inAvoid) {
+        if (!this.doesVerdictMatchQuery(v, this.searchQuery)) {
           return false;
         }
       }
@@ -925,6 +1004,180 @@ class App {
     }, 4000);
   }
 
+  private renderSearchTags(): void {
+    const scrollContainer = document.getElementById('search-tags-scroll');
+    if (!scrollContainer) return;
+
+    scrollContainer.innerHTML = '';
+
+    for (const tag of POPULAR_SEARCH_TAGS) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'search-tag-chip';
+      chip.setAttribute('data-tag-id', tag.id);
+      chip.setAttribute('data-query', tag.query);
+      chip.setAttribute('data-label', tag.label);
+
+      const isActive = this.isTagActive(tag);
+      if (isActive) {
+        chip.classList.add('active');
+      }
+
+      const matchCount = this.getMatchingCountForTag(tag);
+      const countBadge = matchCount > 0 ? `<span class="search-tag-count">${matchCount}</span>` : '';
+
+      chip.innerHTML = `
+        <span class="search-tag-text">${tag.label}</span>
+        ${countBadge}
+      `;
+
+      chip.addEventListener('click', () => {
+        const searchInput = document.getElementById('search-input') as HTMLInputElement;
+        const searchClearBtn = document.getElementById('search-clear-btn');
+        soundService.playClick();
+
+        if (this.isTagActive(tag)) {
+          // Toggle off if currently active
+          if (searchInput) searchInput.value = '';
+          this.searchQuery = '';
+          if (searchClearBtn) searchClearBtn.classList.remove('visible');
+        } else {
+          // Apply tag filter
+          if (searchInput) searchInput.value = tag.label;
+          this.searchQuery = tag.query.toLowerCase();
+          if (searchClearBtn) searchClearBtn.classList.add('visible');
+        }
+
+        this.updateActiveSearchTagUI();
+        this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+        this.applyFiltersAndSort();
+      });
+
+      scrollContainer.appendChild(chip);
+    }
+  }
+
+  private isTagActive(tag: PopularSearchTag): boolean {
+    if (!this.searchQuery) return false;
+    const q = this.searchQuery.toLowerCase().trim();
+    const tQuery = tag.query.toLowerCase();
+    const tLabel = tag.label.toLowerCase();
+    return q === tQuery || q === tLabel || tLabel.includes(q) || tQuery.includes(q) || q.includes(tQuery);
+  }
+
+  private updateActiveSearchTagUI(): void {
+    const chips = document.querySelectorAll<HTMLButtonElement>('.search-tag-chip');
+    chips.forEach(chip => {
+      const q = chip.getAttribute('data-query') || '';
+      const label = chip.getAttribute('data-label') || '';
+      const tag: PopularSearchTag = { id: chip.getAttribute('data-tag-id') || '', label, query: q };
+      chip.classList.toggle('active', this.isTagActive(tag));
+    });
+  }
+
+  private getMatchingCountForTag(tag: PopularSearchTag): number {
+    const q = tag.query.toLowerCase();
+    const label = tag.label.toLowerCase();
+    const games = this.snapshot.games || [];
+    let count = 0;
+
+    for (const g of games) {
+      const inTitle = g.title.toLowerCase().includes(q) || g.title.toLowerCase().includes(label);
+      const inGenre = (g.genre && (g.genre.toLowerCase().includes(q) || g.genre.toLowerCase().includes(label))) || false;
+      const inTags = (g.tags || []).some(t => t.toLowerCase().includes(q) || t.toLowerCase().includes(label));
+
+      let inArch = false;
+      if (q === 'симулятор' || q === 'кликер') inArch = g.archetype === 'SIMULATION_INCREMENTAL';
+      else if (q === 'хоррор') inArch = g.archetype === 'SURVIVAL_HORROR';
+      else if (q === 'обби') inArch = g.archetype === 'OBBY_PARKOUR';
+      else if (q === 'головоломк') inArch = g.archetype === 'WORD_PUZZLE';
+      else if (q === 'песочниц' || q === 'рэгдолл') inArch = g.archetype === 'PHYSICS_SANDBOX';
+      else if (q === 'мёрдж' || q === 'тайкун') inArch = g.archetype === 'MERGE_IDLE';
+      else if (q === 'шутер') inArch = g.archetype === 'ACTION_SHOOTER';
+      else if (q === 'shorts') inArch = g.platform === 'youtube_trends' || (g.tags && g.tags.some(t => t.toLowerCase().includes('short')));
+
+      if (inTitle || inGenre || inTags || inArch) {
+        count++;
+      }
+    }
+
+    if (count === 0) {
+      for (const v of this.snapshot.verdicts || []) {
+        if (this.doesVerdictMatchQuery(v, q)) {
+          count += Math.max(1, v.sampleTitles.length);
+        }
+      }
+    }
+
+    return count;
+  }
+
+  private doesVerdictMatchQuery(v: MarketVerdict, q: string): boolean {
+    if (!q) return true;
+    const lower = q.toLowerCase().trim();
+
+    // 1. Direct text fields
+    if (
+      v.titleRu.toLowerCase().includes(lower) ||
+      v.archetype.toLowerCase().includes(lower) ||
+      v.sampleTitles.some(s => s.toLowerCase().includes(lower)) ||
+      v.actionRecommendation.toLowerCase().includes(lower) ||
+      v.coreLoopBlueprint.toLowerCase().includes(lower) ||
+      v.avoidPitfalls.toLowerCase().includes(lower) ||
+      (v.monetizationStrategy && v.monetizationStrategy.toLowerCase().includes(lower))
+    ) {
+      return true;
+    }
+
+    // 2. Archetype keyword mapping (e.g. головоломка -> WORD_PUZZLE, песочница -> PHYSICS_SANDBOX, кликер -> SIMULATION_INCREMENTAL)
+    const keywords: Record<GameArchetype, string[]> = {
+      SIMULATION_INCREMENTAL: ['симулятор', 'симуляторы', 'эволюция', 'кликер', 'кликеры', 'тайкун', 'тайкуны', 'добыча', 'прокачка'],
+      PHYSICS_SANDBOX: ['песочница', 'песочницы', 'сендбокс', 'sandbox', 'рэгдолл', 'ragdoll', 'физика', 'разрушение', 'melon'],
+      MERGE_IDLE: ['мёрдж', 'мердж', 'merge', 'сортировка', 'айдл', 'idle', 'тайкун', 'крафт'],
+      SURVIVAL_HORROR: ['хоррор', 'хорроры', 'horror', 'побег', 'выживание', 'survival', 'escape', 'doors', 'фредди', 'fnaf'],
+      WORD_PUZZLE: ['головоломка', 'головоломки', 'пазл', 'пазлы', 'puzzle', 'слова', 'словесные', 'филворд', 'кроссворд', 'логика', 'викторина'],
+      ACTION_SHOOTER: ['шутер', 'шутеры', 'shooter', 'экшен', 'action', 'стрелялка', 'стрелялки', 'оружие', 'standoff'],
+      OBBY_PARKOUR: ['обби', 'паркур', 'obby', 'parkour', 'башня', 'прыжки', 'tower'],
+      OTHER_CASUAL: ['казуальные', 'casual', 'аркады', 'arcade'],
+    };
+
+    const archKeywords = keywords[v.archetype] || [];
+    if (archKeywords.some(k => k.includes(lower) || lower.includes(k))) {
+      return true;
+    }
+
+    // 3. YouTube Shorts / viral meme search
+    if (lower.includes('мем') || lower.includes('short') || lower.includes('viral') || lower.includes('вирус')) {
+      if (v.opportunityScore?.viralMultiplier && v.opportunityScore.viralMultiplier > 1.0) {
+        return true;
+      }
+      if (
+        v.sampleTitles.some(s =>
+          s.toLowerCase().includes('brainrot') ||
+          s.toLowerCase().includes('egg') ||
+          s.toLowerCase().includes('skibidi') ||
+          s.toLowerCase().includes('shorts')
+        )
+      ) {
+        return true;
+      }
+    }
+
+    // 4. Any associated games in this snapshot
+    const matchingGames = (this.snapshot.games || []).some(
+      g =>
+        g.archetype === v.archetype &&
+        (g.title.toLowerCase().includes(lower) ||
+          (g.genre && g.genre.toLowerCase().includes(lower)) ||
+          (g.tags && g.tags.some(t => t.toLowerCase().includes(lower))))
+    );
+    if (matchingGames) {
+      return true;
+    }
+
+    return false;
+  }
+
   private formatNumber(n: number): string {
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
     if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
@@ -932,7 +1185,9 @@ class App {
   }
 }
 
-// Instantiate on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  new App();
-});
+// Instantiate on DOM ready in browser
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    new App();
+  });
+}
