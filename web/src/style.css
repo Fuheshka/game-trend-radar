@@ -2537,3 +2537,710 @@ code, pre, .mono {
   background: rgba(203, 166, 247, 0.08);
 }
 
+/* ==========================================================================
+   MAIN VIEW MODE TABS (НИШИ VS КАТАЛОГ ИГР)
+   ========================================================================== */
+
+.main-tabs-nav {
+  margin: 1.25rem 0 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tabs-segmented-control {
+  display: inline-flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+  gap: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.view-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.2, 0, 0, 1);
+  outline: none;
+}
+
+.view-tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.view-tab-btn:active {
+  transform: scale(0.96);
+}
+
+.view-tab-btn.active {
+  background: var(--bg-raised);
+  color: #fff;
+  border-color: var(--border-hover);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 14px rgba(56, 189, 248, 0.2);
+}
+
+.tab-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: var(--accent-cyan);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  margin-left: 0.15rem;
+}
+
+/* ==========================================================================
+   GAME CATALOG TOOLBAR & CONTROLS
+   ========================================================================== */
+
+.catalog-toolbar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.catalog-toolbar-top {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .catalog-toolbar-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ccu-slider-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.ccu-slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ccu-slider-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.ccu-slider-val-badge {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--status-green-light);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 0.82rem;
+  margin-left: 0.35rem;
+}
+
+.ccu-presets-group {
+  display: flex;
+  gap: 4px;
+}
+
+.ccu-preset-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ccu-preset-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.ccu-preset-btn:active {
+  transform: scale(0.96);
+}
+
+.ccu-preset-btn.active {
+  background: var(--status-green-bg);
+  color: var(--status-green-light);
+  border-color: var(--status-green-border);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+}
+
+.ccu-slider-track-wrap {
+  width: 100%;
+}
+
+.ccu-slider-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.ccu-slider-input:focus {
+  border-color: var(--status-green);
+}
+
+.ccu-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--status-green);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6), 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.ccu-slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+}
+
+.ccu-slider-input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--status-green);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+  cursor: pointer;
+}
+
+.ccu-slider-markers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.catalog-search-wrap {
+  width: 100%;
+}
+
+.catalog-toolbar-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.catalog-filters-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.catalog-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.catalog-count-badge {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.view-mode-toggles {
+  display: inline-flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 3px;
+}
+
+.view-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-mode-btn:hover {
+  color: #fff;
+}
+
+.view-mode-btn:active {
+  transform: scale(0.96);
+}
+
+.view-mode-btn.active {
+  background: var(--bg-raised);
+  color: #fff;
+  border: 1px solid var(--border-hover);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   GAME CATALOG CARDS GRID
+   ========================================================================== */
+
+.catalog-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+}
+
+.catalog-game-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  outline: none;
+}
+
+.catalog-game-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.12);
+}
+
+.catalog-game-card:active {
+  transform: scale(0.98);
+}
+
+.card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.catalog-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.catalog-platform-badge.compact {
+  padding: 1px 6px;
+  font-size: 0.7rem;
+}
+
+.catalog-platform-badge.badge-roblox {
+  background: rgba(244, 63, 94, 0.12);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.catalog-platform-badge.badge-yandex {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.catalog-platform-badge.badge-poki {
+  background: rgba(167, 139, 250, 0.12);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.catalog-platform-badge.badge-shorts {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.catalog-platform-badge.badge-neutral {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.catalog-arch-badge {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.catalog-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 2.7rem;
+}
+
+.catalog-card-genre {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: -0.35rem;
+}
+
+.catalog-metrics-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.catalog-metric-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.catalog-metric-pill.ccu {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--status-green-light);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.catalog-metric-pill.likes {
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.catalog-metric-pill.generic {
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.catalog-tags-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.catalog-tag-chip {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.catalog-tag-chip:hover {
+  color: var(--accent-lavender);
+  border-color: var(--accent-lavender);
+}
+
+.catalog-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.catalog-card-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.catalog-game-card:hover .catalog-card-hint {
+  color: var(--accent-cyan);
+}
+
+.catalog-ext-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.catalog-ext-link.compact {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.74rem;
+}
+
+.catalog-ext-link:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-cyan);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+.catalog-ext-link:active {
+  transform: scale(0.96);
+}
+
+/* ==========================================================================
+   GAME CATALOG COMPACT TABLE
+   ========================================================================== */
+
+.catalog-table-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  box-shadow: var(--shadow-card);
+}
+
+.catalog-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.catalog-table th {
+  background: var(--bg-surface);
+  padding: 0.75rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-default);
+  text-align: left;
+}
+
+.catalog-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.catalog-table-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.catalog-table-row:hover {
+  background: var(--bg-hover);
+}
+
+.catalog-table-row:last-child td {
+  border-bottom: none;
+}
+
+.table-title-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-game-title {
+  font-weight: 600;
+  color: #fff;
+}
+
+.table-genre-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.table-arch-badge {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.table-genre-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.table-metric-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.table-metric-val.ccu {
+  color: var(--status-green-light);
+}
+
+.table-likes-val {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent-cyan);
+}
+
+/* ==========================================================================
+   PAGINATION & EMPTY STATES
+   ========================================================================== */
+
+.catalog-pagination-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn-catalog-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-catalog-more:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-cyan);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+}
+
+.btn-catalog-more:active {
+  transform: scale(0.96);
+}
+
+.btn-catalog-all {
+  background: transparent;
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  padding: 0.7rem 1.1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-catalog-all:hover {
+  color: #fff;
+  border-color: var(--border-hover);
+}
+
+.btn-catalog-all:active {
+  transform: scale(0.96);
+}
+
+.catalog-empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-xl);
+  margin: 1rem 0;
+}
+
+.empty-icon {
+  margin-bottom: 1rem;
+}
+
+.catalog-empty-state h3 {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.catalog-empty-state p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+

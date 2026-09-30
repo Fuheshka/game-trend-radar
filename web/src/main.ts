@@ -4,6 +4,7 @@ import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { DetailDrawerComponent } from './components/DetailDrawer.js';
+import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
 
@@ -15,6 +16,7 @@ class App {
   private searchQuery: string = '';
   private sortBy: 'score_desc' | 'score_asc' | 'ccu_desc' | 'velocity_desc' | 'title_asc' = 'score_desc';
   private isScanning: boolean = false;
+  private currentView: 'niches' | 'catalog' = 'niches';
   private prevMetrics = {
     totalGames: 0,
     totalCcu: 0,
@@ -26,6 +28,7 @@ class App {
   private verdictCards!: VerdictCardsComponent;
   private liveTicker!: LiveTickerComponent;
   private detailDrawer!: DetailDrawerComponent;
+  private gameCatalog!: GameCatalogComponent;
 
   constructor() {
     this.init();
@@ -128,6 +131,101 @@ class App {
         soundService.playClick();
         this.applyFiltersAndSort();
       });
+    });
+
+    // Main View Mode Tabs
+    const tabBtnNiches = document.getElementById('tab-btn-niches');
+    const tabBtnCatalog = document.getElementById('tab-btn-catalog');
+    tabBtnNiches?.addEventListener('click', () => {
+      this.switchView('niches');
+      soundService.playClick();
+    });
+    tabBtnCatalog?.addEventListener('click', () => {
+      this.switchView('catalog');
+      soundService.playClick();
+    });
+
+    // Catalog Min CCU Slider & Presets
+    const ccuSlider = document.getElementById('catalog-ccu-slider') as HTMLInputElement;
+    const ccuPresets = document.querySelectorAll<HTMLButtonElement>('.ccu-preset-btn');
+
+    const updateSliderUI = (val: number) => {
+      this.updateCcuSliderBadge(val);
+      ccuPresets.forEach(btn => {
+        const presetVal = parseInt(btn.getAttribute('data-ccu') || '0', 10);
+        btn.classList.toggle('active', presetVal === val);
+      });
+      if (this.gameCatalog) {
+        this.gameCatalog.setMinCcu(val);
+        this.updateCatalogCountUI();
+      }
+    };
+
+    ccuSlider?.addEventListener('input', e => {
+      const val = parseInt((e.target as HTMLInputElement).value, 10) || 0;
+      updateSliderUI(val);
+    });
+
+    ccuPresets.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = parseInt(btn.getAttribute('data-ccu') || '0', 10);
+        if (ccuSlider) ccuSlider.value = val.toString();
+        soundService.playClick();
+        updateSliderUI(val);
+      });
+    });
+
+    // Catalog Search Input
+    const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
+    catalogSearchInput?.addEventListener('input', e => {
+      const query = (e.target as HTMLInputElement).value;
+      if (this.gameCatalog) {
+        this.gameCatalog.setSearchQuery(query);
+        this.updateCatalogCountUI();
+      }
+    });
+
+    // Catalog Platform Filter Pills
+    const catalogPlatformPills = document.querySelectorAll<HTMLButtonElement>('[data-catalog-platform]');
+    catalogPlatformPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        catalogPlatformPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const platform = pill.getAttribute('data-catalog-platform') as any;
+        soundService.playClick();
+        if (this.gameCatalog) {
+          this.gameCatalog.setPlatform(platform);
+          this.updateCatalogCountUI();
+        }
+      });
+    });
+
+    // Catalog Sort Select
+    const catalogSortSelect = document.getElementById('catalog-sort-select') as HTMLSelectElement;
+    catalogSortSelect?.addEventListener('change', e => {
+      const sort = (e.target as HTMLSelectElement).value as any;
+      soundService.playClick();
+      if (this.gameCatalog) {
+        this.gameCatalog.setSort(sort);
+      }
+    });
+
+    // Catalog View Mode Toggles (Grid / Table)
+    const btnViewGrid = document.getElementById('btn-view-grid');
+    const btnViewTable = document.getElementById('btn-view-table');
+
+    btnViewGrid?.addEventListener('click', () => {
+      btnViewGrid.classList.add('active');
+      btnViewTable?.classList.remove('active');
+      soundService.playClick();
+      this.gameCatalog?.setViewMode('grid');
+    });
+
+    btnViewTable?.addEventListener('click', () => {
+      btnViewTable.classList.add('active');
+      btnViewGrid?.classList.remove('active');
+      soundService.playClick();
+      this.gameCatalog?.setViewMode('table');
     });
   }
 
@@ -270,6 +368,81 @@ class App {
           }
         }
       });
+    }
+
+    // Game Catalog Component setup
+    const catalogContainer = document.getElementById('catalog-container');
+    if (catalogContainer) {
+      this.gameCatalog = new GameCatalogComponent({
+        container: catalogContainer,
+        games: this.snapshot.games || [],
+        onSelectGame: game => {
+          soundService.playClick();
+          this.detailDrawer.openGame(game, this.snapshot.games);
+        },
+        onTagClick: tag => {
+          soundService.playClick();
+          const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
+          if (catalogSearchInput) {
+            catalogSearchInput.value = tag;
+          }
+          this.gameCatalog.setSearchQuery(tag);
+          this.updateCatalogCountUI();
+        },
+      });
+      this.updateCatalogCountUI();
+    }
+  }
+
+  private switchView(view: 'niches' | 'catalog'): void {
+    if (this.currentView === view) return;
+    this.currentView = view;
+
+    const tabNiches = document.getElementById('tab-btn-niches');
+    const tabCatalog = document.getElementById('tab-btn-catalog');
+    const panelNiches = document.getElementById('niches-view-panel');
+    const panelCatalog = document.getElementById('catalog-view-panel');
+
+    if (view === 'niches') {
+      tabNiches?.classList.add('active');
+      tabCatalog?.classList.remove('active');
+      if (panelNiches) panelNiches.style.display = 'block';
+      if (panelCatalog) panelCatalog.style.display = 'none';
+    } else {
+      tabCatalog?.classList.add('active');
+      tabNiches?.classList.remove('active');
+      if (panelNiches) panelNiches.style.display = 'none';
+      if (panelCatalog) panelCatalog.style.display = 'block';
+      this.updateCatalogCountUI();
+    }
+  }
+
+  private updateCcuSliderBadge(val: number): void {
+    const badge = document.getElementById('catalog-ccu-val-text');
+    if (badge) {
+      if (val === 0) {
+        badge.textContent = '0';
+      } else if (val >= 100000) {
+        badge.textContent = '100k+';
+      } else if (val >= 1000) {
+        badge.textContent = `${Math.round(val / 1000)}k`;
+      } else {
+        badge.textContent = val.toLocaleString();
+      }
+    }
+  }
+
+  private updateCatalogCountUI(): void {
+    const countText = document.getElementById('catalog-count-text');
+    const tabBadge = document.getElementById('tab-games-count');
+    const total = this.snapshot.games?.length || this.snapshot.totalGamesScanned || 0;
+    const filtered = this.gameCatalog ? this.gameCatalog.getFilteredCount() : total;
+
+    if (tabBadge) {
+      tabBadge.textContent = total.toString();
+    }
+    if (countText) {
+      countText.textContent = `Отображается ${filtered} из ${total}`;
     }
   }
 
@@ -437,6 +610,8 @@ class App {
     this.renderLegend();
     this.liveTicker?.updateData(this.snapshot);
     this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
+    this.gameCatalog?.updateData(this.snapshot.games || []);
+    this.updateCatalogCountUI();
     this.applyFiltersAndSort();
   }
 
@@ -522,6 +697,8 @@ class App {
         this.renderLegend();
         this.liveTicker?.updateData(this.snapshot);
         this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
+        this.gameCatalog?.updateData(this.snapshot.games || []);
+        this.updateCatalogCountUI();
         this.applyFiltersAndSort();
       }, 700);
     }
@@ -603,6 +780,7 @@ class App {
       arbitrageCount,
     };
 
+    this.updateCatalogCountUI();
     this.triggerMetricCardsPulse();
   }
 

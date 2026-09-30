@@ -99,8 +99,32 @@
       </div>
     </section>
 
-    <!-- RADAR & ANALYTICAL HUB -->
-    <section class="radar-hub-card">
+    <!-- MAIN VIEW MODE TABS -->
+    <nav class="main-tabs-nav" aria-label="Режимы отображения">
+      <div class="tabs-segmented-control">
+        <button class="view-tab-btn active" id="tab-btn-niches" data-view="niches">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="2" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+          </svg>
+          <span>Ниши и вердикты</span>
+        </button>
+        <button class="view-tab-btn" id="tab-btn-catalog" data-view="catalog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span>Каталог игр <span class="tab-count-badge" id="tab-games-count">0</span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- 1. NICHES & VERDICTS VIEW PANEL -->
+    <div id="niches-view-panel" class="view-panel active">
+      <!-- RADAR & ANALYTICAL HUB -->
+      <section class="radar-hub-card">
       <div class="radar-header">
         <div class="radar-title-group">
           <h2>
@@ -213,6 +237,114 @@
         <!-- Rendered dynamically by VerdictCardsComponent -->
       </div>
     </section>
+    </div> <!-- END #niches-view-panel -->
+
+    <!-- 2. GAME CATALOG VIEW PANEL -->
+    <div id="catalog-view-panel" class="view-panel" style="display: none;">
+      <section class="catalog-toolbar">
+        <div class="catalog-toolbar-top">
+          <!-- Min CCU Slider -->
+          <div class="ccu-slider-box">
+            <div class="ccu-slider-header">
+              <label for="catalog-ccu-slider" class="ccu-slider-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                </svg>
+                <span>Минимальный CCU:</span>
+                <span class="ccu-slider-val-badge" id="catalog-ccu-val-text">0</span>
+              </label>
+              <div class="ccu-presets-group">
+                <button type="button" class="ccu-preset-btn active" data-ccu="0">0</button>
+                <button type="button" class="ccu-preset-btn" data-ccu="1000">1k+</button>
+                <button type="button" class="ccu-preset-btn" data-ccu="10000">10k+</button>
+                <button type="button" class="ccu-preset-btn" data-ccu="50000">50k+</button>
+                <button type="button" class="ccu-preset-btn" data-ccu="100000">100k+</button>
+              </div>
+            </div>
+            <div class="ccu-slider-track-wrap">
+              <input type="range" class="ccu-slider-input" id="catalog-ccu-slider" min="0" max="100000" step="1000" value="0" />
+              <div class="ccu-slider-markers">
+                <span>0</span>
+                <span>25k</span>
+                <span>50k</span>
+                <span>75k</span>
+                <span>100k+</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Catalog Search Input -->
+          <div class="catalog-search-wrap">
+            <div class="search-input-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="search" class="search-input" id="catalog-search-input" placeholder="Поиск в каталоге (название, жанр, теги)..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Catalog Filter Pills & View Toggles -->
+        <div class="catalog-toolbar-bottom">
+          <div class="catalog-filters-left">
+            <div class="filter-pills-row">
+              <span class="filter-category-label">Платформы:</span>
+              <button class="filter-pill active" data-catalog-platform="all">Все</button>
+              <button class="filter-pill" data-catalog-platform="roblox">Roblox</button>
+              <button class="filter-pill" data-catalog-platform="yandex_games">Яндекс Игры</button>
+              <button class="filter-pill" data-catalog-platform="poki">Poki</button>
+              <button class="filter-pill" data-catalog-platform="youtube_trends">Shorts</button>
+            </div>
+
+            <div class="sort-select-wrapper compact">
+              <span class="sort-label">Сортировка:</span>
+              <select class="sort-select" id="catalog-sort-select">
+                <option value="ccu_desc">Онлайн CCU (убыв.)</option>
+                <option value="ccu_asc">Онлайн CCU (возр.)</option>
+                <option value="likes_desc">Оценка / Лайки (убыв.)</option>
+                <option value="title_asc">Название (А-Я)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="catalog-actions-right">
+            <div class="catalog-count-badge" id="catalog-count-text">Отображается 0 из 0</div>
+            <div class="view-mode-toggles">
+              <button type="button" class="view-mode-btn active" id="btn-view-grid" title="Вид: Сетка карточек">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Сетка</span>
+              </button>
+              <button type="button" class="view-mode-btn" id="btn-view-table" title="Вид: Компактная таблица">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <span>Таблица</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Catalog Container -->
+      <section class="catalog-content-section">
+        <div id="catalog-container" class="catalog-container">
+          <!-- Rendered dynamically by GameCatalogComponent -->
+        </div>
+      </section>
+    </div> <!-- END #catalog-view-panel -->
   </div>
 
   <!-- SCAN PROGRESS MODAL OVERLAY -->
