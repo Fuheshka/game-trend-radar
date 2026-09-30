@@ -127,9 +127,9 @@ export class RadarChartComponent {
   }
 
   /**
-   * Создание SVG Defs с градиентами и фильтрами свечения
+   * Создание SVG Defs с градиентами, фильтрами свечения и маской радара
    */
-  private createDefs(): SVGDefsElement {
+  private createDefs(clipRadius: number = 162): SVGDefsElement {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     defs.innerHTML = `
       <linearGradient id="radar-beam-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -144,6 +144,9 @@ export class RadarChartComponent {
           <feMergeNode in="SourceGraphic" />
         </feMerge>
       </filter>
+      <clipPath id="radar-scope-clip">
+        <circle cx="220" cy="220" r="${clipRadius}" />
+      </clipPath>
     `;
     return defs;
   }
@@ -155,7 +158,13 @@ export class RadarChartComponent {
     const beamGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     beamGroup.setAttribute('class', 'radar-sweep-beam');
     beamGroup.setAttribute('id', 'radar-sweep-beam');
+    beamGroup.setAttribute('clip-path', 'url(#radar-scope-clip)');
     beamGroup.style.pointerEvents = 'none';
+
+    const rotator = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    rotator.setAttribute('class', 'radar-sweep-rotator');
+    rotator.setAttribute('id', 'radar-sweep-rotator');
+    rotator.style.pointerEvents = 'none';
 
     // Вращающийся шлейф луча (хвост сектора 42 градуса против часовой стрелки от 12 часов)
     const trailAngleRad = (42 * Math.PI) / 180;
@@ -167,7 +176,7 @@ export class RadarChartComponent {
     trailPath.setAttribute('d', d);
     trailPath.setAttribute('class', 'radar-sweep-trail');
     trailPath.setAttribute('fill', 'url(#radar-beam-gradient)');
-    beamGroup.appendChild(trailPath);
+    rotator.appendChild(trailPath);
 
     // Дополнительный внутренний высокоинтенсивный фосфорный слой (18 градусов)
     const innerAngleRad = (18 * Math.PI) / 180;
@@ -177,7 +186,7 @@ export class RadarChartComponent {
     innerTrail.setAttribute('d', `M ${cx} ${cy} L ${cx} ${cy - beamRadius} A ${beamRadius} ${beamRadius} 0 0 0 ${ix.toFixed(1)} ${iy.toFixed(1)} Z`);
     innerTrail.setAttribute('fill', '#00f2fe');
     innerTrail.setAttribute('opacity', '0.15');
-    beamGroup.appendChild(innerTrail);
+    rotator.appendChild(innerTrail);
 
     // Ведущий сканирующий луч (линия 12 часов)
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -187,9 +196,11 @@ export class RadarChartComponent {
     line.setAttribute('y2', String(cy - beamRadius));
     line.setAttribute('class', 'radar-sweep-line');
     line.setAttribute('filter', 'url(#radar-glow-filter)');
-    beamGroup.appendChild(line);
+    rotator.appendChild(line);
 
-    // Центральное ядро радара
+    beamGroup.appendChild(rotator);
+
+    // Центральное ядро радара (неподвижное в центре cx, cy)
     const hubRing = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     hubRing.setAttribute('cx', String(cx));
     hubRing.setAttribute('cy', String(cy));
@@ -215,6 +226,8 @@ export class RadarChartComponent {
     let lastTimestamp = performance.now();
     let currentAngle = 0;
 
+    const rotatorEl = (beamEl.querySelector('.radar-sweep-rotator') as SVGElement) || beamEl;
+
     const tick = (now: number) => {
       const dt = now - lastTimestamp;
       lastTimestamp = now;
@@ -224,7 +237,7 @@ export class RadarChartComponent {
         const prevAngle = currentAngle;
         currentAngle = (currentAngle + (dt / DURATION_MS) * 360) % 360;
 
-        beamEl.setAttribute('transform', `rotate(${currentAngle.toFixed(2)} ${cx} ${cy})`);
+        rotatorEl.setAttribute('transform', `rotate(${currentAngle.toFixed(2)} ${cx} ${cy})`);
         this.updateBlips(prevAngle, currentAngle, now);
       } else {
         lastTimestamp = now;
@@ -551,7 +564,7 @@ export class RadarChartComponent {
     svg.setAttribute('class', 'radar-svg');
 
     // Градиенты и фильтры
-    svg.appendChild(this.createDefs());
+    svg.appendChild(this.createDefs(outerR + 10));
 
     // Внешние кольца прицела
     const outerScope = document.createElementNS('http://www.w3.org/2000/svg', 'circle');

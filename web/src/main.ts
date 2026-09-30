@@ -2,6 +2,7 @@ import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType } from './ty
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
+import { animateCounter } from './utils/animation.js';
 
 class App {
   private snapshot: MarketSnapshot = FALLBACK_SNAPSHOT;
@@ -11,6 +12,12 @@ class App {
   private searchQuery: string = '';
   private sortBy: 'score_desc' | 'score_asc' | 'ccu_desc' | 'velocity_desc' | 'title_asc' = 'score_desc';
   private isScanning: boolean = false;
+  private prevMetrics = {
+    totalGames: 0,
+    totalCcu: 0,
+    topScore: 0,
+    arbitrageCount: 0,
+  };
 
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
@@ -266,28 +273,80 @@ class App {
     const totalGames = this.snapshot.totalGamesScanned || 0;
     const totalCCU = this.snapshot.robloxTotalCCU || 0;
 
-    if (totalGamesEl) totalGamesEl.textContent = totalGames.toLocaleString();
-    if (totalCcuEl) totalCcuEl.textContent = this.formatNumber(totalCCU);
-
-    if (platformsHintEl) {
-      platformsHintEl.textContent = `Roblox: ${counts.roblox || 0} · Yandex: ${counts.yandex_games || 0} · Poki: ${counts.poki || 0}`;
-    }
-
     const sortedVerdicts = [...(this.snapshot.verdicts || [])].sort(
       (a, b) => b.opportunityScore.overallScore - a.opportunityScore.overallScore
     );
 
-    if (sortedVerdicts.length > 0) {
-      const top = sortedVerdicts[0];
-      if (topScoreEl) topScoreEl.textContent = `${top.opportunityScore.overallScore}/100`;
-      if (topGenreEl) topGenreEl.textContent = top.titleRu;
+    const topScore = sortedVerdicts.length > 0 ? sortedVerdicts[0].opportunityScore.overallScore : 0;
+    if (topGenreEl && sortedVerdicts.length > 0) {
+      topGenreEl.textContent = sortedVerdicts[0].titleRu;
     }
 
     const arbitrageCount =
       this.snapshot.arbitrageOpportunities?.length ??
       this.snapshot.verdicts.filter(v => v.hasArbitrageOpportunity).length;
 
-    if (arbitrageCountEl) arbitrageCountEl.textContent = String(arbitrageCount);
+    if (totalGamesEl) {
+      animateCounter(
+        totalGamesEl,
+        this.prevMetrics.totalGames,
+        totalGames,
+        1000,
+        val => Math.round(val).toLocaleString()
+      );
+    }
+
+    if (totalCcuEl) {
+      animateCounter(
+        totalCcuEl,
+        this.prevMetrics.totalCcu,
+        totalCCU,
+        1000,
+        val => this.formatNumber(val)
+      );
+    }
+
+    if (topScoreEl) {
+      animateCounter(
+        topScoreEl,
+        this.prevMetrics.topScore,
+        topScore,
+        1000,
+        val => `${Math.round(val)}/100`
+      );
+    }
+
+    if (arbitrageCountEl) {
+      animateCounter(
+        arbitrageCountEl,
+        this.prevMetrics.arbitrageCount,
+        arbitrageCount,
+        1000,
+        val => Math.round(val).toString()
+      );
+    }
+
+    if (platformsHintEl) {
+      platformsHintEl.textContent = `Roblox: ${counts.roblox || 0} · Yandex: ${counts.yandex_games || 0} · Poki: ${counts.poki || 0}`;
+    }
+
+    this.prevMetrics = {
+      totalGames,
+      totalCcu: totalCCU,
+      topScore,
+      arbitrageCount,
+    };
+
+    this.triggerMetricCardsPulse();
+  }
+
+  private triggerMetricCardsPulse(): void {
+    const cards = document.querySelectorAll<HTMLElement>('.metrics-grid .metric-card');
+    cards.forEach(card => {
+      card.classList.remove('glow-pulse');
+      void card.offsetWidth;
+      card.classList.add('glow-pulse');
+    });
   }
 
   private renderLegend(): void {
@@ -419,7 +478,7 @@ class App {
   private formatNumber(n: number): string {
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
     if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
-    return n.toLocaleString();
+    return Math.round(n).toLocaleString();
   }
 }
 
