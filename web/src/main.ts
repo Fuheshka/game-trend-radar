@@ -6,6 +6,7 @@ import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { DetailDrawerComponent } from './components/DetailDrawer.js';
 import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
 import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
+import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
 
@@ -51,6 +52,8 @@ class App {
   private detailDrawer!: DetailDrawerComponent;
   private gameCatalog!: GameCatalogComponent;
   private arbitrageMatrix!: ArbitrageMatrixComponent;
+  private promptModal!: PromptGeneratorModalComponent;
+  private currentDrawerVerdict: MarketVerdict | null = null;
 
   constructor() {
     this.init();
@@ -62,6 +65,7 @@ class App {
 
     // Initial render with fallback data while fetching live snapshot
     this.setupComponents();
+    this.enhanceVerdictCardsWithPromptButton();
     this.updateGlobalMetrics();
     this.renderLegend();
     this.renderSearchTags();
@@ -343,6 +347,32 @@ class App {
         }
       }
     });
+
+    // Drawer click delegation for AI spec generator button
+    const gameDrawerEl = document.getElementById('game-drawer');
+    gameDrawerEl?.addEventListener('click', e => {
+      const target = e.target as HTMLElement;
+      const specBtn = target.closest('#drawer-btn-generate-spec');
+      if (specBtn) {
+        e.stopPropagation();
+        if (this.currentDrawerVerdict) {
+          this.openPromptModalForArchetype(this.currentDrawerVerdict.archetype);
+        }
+      }
+    });
+
+    if (gameDrawerEl) {
+      const observer = new MutationObserver(() => {
+        if (this.currentDrawerVerdict) {
+          const footerActions = gameDrawerEl.querySelector('.drawer-footer-actions');
+          const filterBtn = gameDrawerEl.querySelector('#drawer-btn-filter-archetype');
+          if (footerActions && filterBtn && !footerActions.querySelector('#drawer-btn-generate-spec')) {
+            this.injectDrawerPromptButton(this.currentDrawerVerdict);
+          }
+        }
+      });
+      observer.observe(gameDrawerEl, { childList: true, subtree: true });
+    }
   }
 
   private setupComponents(): void {
@@ -430,6 +460,17 @@ class App {
       verdictsContainer.addEventListener('click', e => {
         const target = e.target as HTMLElement;
 
+        // 0. Click on "Сгенерировать ТЗ для ИИ" button inside card
+        const promptBtn = target.closest('.btn-generate-ai-spec') as HTMLElement;
+        if (promptBtn) {
+          e.stopPropagation();
+          const arch = promptBtn.getAttribute('data-archetype') as GameArchetype;
+          if (arch) {
+            this.openPromptModalForArchetype(arch);
+          }
+          return;
+        }
+
         // 1. Click on game sample chip
         const chip = target.closest('.game-sample-chip') as HTMLElement;
         if (chip) {
@@ -504,6 +545,12 @@ class App {
       });
       this.updateArbitrageCountUI();
     }
+
+    // Prompt Generator Modal Component setup
+    this.promptModal = new PromptGeneratorModalComponent({
+      showToast: msg => this.showToast(msg),
+      onClose: () => soundService.playClick(),
+    });
   }
 
   private switchView(view: 'niches' | 'catalog' | 'arbitrage'): void {
@@ -575,9 +622,11 @@ class App {
     const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === archetype);
     if (!verdict) return;
 
+    this.currentDrawerVerdict = verdict;
     soundService.playRadarPing();
     const games = this.getGamesForArchetype(archetype);
     this.detailDrawer.openArchetype(verdict, games);
+    this.injectDrawerPromptButton(verdict);
   }
 
   public openGameDetail(titleOrId: string, archetypeHint?: GameArchetype): void {
@@ -1039,6 +1088,56 @@ class App {
     }
 
     this.verdictCards?.updateData(filtered);
+    this.enhanceVerdictCardsWithPromptButton();
+  }
+
+  public openPromptModalForArchetype(archetype: GameArchetype): void {
+    const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === archetype);
+    const games = this.getGamesForArchetype(archetype);
+    const arbitrage = (this.snapshot.arbitrageOpportunities || []).find(
+      o => o.archetype === archetype
+    );
+    soundService.playClick();
+    this.promptModal.open(verdict, games, arbitrage);
+  }
+
+  private enhanceVerdictCardsWithPromptButton(): void {
+    const cards = document.querySelectorAll<HTMLElement>('#verdicts-container .verdict-card');
+    cards.forEach(card => {
+      if (card.querySelector('.btn-generate-ai-spec')) return;
+      const arch = card.getAttribute('data-archetype') as GameArchetype;
+      if (!arch) return;
+
+      const footer = document.createElement('div');
+      footer.className = 'verdict-card-footer';
+      footer.innerHTML = `
+        <button type="button" class="btn-generate-ai-spec" data-archetype="${arch}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Сгенерировать ТЗ для ИИ</span>
+        </button>
+      `;
+      card.appendChild(footer);
+    });
+  }
+
+  private injectDrawerPromptButton(verdict: MarketVerdict): void {
+    this.currentDrawerVerdict = verdict;
+    const footerActions = document.querySelector<HTMLElement>('#game-drawer .drawer-footer-actions');
+    if (footerActions && !footerActions.querySelector('#drawer-btn-generate-spec')) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'drawer-btn ai-spec-btn';
+      btn.id = 'drawer-btn-generate-spec';
+      btn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span>Сгенерировать ТЗ для ИИ</span>
+      `;
+      footerActions.insertBefore(btn, footerActions.firstChild);
+    }
   }
 
   private showToast(message: string): void {
