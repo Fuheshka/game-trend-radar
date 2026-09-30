@@ -1,9 +1,9 @@
-import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType } from './types.js';
+import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType, NormalizedGame } from './types.js';
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
-import { GameDrawerComponent } from './components/GameDrawer.js';
+import { DetailDrawerComponent } from './components/DetailDrawer.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
 
@@ -25,7 +25,7 @@ class App {
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
   private liveTicker!: LiveTickerComponent;
-  private gameDrawer!: GameDrawerComponent;
+  private detailDrawer!: DetailDrawerComponent;
 
   constructor() {
     this.init();
@@ -161,13 +161,19 @@ class App {
     const gameDrawer = document.getElementById('game-drawer');
 
     if (drawerBackdrop && gameDrawer) {
-      this.gameDrawer = new GameDrawerComponent({
+      this.detailDrawer = new DetailDrawerComponent({
         backdrop: drawerBackdrop,
         drawer: gameDrawer,
         onFilterSearch: (query, archetype) => {
           this.applyFilterFromSignal(query, archetype);
         },
         showToast: msg => this.showToast(msg),
+        onSelectGame: game => {
+          this.openGameDetail(game.title, game.archetype);
+        },
+        onSelectArchetype: archetype => {
+          this.openArchetypeDetail(archetype);
+        },
       });
     }
 
@@ -190,6 +196,7 @@ class App {
           this.activeArchetype = archetype;
           if (archetype) {
             soundService.playRadarPing();
+            this.openArchetypeDetail(archetype);
           } else {
             soundService.playClick();
           }
@@ -197,6 +204,18 @@ class App {
           this.applyFiltersAndSort();
           this.renderLegend();
         },
+      });
+
+      // Delegated click on radar chart blips/points
+      radarContainer.addEventListener('click', e => {
+        const target = e.target as SVGElement;
+        const blip = target.closest('.radar-blip-group, .polar-blip-group') as SVGElement;
+        if (blip) {
+          // If a blip was clicked, open the detail drawer for the active archetype or determine from blip
+          if (this.activeArchetype) {
+            this.openArchetypeDetail(this.activeArchetype);
+          }
+        }
       });
     }
 
@@ -214,7 +233,151 @@ class App {
           }
         },
       });
+
+      // Event delegation for clicks on chips, tags, and verdict cards
+      verdictsContainer.addEventListener('click', e => {
+        const target = e.target as HTMLElement;
+
+        // 1. Click on game sample chip
+        const chip = target.closest('.game-sample-chip') as HTMLElement;
+        if (chip) {
+          e.stopPropagation();
+          const card = chip.closest('.verdict-card') as HTMLElement;
+          const arch = card?.getAttribute('data-archetype') as GameArchetype | undefined;
+          const title = chip.getAttribute('title') || chip.textContent?.trim() || '';
+          this.openGameDetail(title, arch);
+          return;
+        }
+
+        // 2. Click on archetype tag inside card
+        const tagChip = target.closest('.card-archetype-tag') as HTMLElement;
+        if (tagChip) {
+          e.stopPropagation();
+          const card = tagChip.closest('.verdict-card') as HTMLElement;
+          const arch = card?.getAttribute('data-archetype') as GameArchetype;
+          if (arch) {
+            this.openArchetypeDetail(arch);
+          }
+          return;
+        }
+
+        // 3. Click on verdict card itself
+        const card = target.closest('.verdict-card') as HTMLElement;
+        if (card) {
+          const arch = card.getAttribute('data-archetype') as GameArchetype;
+          if (arch) {
+            this.openArchetypeDetail(arch);
+          }
+        }
+      });
     }
+  }
+
+  public openArchetypeDetail(archetype: GameArchetype): void {
+    const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === archetype);
+    if (!verdict) return;
+
+    soundService.playRadarPing();
+    const games = this.getGamesForArchetype(archetype);
+    this.detailDrawer.openArchetype(verdict, games);
+  }
+
+  public openGameDetail(titleOrId: string, archetypeHint?: GameArchetype): void {
+    if (!titleOrId) return;
+    soundService.playClick();
+
+    const games = this.snapshot.games || [];
+    const lower = titleOrId.toLowerCase().trim();
+
+    // 1. Exact ID or Title match
+    let found = games.find(g => g.id === titleOrId || g.title.toLowerCase().trim() === lower);
+
+    // 2. Substring match
+    if (!found) {
+      found = games.find(
+        g => g.title.toLowerCase().includes(lower) || lower.includes(g.title.toLowerCase())
+      );
+    }
+
+    // 3. Arbitrage match
+    if (!found && this.snapshot.arbitrageOpportunities) {
+      for (const opp of this.snapshot.arbitrageOpportunities) {
+        if (opp.robloxGame && opp.robloxGame.title.toLowerCase().includes(lower)) {
+          found = opp.robloxGame;
+          break;
+        }
+        if (opp.nearestAnalog && opp.nearestAnalog.title.toLowerCase().includes(lower)) {
+          found = {
+            id: opp.nearestAnalog.id,
+            platform: 'yandex_games',
+            title: opp.nearestAnalog.title,
+            genre: 'Аналог',
+            archetype: opp.nearestAnalog.archetype,
+            metricValue: Math.round(opp.robloxCCU * 0.15),
+            metricType: 'ccu',
+            likeRatio: 0.88,
+            tags: ['analog', 'arbitrage'],
+            timestamp: this.snapshot.timestamp,
+          };
+          break;
+        }
+      }
+    }
+
+    // 4. Synthesize game if not explicitly present in snapshot
+    if (!found) {
+      const arch = archetypeHint || 'OTHER_CASUAL';
+      const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === arch);
+      found = {
+        id: `synth_${encodeURIComponent(lower)}`,
+        platform: 'roblox',
+        title: titleOrId,
+        genre: verdict ? verdict.titleRu : 'Казуальные',
+        archetype: arch,
+        metricValue: verdict
+          ? Math.round(verdict.totalAudienceCCU / Math.max(1, verdict.sampleTitles.length))
+          : 25000,
+        metricType: 'ccu',
+        likeRatio: 0.92,
+        tags: [arch, 'Sample', 'Trending'],
+        timestamp: this.snapshot.timestamp || new Date().toISOString(),
+        url: `https://www.roblox.com/discover/?Keyword=${encodeURIComponent(titleOrId)}`,
+      };
+    }
+
+    const archetypeGames = this.getGamesForArchetype(found.archetype);
+    const parentVerdict = (this.snapshot.verdicts || []).find(v => v.archetype === found!.archetype);
+
+    this.detailDrawer.openGame(found, archetypeGames, parentVerdict);
+  }
+
+  private getGamesForArchetype(archetype: GameArchetype): NormalizedGame[] {
+    const games = (this.snapshot.games || []).filter(g => g.archetype === archetype);
+    const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === archetype);
+
+    if (verdict && verdict.sampleTitles) {
+      const existingTitles = new Set(games.map(g => g.title.toLowerCase().trim()));
+      for (const sampleTitle of verdict.sampleTitles) {
+        if (!sampleTitle || existingTitles.has(sampleTitle.toLowerCase().trim())) continue;
+        games.push({
+          id: `sample_${sampleTitle.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`,
+          platform: 'roblox',
+          title: sampleTitle,
+          genre: verdict.titleRu,
+          archetype: archetype,
+          metricValue: Math.round(
+            (verdict.totalAudienceCCU || 50000) / Math.max(1, verdict.sampleTitles.length)
+          ),
+          metricType: 'ccu',
+          likeRatio: 0.91,
+          url: `https://www.roblox.com/discover/?Keyword=${encodeURIComponent(sampleTitle)}`,
+          tags: [archetype, 'Sample', 'Trending'],
+          timestamp: this.snapshot.timestamp || new Date().toISOString(),
+        });
+        existingTitles.add(sampleTitle.toLowerCase().trim());
+      }
+    }
+    return games;
   }
 
   private handleTickerSignalClick(signal: TickerSignal): void {
@@ -223,8 +386,8 @@ class App {
     } else {
       soundService.playClick();
     }
-    if (this.gameDrawer) {
-      this.gameDrawer.open(signal);
+    if (this.detailDrawer) {
+      this.detailDrawer.openSignal(signal);
     }
     this.applyFilterFromSignal(signal.searchFilter, signal.archetype);
   }
@@ -481,6 +644,7 @@ class App {
         this.activeArchetype = this.activeArchetype === v.archetype ? null : v.archetype;
         if (this.activeArchetype) {
           soundService.playRadarPing();
+          this.openArchetypeDetail(this.activeArchetype);
         } else {
           soundService.playClick();
         }
