@@ -27,6 +27,22 @@
       </div>
 
       <div class="header-right">
+        <!-- SNAPSHOT HISTORY SELECTOR -->
+        <div class="snapshot-selector-wrapper" id="snapshot-selector-wrapper" title="Выбор исторического среза рынка">
+          <div class="snapshot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <span class="snapshot-label">Срез:</span>
+          <select id="snapshot-select" class="snapshot-select" aria-label="Выберите срез рынка">
+            <option value="" disabled selected>Загрузка срезов...</option>
+          </select>
+        </div>
+
         <div class="server-status-pill" id="server-status-indicator">
           <span class="status-dot" id="status-dot"></span>
           <span id="server-status-text">Локальный сервер :4200</span>

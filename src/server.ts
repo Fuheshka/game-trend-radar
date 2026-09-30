@@ -97,10 +97,32 @@ export function createRadarServer(options: RadarServerOptions = {}) {
     // API Routes
     if (pathname.startsWith('/api/')) {
       try {
+        if (pathname === '/api/snapshots' && req.method === 'GET') {
+          const snapshots = store.listSnapshots();
+          sendJson(res, 200, snapshots);
+          return;
+        }
+
         if (pathname === '/api/snapshots/latest' && req.method === 'GET') {
           const snapshot = store.getLatestSnapshot();
           if (!snapshot) {
             sendJson(res, 404, { error: 'No snapshots available. Trigger a scan via POST /api/scan.' });
+            return;
+          }
+          sendJson(res, 200, snapshot);
+          return;
+        }
+
+        if (pathname.startsWith('/api/snapshots/') && req.method === 'GET') {
+          const id = pathname.slice('/api/snapshots/'.length);
+          if (!id) {
+            const snapshots = store.listSnapshots();
+            sendJson(res, 200, snapshots);
+            return;
+          }
+          const snapshot = store.getSnapshotById(id);
+          if (!snapshot) {
+            sendJson(res, 404, { error: `Snapshot with id '${id}' not found` });
             return;
           }
           sendJson(res, 200, snapshot);

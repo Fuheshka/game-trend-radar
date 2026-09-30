@@ -1,4 +1,4 @@
-import { MarketSnapshot, MarketVerdict } from '../types/index.js';
+import { MarketSnapshot, MarketVerdict, SnapshotSummary } from '../types/index.js';
 import { ArbitrageAnalyzer } from '../analyzer/arbitrage.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -35,6 +35,86 @@ export class SnapshotStore {
     if (files.length === 0) return null;
     const raw = fs.readFileSync(path.join(this.snapshotsDir, files[0]), 'utf-8');
     return JSON.parse(raw) as MarketSnapshot;
+  }
+
+  listSnapshots(): SnapshotSummary[] {
+    if (!fs.existsSync(this.snapshotsDir)) return [];
+    const files = fs
+      .readdirSync(this.snapshotsDir)
+      .filter(f => f.startsWith('snapshot-') && f.endsWith('.json'))
+      .sort()
+      .reverse();
+
+    const summaries: SnapshotSummary[] = [];
+    for (const file of files) {
+      try {
+        const raw = fs.readFileSync(path.join(this.snapshotsDir, file), 'utf-8');
+        const parsed = JSON.parse(raw) as MarketSnapshot;
+        const dateMatch = file.match(/snapshot-(\d{4}-\d{2}-\d{2})\.json/);
+        const date = dateMatch ? dateMatch[1] : (parsed.timestamp ? parsed.timestamp.split('T')[0] : file);
+        summaries.push({
+          id: parsed.id || file.replace(/\.json$/, ''),
+          timestamp: parsed.timestamp || '',
+          date,
+          totalGamesScanned: parsed.totalGamesScanned ?? (parsed.games?.length || 0),
+          robloxTotalCCU: parsed.robloxTotalCCU,
+          filename: file,
+        });
+      } catch {
+        // Skip corrupted or unreadable files
+      }
+    }
+    return summaries;
+  }
+
+  getSnapshotById(idOrDate: string): MarketSnapshot | null {
+    if (!idOrDate || !fs.existsSync(this.snapshotsDir)) return null;
+
+    if (idOrDate === 'latest') {
+      return this.getLatestSnapshot();
+    }
+
+    // Direct filename checks
+    const possibleFiles = [
+      idOrDate.endsWith('.json') ? idOrDate : `${idOrDate}.json`,
+      `snapshot-${idOrDate}.json`,
+      idOrDate,
+    ];
+
+    for (const candidate of possibleFiles) {
+      const p = path.join(this.snapshotsDir, candidate);
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) {
+        try {
+          return JSON.parse(fs.readFileSync(p, 'utf-8')) as MarketSnapshot;
+        } catch {
+          return null;
+        }
+      }
+    }
+
+    // Search by snapshot.id or timestamp date prefix
+    const files = fs
+      .readdirSync(this.snapshotsDir)
+      .filter(f => f.startsWith('snapshot-') && f.endsWith('.json'))
+      .sort()
+      .reverse();
+
+    for (const file of files) {
+      try {
+        const raw = fs.readFileSync(path.join(this.snapshotsDir, file), 'utf-8');
+        const parsed = JSON.parse(raw) as MarketSnapshot;
+        if (parsed.id === idOrDate) {
+          return parsed;
+        }
+        if (parsed.timestamp && parsed.timestamp.startsWith(idOrDate)) {
+          return parsed;
+        }
+      } catch {
+        // Continue to next file
+      }
+    }
+
+    return null;
   }
 
   generateMarkdownReport(snapshot: MarketSnapshot): string {

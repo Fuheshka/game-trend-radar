@@ -107,6 +107,15 @@ export interface MarketSnapshot {
   arbitrageOpportunities?: ArbitrageOpportunity[];
 }
 
+export interface SnapshotSummary {
+  id: string;
+  timestamp: string;
+  date: string;
+  totalGamesScanned: number;
+  robloxTotalCCU?: number;
+  filename: string;
+}
+
 export interface RawRobloxGame {
   universeId: number;
   rootPlaceId: number;

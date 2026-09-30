@@ -3,23 +3,29 @@ import { MarketVerdict, GameArchetype } from '../types.js';
 export interface VerdictCardsOptions {
   container: HTMLElement;
   verdicts: MarketVerdict[];
+  previousVerdicts?: MarketVerdict[];
   onSelectTag?: (tag: string) => void;
 }
 
 export class VerdictCardsComponent {
   private container: HTMLElement;
   private verdicts: MarketVerdict[] = [];
+  private previousVerdicts: MarketVerdict[] = [];
   private onSelectTag?: (tag: string) => void;
 
   constructor(options: VerdictCardsOptions) {
     this.container = options.container;
     this.verdicts = options.verdicts;
+    this.previousVerdicts = options.previousVerdicts || [];
     this.onSelectTag = options.onSelectTag;
     this.render();
   }
 
-  public updateData(verdicts: MarketVerdict[]): void {
+  public updateData(verdicts: MarketVerdict[], previousVerdicts?: MarketVerdict[]): void {
     this.verdicts = verdicts;
+    if (previousVerdicts !== undefined) {
+      this.previousVerdicts = previousVerdicts;
+    }
     this.render();
   }
 
@@ -94,6 +100,25 @@ export class VerdictCardsComponent {
     const viralMultiplier = v.opportunityScore.viralMultiplier || 1.0;
     const hasArbitrage = Boolean(v.hasArbitrageOpportunity);
 
+    // Calculate CCU dynamics vs previous snapshot
+    const prevVerdict = this.previousVerdicts.find(pv => pv.archetype === v.archetype);
+    let ccuDiffHtml = '';
+    if (prevVerdict && prevVerdict.totalAudienceCCU > 0) {
+      const prevCCU = prevVerdict.totalAudienceCCU;
+      const currCCU = v.totalAudienceCCU;
+      const diff = currCCU - prevCCU;
+      const percent = (diff / prevCCU) * 100;
+      const absPercent = Math.abs(percent).toFixed(1);
+
+      if (percent > 0.05) {
+        ccuDiffHtml = `<span class="ccu-trend-badge trend-up" title="Динамика CCU к предыдущему срезу: +${diff.toLocaleString()}">+${absPercent}% ▲</span>`;
+      } else if (percent < -0.05) {
+        ccuDiffHtml = `<span class="ccu-trend-badge trend-down" title="Динамика CCU к предыдущему срезу: ${diff.toLocaleString()}">-${absPercent}% ▼</span>`;
+      } else {
+        ccuDiffHtml = `<span class="ccu-trend-badge trend-neutral" title="CCU без изменений">0.0% ━</span>`;
+      }
+    }
+
     card.innerHTML = `
       <div class="card-top-bar">
         <div class="card-title-block">
@@ -123,7 +148,7 @@ export class VerdictCardsComponent {
           <div class="audience-share-bar">
             <div class="bar-labels">
               <span>Доля рынка: ${v.marketSharePercent}%</span>
-              <span>CCU: ${v.totalAudienceCCU.toLocaleString()}</span>
+              <span class="ccu-metric-wrapper"><span>CCU: ${v.totalAudienceCCU.toLocaleString()}</span>${ccuDiffHtml}</span>
             </div>
             <div class="progress-track">
               <div class="progress-fill" style="width: ${Math.min(100, Math.max(4, v.marketSharePercent))}%;"></div>

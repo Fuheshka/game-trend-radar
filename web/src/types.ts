@@ -84,3 +84,12 @@ export interface MarketSnapshot {
   verdicts: MarketVerdict[];
   arbitrageOpportunities?: ArbitrageOpportunity[];
 }
+
+export interface SnapshotSummary {
+  id: string;
+  timestamp: string;
+  date: string;
+  totalGamesScanned: number;
+  robloxTotalCCU?: number;
+  filename: string;
+}

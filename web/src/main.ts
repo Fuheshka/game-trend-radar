@@ -1,4 +1,4 @@
-import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType, NormalizedGame } from './types.js';
+import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType, NormalizedGame, SnapshotSummary } from './types.js';
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
@@ -30,8 +30,29 @@ export const POPULAR_SEARCH_TAGS: PopularSearchTag[] = [
   { id: 'ragdoll', label: 'Рэгдолл', query: 'рэгдолл' },
 ];
 
+export function formatSnapshotDateRu(dateStr: string): string {
+  const dateOnly = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+  const parts = dateOnly.split('-');
+  if (parts.length === 3) {
+    const day = parseInt(parts[2], 10);
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const monthsRu = [
+      'янв', 'фев', 'мар', 'апр', 'май', 'июн',
+      'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'
+    ];
+    if (monthIndex >= 0 && monthIndex < 12) {
+      return `${day} ${monthsRu[monthIndex]}`;
+    }
+  }
+  return dateStr;
+}
+
 class App {
   private snapshot: MarketSnapshot = FALLBACK_SNAPSHOT;
+  private snapshotsList: SnapshotSummary[] = [];
+  private snapshotsCache: Map<string, MarketSnapshot> = new Map();
+  private currentSnapshotId: string = '';
+  private previousSnapshot: MarketSnapshot | null = null;
   private activePlatform: 'all' | PlatformType = 'all';
   private activeStatus: 'all' | 'GREEN_LIGHT' | 'YELLOW_LIGHT' | 'RED_LIGHT' | 'arbitrage' = 'all';
   private activeArchetype: GameArchetype | null = null;
@@ -70,11 +91,19 @@ class App {
     this.renderLegend();
     this.renderSearchTags();
 
-    // Fetch live data from backend
-    await this.fetchLatestSnapshot();
+    // Fetch live snapshots list & data from backend
+    await this.fetchSnapshots();
   }
 
   private initElements(): void {
+    // Snapshot history selector
+    const snapshotSelect = document.getElementById('snapshot-select') as HTMLSelectElement | null;
+    snapshotSelect?.addEventListener('change', async e => {
+      const selectedId = (e.target as HTMLSelectElement).value;
+      soundService.playClick();
+      await this.selectSnapshot(selectedId, true);
+    });
+
     // Sound toggle button
     const btnSoundToggle = document.getElementById('btn-sound-toggle');
     const soundToggleLabel = document.getElementById('sound-toggle-label');
@@ -445,6 +474,7 @@ class App {
       this.verdictCards = new VerdictCardsComponent({
         container: verdictsContainer,
         verdicts: this.getFilteredVerdicts(),
+        previousVerdicts: this.previousSnapshot?.verdicts,
         onSelectTag: tag => {
           soundService.playClick();
           const searchInput = document.getElementById('search-input') as HTMLInputElement;
@@ -767,24 +797,125 @@ class App {
     this.renderLegend();
   }
 
-  private async fetchLatestSnapshot(): Promise<void> {
+  private async fetchSnapshots(): Promise<void> {
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('server-status-text');
 
     try {
-      const res = await fetch('/api/snapshots/latest');
+      const res = await fetch('/api/snapshots');
       if (res.ok) {
-        const data: MarketSnapshot = await res.json();
-        this.snapshot = data;
+        const list: SnapshotSummary[] = await res.json();
+        this.snapshotsList = list;
         statusDot?.classList.remove('offline');
         if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
-      } else {
-        await this.tryStaticSnapshotFallback(statusDot, statusText);
+
+        if (this.snapshotsList.length > 0) {
+          this.populateSnapshotSelect();
+          // Load the latest snapshot (first in list)
+          await this.selectSnapshot(this.snapshotsList[0].id, false);
+          return;
+        }
       }
     } catch {
-      await this.tryStaticSnapshotFallback(statusDot, statusText);
+      // Backend unavailable or fetch error, proceed to fallback
     }
 
+    // Fallback: try fetching /api/snapshots/latest or static fallback
+    await this.fetchLatestSnapshot();
+  }
+
+  private populateSnapshotSelect(): void {
+    const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
+    if (!select) return;
+
+    select.innerHTML = '';
+    this.snapshotsList.forEach((s, idx) => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      const formattedDate = formatSnapshotDateRu(s.date);
+      opt.textContent = `${formattedDate} (${s.totalGamesScanned} игр)`;
+      if (idx === 0) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+  }
+
+  private async selectSnapshot(snapshotId: string, animate: boolean = true): Promise<void> {
+    if (!snapshotId) return;
+
+    const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
+    if (select && select.value !== snapshotId) {
+      select.value = snapshotId;
+    }
+
+    try {
+      let data: MarketSnapshot | undefined = this.snapshotsCache.get(snapshotId);
+      if (!data) {
+        const res = await fetch(`/api/snapshots/${snapshotId}`);
+        if (res.ok) {
+          data = await res.json();
+          this.snapshotsCache.set(snapshotId, data!);
+        }
+      }
+
+      if (data) {
+        this.snapshot = data;
+        this.currentSnapshotId = snapshotId;
+
+        // Find immediately preceding snapshot in history (idx + 1 in date-descending list)
+        const currIdx = this.snapshotsList.findIndex(s => s.id === snapshotId);
+        if (currIdx >= 0 && currIdx + 1 < this.snapshotsList.length) {
+          const prevSummary = this.snapshotsList[currIdx + 1];
+          let prevData = this.snapshotsCache.get(prevSummary.id);
+          if (!prevData) {
+            try {
+              const prevRes = await fetch(`/api/snapshots/${prevSummary.id}`);
+              if (prevRes.ok) {
+                prevData = await prevRes.json();
+                this.snapshotsCache.set(prevSummary.id, prevData!);
+              }
+            } catch {
+              // Ignore failure for previous snapshot
+            }
+          }
+          this.previousSnapshot = prevData || null;
+        } else {
+          this.previousSnapshot = null;
+        }
+
+        if (animate) {
+          this.triggerSnapshotTransitionAnimation();
+        }
+
+        this.applySnapshotDataToUI();
+      }
+    } catch (err) {
+      console.error('Failed to load snapshot:', err);
+    }
+  }
+
+  private triggerSnapshotTransitionAnimation(): void {
+    const targets = [
+      document.getElementById('verdicts-grid'),
+      document.getElementById('radar-chart-container'),
+      document.getElementById('metrics-hero-grid'),
+      document.getElementById('catalog-content'),
+      document.getElementById('arbitrage-matrix-container'),
+    ].filter(Boolean) as HTMLElement[];
+
+    targets.forEach(el => {
+      el.classList.remove('snapshot-fade-update');
+      void el.offsetWidth; // Force reflow
+      el.classList.add('snapshot-fade-update');
+    });
+
+    setTimeout(() => {
+      targets.forEach(el => el.classList.remove('snapshot-fade-update'));
+    }, 400);
+  }
+
+  private applySnapshotDataToUI(): void {
     this.updateGlobalMetrics();
     this.renderLegend();
     this.renderSearchTags();
@@ -795,6 +926,40 @@ class App {
     this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
     this.updateArbitrageCountUI();
     this.applyFiltersAndSort();
+  }
+
+  private async fetchLatestSnapshot(): Promise<void> {
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('server-status-text');
+
+    try {
+      const res = await fetch('/api/snapshots/latest');
+      if (res.ok) {
+        const data: MarketSnapshot = await res.json();
+        this.snapshot = data;
+        this.currentSnapshotId = data.id;
+        this.snapshotsCache.set(data.id, data);
+        statusDot?.classList.remove('offline');
+        if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
+
+        // Populate single fallback option if snapshotsList is empty
+        const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
+        if (select && select.options.length <= 1) {
+          select.innerHTML = '';
+          const opt = document.createElement('option');
+          opt.value = data.id;
+          opt.textContent = `${formatSnapshotDateRu(data.timestamp)} (${data.totalGamesScanned} игр)`;
+          opt.selected = true;
+          select.appendChild(opt);
+        }
+      } else {
+        await this.tryStaticSnapshotFallback(statusDot, statusText);
+      }
+    } catch {
+      await this.tryStaticSnapshotFallback(statusDot, statusText);
+    }
+
+    this.applySnapshotDataToUI();
   }
 
   private async tryStaticSnapshotFallback(
@@ -857,6 +1022,8 @@ class App {
         if (progressInner) progressInner.style.width = '100%';
         if (phaseText) phaseText.textContent = 'Сканирование успешно завершено.';
         this.showToast('Сканирование завершено! Снимок обновлен.');
+        // Refresh snapshots list to include the newly generated snapshot
+        await this.fetchSnapshots();
       } else {
         if (phaseText) phaseText.textContent = 'Сервер вернул ошибку, обновляем данные из кэша.';
         this.showToast('Ошибка внешних API, использован локальный кэш.');
@@ -1087,7 +1254,7 @@ class App {
       countText.textContent = `Отображается ${filtered.length} из ${this.snapshot.verdicts?.length || 0}`;
     }
 
-    this.verdictCards?.updateData(filtered);
+    this.verdictCards?.updateData(filtered, this.previousSnapshot?.verdicts);
     this.enhanceVerdictCardsWithPromptButton();
   }
 

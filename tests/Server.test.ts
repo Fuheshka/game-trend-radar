@@ -132,6 +132,14 @@ describe('Radar HTTP Server (порт 4200)', () => {
     });
   });
 
+  const mockSnapshot2: MarketSnapshot = {
+    ...mockSnapshot,
+    id: 'test-snapshot-uuid-2',
+    timestamp: '2026-09-14T12:00:00.000Z',
+    totalGamesScanned: 88,
+    robloxTotalCCU: 1500000,
+  };
+
   describe('2. Эндпоинт GET /api/snapshots/latest', () => {
     it('должен возвращать 404, если в хранилище еще нет снимков', async () => {
       const res = await fetch(`${baseUrl}/api/snapshots/latest`);
@@ -154,6 +162,71 @@ describe('Radar HTTP Server (порт 4200)', () => {
       expect(data.games.length).toBe(1);
       expect(data.verdicts.length).toBe(1);
       expect(data.arbitrageOpportunities?.length).toBe(1);
+    });
+  });
+
+  describe('2.1. Эндпоинт GET /api/snapshots (список доступных срезов)', () => {
+    it('должен возвращать список снимков с датами и количеством игр, отсортированный по убыванию дат', async () => {
+      // Сохраняем второй снимок на более позднюю дату
+      store.saveSnapshot(mockSnapshot2);
+
+      const res = await fetch(`${baseUrl}/api/snapshots`);
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('application/json');
+
+      const snapshots = (await res.json()) as Array<{
+        id: string;
+        date: string;
+        timestamp: string;
+        totalGamesScanned: number;
+        robloxTotalCCU?: number;
+      }>;
+
+      expect(Array.isArray(snapshots)).toBe(true);
+      expect(snapshots.length).toBe(2);
+
+      // Первый должен быть более свежий (2026-09-14)
+      expect(snapshots[0].id).toBe('test-snapshot-uuid-2');
+      expect(snapshots[0].date).toBe('2026-09-14');
+      expect(snapshots[0].totalGamesScanned).toBe(88);
+      expect(snapshots[0].robloxTotalCCU).toBe(1500000);
+
+      // Второй должен быть за 2026-09-13
+      expect(snapshots[1].id).toBe('test-snapshot-uuid');
+      expect(snapshots[1].date).toBe('2026-09-13');
+      expect(snapshots[1].totalGamesScanned).toBe(42);
+    });
+  });
+
+  describe('2.2. Эндпоинт GET /api/snapshots/:id (получение конкретного среза)', () => {
+    it('должен находить снимок по id (UUID)', async () => {
+      const res = await fetch(`${baseUrl}/api/snapshots/test-snapshot-uuid`);
+      expect(res.status).toBe(200);
+      const data = (await res.json()) as MarketSnapshot;
+      expect(data.id).toBe('test-snapshot-uuid');
+      expect(data.totalGamesScanned).toBe(42);
+    });
+
+    it('должен находить снимок по дате (YYYY-MM-DD)', async () => {
+      const res = await fetch(`${baseUrl}/api/snapshots/2026-09-14`);
+      expect(res.status).toBe(200);
+      const data = (await res.json()) as MarketSnapshot;
+      expect(data.id).toBe('test-snapshot-uuid-2');
+      expect(data.totalGamesScanned).toBe(88);
+    });
+
+    it('должен находить снимок по имени файла без расширения (snapshot-YYYY-MM-DD)', async () => {
+      const res = await fetch(`${baseUrl}/api/snapshots/snapshot-2026-09-14`);
+      expect(res.status).toBe(200);
+      const data = (await res.json()) as MarketSnapshot;
+      expect(data.id).toBe('test-snapshot-uuid-2');
+    });
+
+    it('должен возвращать 404, если снимок с указанным id не существует', async () => {
+      const res = await fetch(`${baseUrl}/api/snapshots/non-existent-snapshot-id`);
+      expect(res.status).toBe(404);
+      const json = await res.json();
+      expect(json.error).toBeDefined();
     });
   });
 
