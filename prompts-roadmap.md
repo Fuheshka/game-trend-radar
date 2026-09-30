@@ -175,9 +175,9 @@
 > - Категорический запрет автокоммитов без прямого подтверждения.
 > ```
 
-- [ ] **Промпт 7.3: Бегущая строка горячих трендов (Live Ticker Bar)**
+- [x] **Промпт 7.3: Бегущая строка горячих трендов (Live Ticker Bar)**
 
-> [!note]+ Текст промпта 7.3
+> [!note]- Текст промпта 7.3
 > ```text
 > [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail) [/better-ui](slashCommand;better-ui)
 > 

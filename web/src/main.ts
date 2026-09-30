@@ -2,6 +2,8 @@ import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType } from './ty
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
+import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
+import { GameDrawerComponent } from './components/GameDrawer.js';
 import { animateCounter } from './utils/animation.js';
 
 class App {
@@ -21,6 +23,8 @@ class App {
 
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
+  private liveTicker!: LiveTickerComponent;
+  private gameDrawer!: GameDrawerComponent;
 
   constructor() {
     this.init();
@@ -122,6 +126,30 @@ class App {
   private setupComponents(): void {
     const radarContainer = document.getElementById('radar-chart-container');
     const verdictsContainer = document.getElementById('verdicts-container');
+    const tickerTrack = document.getElementById('ticker-track');
+    const drawerBackdrop = document.getElementById('drawer-backdrop');
+    const gameDrawer = document.getElementById('game-drawer');
+
+    if (drawerBackdrop && gameDrawer) {
+      this.gameDrawer = new GameDrawerComponent({
+        backdrop: drawerBackdrop,
+        drawer: gameDrawer,
+        onFilterSearch: (query, archetype) => {
+          this.applyFilterFromSignal(query, archetype);
+        },
+        showToast: msg => this.showToast(msg),
+      });
+    }
+
+    if (tickerTrack) {
+      this.liveTicker = new LiveTickerComponent({
+        container: tickerTrack,
+        snapshot: this.snapshot,
+        onSelectSignal: signal => {
+          this.handleTickerSignalClick(signal);
+        },
+      });
+    }
 
     if (radarContainer) {
       this.radarChart = new RadarChartComponent({
@@ -153,6 +181,36 @@ class App {
     }
   }
 
+  private handleTickerSignalClick(signal: TickerSignal): void {
+    if (this.gameDrawer) {
+      this.gameDrawer.open(signal);
+    }
+    this.applyFilterFromSignal(signal.searchFilter, signal.archetype);
+  }
+
+  private applyFilterFromSignal(query: string, archetype?: GameArchetype): void {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.value = query;
+      this.searchQuery = query.toLowerCase();
+    }
+    if (archetype) {
+      this.activeArchetype = archetype;
+    }
+
+    // Reset status and platform filters to 'all' so matching game/verdict is visible
+    this.activePlatform = 'all';
+    this.activeStatus = 'all';
+    const platformPills = document.querySelectorAll<HTMLButtonElement>('[data-platform]');
+    platformPills.forEach(p => p.classList.toggle('active', p.getAttribute('data-platform') === 'all'));
+    const statusPills = document.querySelectorAll<HTMLButtonElement>('[data-status]');
+    statusPills.forEach(p => p.classList.toggle('active', p.getAttribute('data-status') === 'all'));
+
+    this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+    this.applyFiltersAndSort();
+    this.renderLegend();
+  }
+
   private async fetchLatestSnapshot(): Promise<void> {
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('server-status-text');
@@ -173,6 +231,7 @@ class App {
 
     this.updateGlobalMetrics();
     this.renderLegend();
+    this.liveTicker?.updateData(this.snapshot);
     this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
     this.applyFiltersAndSort();
   }
@@ -255,6 +314,7 @@ class App {
 
         this.updateGlobalMetrics();
         this.renderLegend();
+        this.liveTicker?.updateData(this.snapshot);
         this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
         this.applyFiltersAndSort();
       }, 700);

@@ -73,6 +73,18 @@ export const FALLBACK_SNAPSHOT: MarketSnapshot = {
       tags: ['runner', 'legend', 'arcade'],
       timestamp: '2026-09-13T13:13:24.456Z',
     },
+    {
+      id: 'yt_shorts_catch_run',
+      platform: 'youtube_trends',
+      title: 'Catch & Run',
+      genre: 'Viral Short Format',
+      archetype: 'SIMULATION_INCREMENTAL',
+      metricValue: 98,
+      metricType: 'viral_score',
+      tags: ['youtube_shorts', 'viral', 'egg', 'run', 'meme'],
+      url: 'https://www.youtube.com/hashtag/catchandrun',
+      timestamp: '2026-09-13T13:13:24.456Z',
+    },
   ],
   verdicts: [
     {
@@ -347,6 +359,32 @@ export const FALLBACK_SNAPSHOT: MarketSnapshot = {
       suggestedRuTitle: 'Манекен Рэгдолл: Арена Разрушений',
       badge: 'ARBITRAGE OPPORTUNITY',
       organicPotential: 'VERY_HIGH',
+    },
+    {
+      robloxGame: {
+        id: 'roblox_1686885941',
+        platform: 'roblox',
+        title: 'Brookhaven RP',
+        genre: 'Roleplay & Avatar Sim',
+        archetype: 'OTHER_CASUAL',
+        metricValue: 241142,
+        metricType: 'ccu',
+        tags: ['roleplay', 'town', 'brookhaven', 'rp'],
+        timestamp: '2026-09-13T13:13:24.456Z',
+      },
+      robloxCCU: 241142,
+      archetype: 'OTHER_CASUAL',
+      similarityWithNearestAnalog: 0.15,
+      nearestAnalog: null,
+      hasDirectAnalog: false,
+      nicheKeywords: ['ролеплей', 'город', 'brookhaven', 'дом'],
+      nicheDescription:
+        'Хит Roblox «Brookhaven RP» с онлайном 240k+ CCU полностью отсутствует в Яндекс Играх в виде качественного браузерного аналога (0 клонов в РФ).',
+      adaptationStrategy:
+        'Легковесный 3D/изометрический симулятор жизни и обустройства дома для браузера с социальным чатом и кастомизацией аватаров.',
+      suggestedRuTitle: 'Мой Город: Ролеплей и Дома',
+      badge: 'ARBITRAGE OPPORTUNITY',
+      organicPotential: 'CRITICAL_FIRST_MOVER',
     },
   ],
 };

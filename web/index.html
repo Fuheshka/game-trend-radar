@@ -43,6 +43,19 @@
       </div>
     </header>
 
+    <!-- LIVE TICKER BAR (РЫНОЧНЫЙ ТИКЕР) -->
+    <section class="live-ticker-bar" id="live-ticker-bar" aria-label="Ключевые сигналы рынка">
+      <div class="ticker-kicker">
+        <span class="ticker-pulse-dot"></span>
+        <span class="ticker-kicker-label">LIVE ТИКЕР</span>
+      </div>
+      <div class="ticker-viewport" id="ticker-viewport">
+        <div class="ticker-track" id="ticker-track">
+          <!-- Populated dynamically by LiveTickerComponent -->
+        </div>
+      </div>
+    </section>
+
     <!-- GLOBAL METRICS BAR -->
     <section class="metrics-grid">
       <div class="metric-card green">
@@ -205,6 +218,26 @@
     </svg>
     <span id="toast-text">Снимок рынка обновлен</span>
   </div>
+
+  <!-- GAME / SIGNAL DETAILS DRAWER -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="game-drawer" id="game-drawer" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-header-left">
+        <span class="drawer-tag" id="drawer-badge">СИГНАЛ РЫНКА</span>
+        <h3 id="drawer-title">Название игры</h3>
+      </div>
+      <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Закрыть панель">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="drawer-body">
+      <!-- Dynamic signal details rendered by GameDrawerComponent -->
+    </div>
+  </aside>
 
   <!-- APPLICATION SCRIPT -->
   <script type="module" src="/src/main.ts"></script>
