@@ -217,6 +217,81 @@ code, pre, .mono {
   50% { transform: scale(1.25); opacity: 0.6; }
 }
 
+/* Sound Toggle Button */
+.btn-sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.48rem 0.95rem;
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+}
+
+.btn-sound-toggle:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-sound-toggle:active {
+  transform: scale(0.97);
+}
+
+.btn-sound-toggle.active {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
+}
+
+.btn-sound-toggle.active:hover {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.65);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.35);
+}
+
+.sound-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.sound-icon-wrapper svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.btn-sound-toggle .icon-sound-on {
+  display: none;
+}
+
+.btn-sound-toggle .icon-sound-off {
+  display: block;
+}
+
+.btn-sound-toggle.active .icon-sound-on {
+  display: block;
+}
+
+.btn-sound-toggle.active .icon-sound-off {
+  display: none;
+}
+
+.sound-toggle-label {
+  letter-spacing: 0.03em;
+}
+
 .btn-scan {
   display: inline-flex;
   align-items: center;
@@ -1069,6 +1144,34 @@ code, pre, .mono {
   border-color: var(--accent-sakura);
   color: var(--accent-sakura);
   box-shadow: 0 0 10px rgba(245, 194, 231, 0.25);
+}
+
+.status-indicator-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-indicator-dot.green {
+  background: var(--status-green);
+  box-shadow: 0 0 6px var(--status-green);
+}
+
+.status-indicator-dot.yellow {
+  background: var(--status-yellow);
+  box-shadow: 0 0 6px var(--status-yellow);
+}
+
+.status-indicator-dot.red {
+  background: var(--status-red);
+  box-shadow: 0 0 6px var(--status-red);
+}
+
+.pill-svg {
+  flex-shrink: 0;
+  stroke: currentColor;
 }
 
 /* ==========================================================================

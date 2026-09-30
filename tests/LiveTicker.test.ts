@@ -35,25 +35,25 @@ describe('LiveTicker (Бегущая строка ключевых сигнал�
       expect(types).toContain('shorts');
     });
 
-    it('должен формировать правильные статусы с эмодзи согласно критериям приемки', () => {
+    it('должен формировать правильные статусы и SVG-иконки без эмодзи', () => {
       const signals = extractTickerSignals(FALLBACK_SNAPSHOT);
 
-      // 1. Онлайн Roblox (🔥 Steal An Egg: 2.8M CCU)
+      // 1. Онлайн Roblox (Steal An Egg: CCU)
       const stealEgg = signals.find(s => s.title.includes('Steal An Egg') && s.type === 'online');
       expect(stealEgg).toBeDefined();
-      expect(stealEgg?.emoji).toBe('🔥');
+      expect(stealEgg?.icon).toBe('flame');
       expect(stealEgg?.statusText).toMatch(/Steal An Egg: \d+(\.\d+)?M CCU/);
 
-      // 2. Арбитраж (⚡ Арбитраж: Brookhaven RP (0 клонов в РФ))
+      // 2. Арбитраж (Арбитраж: Brookhaven RP (0 клонов в РФ))
       const brookhaven = signals.find(s => s.title.includes('Brookhaven'));
       expect(brookhaven).toBeDefined();
-      expect(brookhaven?.emoji).toBe('⚡');
+      expect(brookhaven?.icon).toBe('zap');
       expect(brookhaven?.statusText).toContain('0 клонов в РФ');
 
-      // 3. YouTube Shorts (🚀 Shorts: Catch & Run 98 pts)
+      // 3. YouTube Shorts (Shorts: Catch & Run 98 pts)
       const catchRun = signals.find(s => s.title.includes('Catch & Run'));
       expect(catchRun).toBeDefined();
-      expect(catchRun?.emoji).toBe('🚀');
+      expect(catchRun?.icon).toBe('trending-up');
       expect(catchRun?.statusText).toMatch(/Shorts: Catch & Run 98 pts/);
     });
 

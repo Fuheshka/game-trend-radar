@@ -5,6 +5,7 @@ import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { GameDrawerComponent } from './components/GameDrawer.js';
 import { animateCounter } from './utils/animation.js';
+import { soundService } from './services/sound.js';
 
 class App {
   private snapshot: MarketSnapshot = FALLBACK_SNAPSHOT;
@@ -44,6 +45,27 @@ class App {
   }
 
   private initElements(): void {
+    // Sound toggle button
+    const btnSoundToggle = document.getElementById('btn-sound-toggle');
+    const soundToggleLabel = document.getElementById('sound-toggle-label');
+
+    const updateSoundUI = (muted: boolean) => {
+      btnSoundToggle?.classList.toggle('active', !muted);
+      if (soundToggleLabel) {
+        soundToggleLabel.textContent = muted ? 'Mute' : 'Sound On';
+      }
+    };
+
+    updateSoundUI(soundService.isMuted());
+
+    btnSoundToggle?.addEventListener('click', () => {
+      const isMuted = soundService.toggleMute();
+      updateSoundUI(isMuted);
+      if (!isMuted) {
+        soundService.playClick();
+      }
+    });
+
     // Mode toggles for Radar Chart
     const toggleSpider = document.getElementById('toggle-spider');
     const togglePolar = document.getElementById('toggle-polar');
@@ -52,17 +74,22 @@ class App {
       toggleSpider.classList.add('active');
       togglePolar?.classList.remove('active');
       this.radarChart.setMode('spider');
+      soundService.playClick();
     });
 
     togglePolar?.addEventListener('click', () => {
       togglePolar.classList.add('active');
       toggleSpider?.classList.remove('active');
       this.radarChart.setMode('polar');
+      soundService.playClick();
     });
 
     // Scan button
     const btnScan = document.getElementById('btn-live-scan');
-    btnScan?.addEventListener('click', () => this.triggerLiveScan());
+    btnScan?.addEventListener('click', () => {
+      soundService.playClick();
+      this.triggerLiveScan();
+    });
 
     // Search input
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
@@ -75,6 +102,7 @@ class App {
     const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
     sortSelect?.addEventListener('change', e => {
       this.sortBy = (e.target as HTMLSelectElement).value as any;
+      soundService.playClick();
       this.applyFiltersAndSort();
     });
 
@@ -85,6 +113,7 @@ class App {
         platformPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         this.activePlatform = pill.getAttribute('data-platform') as any;
+        soundService.playClick();
         this.applyFiltersAndSort();
       });
     });
@@ -96,6 +125,7 @@ class App {
         statusPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         this.activeStatus = pill.getAttribute('data-status') as any;
+        soundService.playClick();
         this.applyFiltersAndSort();
       });
     });
@@ -158,6 +188,11 @@ class App {
         activeArchetype: this.activeArchetype,
         onSelectArchetype: archetype => {
           this.activeArchetype = archetype;
+          if (archetype) {
+            soundService.playRadarPing();
+          } else {
+            soundService.playClick();
+          }
           this.radarChart.updateData(this.getFilteredVerdicts(), this.activeArchetype);
           this.applyFiltersAndSort();
           this.renderLegend();
@@ -170,6 +205,7 @@ class App {
         container: verdictsContainer,
         verdicts: this.getFilteredVerdicts(),
         onSelectTag: tag => {
+          soundService.playClick();
           const searchInput = document.getElementById('search-input') as HTMLInputElement;
           if (searchInput) {
             searchInput.value = tag;
@@ -182,6 +218,11 @@ class App {
   }
 
   private handleTickerSignalClick(signal: TickerSignal): void {
+    if (signal.archetype) {
+      soundService.playRadarPing();
+    } else {
+      soundService.playClick();
+    }
     if (this.gameDrawer) {
       this.gameDrawer.open(signal);
     }
@@ -270,11 +311,11 @@ class App {
     overlay?.classList.add('active');
 
     const phases = [
-      { text: '📡 Опрос Roblox Explore API (CCU, лайки и ранги)...', pct: 20 },
-      { text: '🎮 Парсинг каталога и промо-блоков Яндекс Игр...', pct: 45 },
-      { text: '🌍 Сбор чартов Poki Web Top-100...', pct: 65 },
-      { text: '🔥 Детекция вирусных мемов в YouTube Shorts...', pct: 85 },
-      { text: '⚙️ Расчет Opportunity Score и арбитражных ниш...', pct: 95 },
+      { text: 'Опрос Roblox Explore API (CCU, лайки и ранги)...', pct: 20 },
+      { text: 'Парсинг каталога и промо-блоков Яндекс Игр...', pct: 45 },
+      { text: 'Сбор чартов Poki Web Top-100...', pct: 65 },
+      { text: 'Детекция вирусных мемов в YouTube Shorts...', pct: 85 },
+      { text: 'Расчет Opportunity Score и арбитражных ниш...', pct: 95 },
     ];
 
     let currentPhase = 0;
@@ -294,16 +335,16 @@ class App {
         const newSnapshot: MarketSnapshot = await res.json();
         this.snapshot = newSnapshot;
         if (progressInner) progressInner.style.width = '100%';
-        if (phaseText) phaseText.textContent = '✅ Сканирование успешно завершено!';
+        if (phaseText) phaseText.textContent = 'Сканирование успешно завершено.';
         this.showToast('Сканирование завершено! Снимок обновлен.');
       } else {
-        if (phaseText) phaseText.textContent = '⚠️ Сервер вернул ошибку, обновляем данные из кэша.';
+        if (phaseText) phaseText.textContent = 'Сервер вернул ошибку, обновляем данные из кэша.';
         this.showToast('Ошибка внешних API, использован локальный кэш.');
       }
     } catch {
       clearInterval(interval);
       if (progressInner) progressInner.style.width = '100%';
-      if (phaseText) phaseText.textContent = 'ℹ️ Сервер недоступен, режим эмуляции завершен.';
+      if (phaseText) phaseText.textContent = 'Сервер недоступен, режим эмуляции завершен.';
       this.showToast('Сервер оффлайн — отображены кэшированные данные.');
     } finally {
       setTimeout(() => {
@@ -311,6 +352,8 @@ class App {
         if (progressInner) progressInner.style.width = '0%';
         if (btnScan) btnScan.disabled = false;
         this.isScanning = false;
+
+        soundService.playScanFinish();
 
         this.updateGlobalMetrics();
         this.renderLegend();
@@ -436,6 +479,11 @@ class App {
 
       item.addEventListener('click', () => {
         this.activeArchetype = this.activeArchetype === v.archetype ? null : v.archetype;
+        if (this.activeArchetype) {
+          soundService.playRadarPing();
+        } else {
+          soundService.playClick();
+        }
         this.radarChart.updateData(this.getFilteredVerdicts(), this.activeArchetype);
         this.applyFiltersAndSort();
         this.renderLegend();

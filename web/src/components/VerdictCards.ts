@@ -61,10 +61,10 @@ export class VerdictCardsComponent {
 
     const statusBadgeText =
       v.status === 'GREEN_LIGHT'
-        ? '🟢 Green Light'
+        ? 'Green Light'
         : v.status === 'YELLOW_LIGHT'
-        ? '🟡 Yellow Light'
-        : '🔴 Red Light';
+        ? 'Yellow Light'
+        : 'Red Light';
 
     const statusBadgeClass =
       v.status === 'GREEN_LIGHT' ? 'green' : v.status === 'YELLOW_LIGHT' ? 'yellow' : 'red';
@@ -102,7 +102,7 @@ export class VerdictCardsComponent {
         </div>
         <div class="badges-stack">
           <span class="status-badge ${statusBadgeClass}">${statusBadgeText}</span>
-          ${hasArbitrage ? `<span class="arbitrage-badge">⚡ ARBITRAGE OPPORTUNITY</span>` : ''}
+          ${hasArbitrage ? `<span class="arbitrage-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> ARBITRAGE OPPORTUNITY</span>` : ''}
         </div>
       </div>
 
@@ -182,7 +182,7 @@ export class VerdictCardsComponent {
             .map(
               (step, idx) => `
                 <span class="loop-step">${this.escapeHtml(step)}</span>
-                ${idx < loopSteps.length - 1 ? `<span class="loop-arrow">➔</span>` : ''}
+                ${idx < loopSteps.length - 1 ? `<svg class="loop-arrow" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>` : ''}
               `
             )
             .join('')}

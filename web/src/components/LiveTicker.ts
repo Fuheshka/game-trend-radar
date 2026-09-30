@@ -1,10 +1,13 @@
 import { MarketSnapshot, PlatformType, GameArchetype, NormalizedGame, ArbitrageOpportunity, MarketVerdict } from '../types.js';
 
+export type SignalIconType = 'flame' | 'zap' | 'trending-up' | 'globe' | 'gamepad' | 'check-circle';
+
 export interface TickerSignal {
   id: string;
   type: 'online' | 'arbitrage' | 'shorts' | 'verdict' | 'web';
   platform: PlatformType;
-  emoji: string;
+  icon: SignalIconType;
+  emoji?: string;
   title: string;
   statusText: string;
   rawMetricValue: number;
@@ -43,22 +46,23 @@ export function formatCompactNumber(n: number): string {
 export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
   const signals: TickerSignal[] = [];
   const games = snapshot.games || [];
-  const opps = snapshot.arbitrageOpportunities || [];
+  const opps = snapshot.opportunities || (snapshot as any).arbitrageOpportunities || [];
   const verdicts = snapshot.verdicts || [];
 
-  // 1. Top Online (Roblox Games by CCU)
+  // 1. Roblox Top Online Games
   const robloxGames = games
     .filter(g => g.platform === 'roblox')
     .sort((a, b) => b.metricValue - a.metricValue)
     .slice(0, 4);
 
   for (const game of robloxGames) {
-    const cleanTitle = game.title.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim() || game.title;
+    const cleanTitle = game.title.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}]/gu, '').trim() || game.title;
     signals.push({
       id: `signal-online-${game.id}`,
       type: 'online',
       platform: 'roblox',
-      emoji: '🔥',
+      icon: 'flame',
+      emoji: '',
       title: cleanTitle,
       statusText: `${cleanTitle}: ${formatCompactNumber(game.metricValue)} CCU`,
       rawMetricValue: game.metricValue,
@@ -81,14 +85,15 @@ export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
   if (opps.length > 0) {
     for (const opp of opps.slice(0, 4)) {
       const titleRaw = opp.robloxGame?.title || 'Хит без аналогов';
-      const cleanTitle = titleRaw.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
+      const cleanTitle = titleRaw.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}]/gu, '').trim();
       const titleDisplay = cleanTitle.includes('Brookhaven') ? 'Brookhaven RP' : cleanTitle;
 
       signals.push({
         id: `signal-arb-${opp.robloxGame?.id || opp.archetype}`,
         type: 'arbitrage',
         platform: 'yandex_games',
-        emoji: '⚡',
+        icon: 'zap',
+        emoji: '',
         title: `Арбитраж: ${titleDisplay}`,
         statusText: `Арбитраж: ${titleDisplay} (0 клонов в РФ)`,
         rawMetricValue: opp.robloxCCU || 100000,
@@ -114,7 +119,8 @@ export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
         id: `signal-arb-${v.archetype}`,
         type: 'arbitrage',
         platform: 'yandex_games',
-        emoji: '⚡',
+        icon: 'zap',
+        emoji: '',
         title: `Арбитраж: ${v.titleRu}`,
         statusText: `Арбитраж: ${v.titleRu} (0 клонов в РФ)`,
         rawMetricValue: v.opportunityScore.overallScore,
@@ -146,7 +152,8 @@ export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
         id: `signal-yt-${yt.id}`,
         type: 'shorts',
         platform: 'youtube_trends',
-        emoji: '🚀',
+        icon: 'trending-up',
+        emoji: '',
         title: `Shorts: ${displayTitle}`,
         statusText: `Shorts: ${displayTitle} ${yt.metricValue} pts`,
         rawMetricValue: yt.metricValue,
@@ -175,7 +182,8 @@ export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
         id: `signal-yt-${v.archetype}`,
         type: 'shorts',
         platform: 'youtube_trends',
-        emoji: '🚀',
+        icon: 'trending-up',
+        emoji: '',
         title: `Shorts: ${sample}`,
         statusText: `Shorts: ${sample} 98 pts`,
         rawMetricValue: 98,
@@ -201,7 +209,8 @@ export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
       id: `signal-poki-${game.id}`,
       type: 'web',
       platform: 'poki',
-      emoji: '🌍',
+      icon: 'globe',
+      emoji: '',
       title: game.title,
       statusText: `${game.title}: Топ-1 Poki Web`,
       rawMetricValue: game.metricValue || 1,
@@ -227,7 +236,8 @@ export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
       id: `signal-ya-${game.id}`,
       type: 'web',
       platform: 'yandex_games',
-      emoji: '🎮',
+      icon: 'gamepad',
+      emoji: '',
       title: game.title,
       statusText: `${game.title}: Рейтинг ${game.metricValue}%`,
       rawMetricValue: game.metricValue || 90,
@@ -253,7 +263,8 @@ export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
       id: `signal-verdict-${v.archetype}`,
       type: 'verdict',
       platform: 'roblox',
-      emoji: '🟢',
+      icon: 'check-circle',
+      emoji: '',
       title: v.titleRu,
       statusText: `${v.titleRu}: ${v.opportunityScore.overallScore} pts (Green Light)`,
       rawMetricValue: v.opportunityScore.overallScore,
@@ -284,6 +295,7 @@ export class LiveTickerComponent {
     this.container = options.container;
     this.snapshot = options.snapshot;
     this.onSelectSignal = options.onSelectSignal;
+
     this.render();
   }
 
@@ -332,8 +344,7 @@ export class LiveTickerComponent {
       }
 
       itemBtn.innerHTML = `
-        <span class="ticker-item-emoji">${sig.emoji}</span>
-        <span class="ticker-item-icon">${this.getPlatformIcon(sig.platform)}</span>
+        <span class="ticker-item-icon">${this.getSignalSvg(sig.icon)}</span>
         <span class="ticker-item-text">${this.escapeHtml(sig.statusText)}</span>
       `;
 
@@ -348,18 +359,27 @@ export class LiveTickerComponent {
     return group;
   }
 
-  private getPlatformIcon(platform: PlatformType): string {
-    switch (platform) {
-      case 'roblox':
-        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3" transform="rotate(10 12 12)" /><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`;
-      case 'yandex_games':
-        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h4l5 9v9h-3v-7l-4-7H6l4 7-4 4"/></svg>`;
-      case 'poki':
-        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
-      case 'youtube_trends':
-        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="4"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></svg>`;
+  private getSignalSvg(icon: SignalIconType): string {
+    switch (icon) {
+      case 'flame':
+        // Lucide flame
+        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`;
+      case 'zap':
+        // Lucide zap
+        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`;
+      case 'trending-up':
+        // Lucide trending-up
+        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`;
+      case 'globe':
+        // Lucide globe
+        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
+      case 'gamepad':
+        // Lucide gamepad-2
+        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>`;
+      case 'check-circle':
       default:
-        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>`;
+        // Lucide check-circle
+        return `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
     }
   }
 

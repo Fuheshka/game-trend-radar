@@ -793,10 +793,10 @@ export class RadarChartComponent {
 
     const statusLabel =
       v.status === 'GREEN_LIGHT'
-        ? '🟢 Green Light'
+        ? 'Green Light'
         : v.status === 'YELLOW_LIGHT'
-        ? '🟡 Yellow Light'
-        : '🔴 Red Light';
+        ? 'Yellow Light'
+        : 'Red Light';
 
     let extraRow = '';
     if (extra && extra.axisLabel !== undefined && extra.axisValue !== undefined) {
