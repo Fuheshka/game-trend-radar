@@ -88,18 +88,28 @@ export function classifyArchetype(title: string, genre: string = '', tags: strin
     return 'WORD_PUZZLE';
   }
 
-  // 6. Shooter & Action
+  // 6. Shooter & Action (исключая казуальные бабл-шутеры и три в ряд)
+  const isBubbleOrPuzzle =
+    text.includes('bubble') ||
+    text.includes('пузыр') ||
+    text.includes('шарик') ||
+    text.includes('marble') ||
+    text.includes('match 3') ||
+    text.includes('матч 3');
+
   if (
-    text.includes('shooter') ||
-    text.includes('шутер') ||
-    text.includes('standoff') ||
-    text.includes('strike') ||
-    text.includes('стрелялк') ||
-    text.includes('battleground') ||
-    text.includes('warfare') ||
-    text.includes('войн') ||
-    text.includes('gun') ||
-    text.includes('оружие')
+    !isBubbleOrPuzzle && (
+      text.includes('shooter') ||
+      text.includes('шутер') ||
+      text.includes('standoff') ||
+      text.includes('strike') ||
+      text.includes('стрелялк') ||
+      text.includes('battleground') ||
+      text.includes('warfare') ||
+      text.includes('войн') ||
+      text.includes('gun') ||
+      text.includes('оружие')
+    )
   ) {
     return 'ACTION_SHOOTER';
   }

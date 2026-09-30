@@ -5,6 +5,7 @@ import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { DetailDrawerComponent } from './components/DetailDrawer.js';
 import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
+import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
 
@@ -36,7 +37,7 @@ class App {
   private searchQuery: string = '';
   private sortBy: 'score_desc' | 'score_asc' | 'ccu_desc' | 'velocity_desc' | 'title_asc' = 'score_desc';
   private isScanning: boolean = false;
-  private currentView: 'niches' | 'catalog' = 'niches';
+  private currentView: 'niches' | 'catalog' | 'arbitrage' = 'niches';
   private prevMetrics = {
     totalGames: 0,
     totalCcu: 0,
@@ -49,6 +50,7 @@ class App {
   private liveTicker!: LiveTickerComponent;
   private detailDrawer!: DetailDrawerComponent;
   private gameCatalog!: GameCatalogComponent;
+  private arbitrageMatrix!: ArbitrageMatrixComponent;
 
   constructor() {
     this.init();
@@ -181,12 +183,24 @@ class App {
     // Main View Mode Tabs
     const tabBtnNiches = document.getElementById('tab-btn-niches');
     const tabBtnCatalog = document.getElementById('tab-btn-catalog');
+    const tabBtnArbitrage = document.getElementById('tab-btn-arbitrage');
     tabBtnNiches?.addEventListener('click', () => {
       this.switchView('niches');
       soundService.playClick();
     });
     tabBtnCatalog?.addEventListener('click', () => {
       this.switchView('catalog');
+      soundService.playClick();
+    });
+    tabBtnArbitrage?.addEventListener('click', () => {
+      this.switchView('arbitrage');
+      soundService.playClick();
+    });
+
+    // Global Metric Card: Arbitrage shortcut click
+    const metricArbitrageCard = document.querySelector('.metric-card.orange');
+    metricArbitrageCard?.addEventListener('click', () => {
+      this.switchView('arbitrage');
       soundService.playClick();
     });
 
@@ -472,28 +486,59 @@ class App {
       });
       this.updateCatalogCountUI();
     }
+
+    // Arbitrage Matrix Component setup
+    const arbitrageContainer = document.getElementById('arbitrage-matrix-container');
+    if (arbitrageContainer) {
+      this.arbitrageMatrix = new ArbitrageMatrixComponent({
+        container: arbitrageContainer,
+        opportunities: this.snapshot.arbitrageOpportunities || [],
+        onSelectGame: game => {
+          soundService.playClick();
+          this.detailDrawer.openGame(game, this.snapshot.games);
+        },
+        onOpenRoblox: url => {
+          soundService.playClick();
+          window.open(url, '_blank', 'noopener,noreferrer');
+        },
+      });
+      this.updateArbitrageCountUI();
+    }
   }
 
-  private switchView(view: 'niches' | 'catalog'): void {
+  private switchView(view: 'niches' | 'catalog' | 'arbitrage'): void {
     if (this.currentView === view) return;
     this.currentView = view;
 
     const tabNiches = document.getElementById('tab-btn-niches');
     const tabCatalog = document.getElementById('tab-btn-catalog');
+    const tabArbitrage = document.getElementById('tab-btn-arbitrage');
     const panelNiches = document.getElementById('niches-view-panel');
     const panelCatalog = document.getElementById('catalog-view-panel');
+    const panelArbitrage = document.getElementById('arbitrage-view-panel');
 
-    if (view === 'niches') {
-      tabNiches?.classList.add('active');
-      tabCatalog?.classList.remove('active');
-      if (panelNiches) panelNiches.style.display = 'block';
-      if (panelCatalog) panelCatalog.style.display = 'none';
-    } else {
-      tabCatalog?.classList.add('active');
-      tabNiches?.classList.remove('active');
-      if (panelNiches) panelNiches.style.display = 'none';
-      if (panelCatalog) panelCatalog.style.display = 'block';
+    tabNiches?.classList.toggle('active', view === 'niches');
+    tabCatalog?.classList.toggle('active', view === 'catalog');
+    tabArbitrage?.classList.toggle('active', view === 'arbitrage');
+
+    if (panelNiches) panelNiches.style.display = view === 'niches' ? 'block' : 'none';
+    if (panelCatalog) panelCatalog.style.display = view === 'catalog' ? 'block' : 'none';
+    if (panelArbitrage) panelArbitrage.style.display = view === 'arbitrage' ? 'block' : 'none';
+
+    if (view === 'catalog') {
       this.updateCatalogCountUI();
+    } else if (view === 'arbitrage') {
+      this.updateArbitrageCountUI();
+    }
+  }
+
+  private updateArbitrageCountUI(): void {
+    const tabBadge = document.getElementById('tab-arbitrage-count');
+    if (tabBadge) {
+      const count = this.arbitrageMatrix
+        ? this.arbitrageMatrix.getTotalCount()
+        : (this.snapshot.arbitrageOpportunities?.length ?? 0);
+      tabBadge.textContent = count.toString();
     }
   }
 
@@ -698,6 +743,8 @@ class App {
     this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
     this.gameCatalog?.updateData(this.snapshot.games || []);
     this.updateCatalogCountUI();
+    this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
+    this.updateArbitrageCountUI();
     this.applyFiltersAndSort();
   }
 
@@ -786,6 +833,8 @@ class App {
         this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
         this.gameCatalog?.updateData(this.snapshot.games || []);
         this.updateCatalogCountUI();
+        this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
+        this.updateArbitrageCountUI();
         this.applyFiltersAndSort();
       }, 700);
     }
@@ -868,6 +917,7 @@ class App {
     };
 
     this.updateCatalogCountUI();
+    this.updateArbitrageCountUI();
     this.triggerMetricCardsPulse();
   }
 

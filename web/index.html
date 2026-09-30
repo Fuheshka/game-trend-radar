@@ -118,6 +118,12 @@
           </svg>
           <span>Каталог игр <span class="tab-count-badge" id="tab-games-count">0</span></span>
         </button>
+        <button class="view-tab-btn" id="tab-btn-arbitrage" data-view="arbitrage">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Матрица арбитража <span class="tab-count-badge tab-arbitrage-badge" id="tab-arbitrage-count">0</span></span>
+        </button>
       </div>
     </nav>
 
@@ -370,6 +376,27 @@
         </div>
       </section>
     </div> <!-- END #catalog-view-panel -->
+
+    <!-- 3. ARBITRAGE MATRIX VIEW PANEL -->
+    <div id="arbitrage-view-panel" class="view-panel" style="display: none;">
+      <section class="arbitrage-content-section">
+        <div id="arbitrage-matrix-container" class="arbitrage-matrix-container">
+          <!-- Rendered dynamically by ArbitrageMatrixComponent -->
+        </div>
+      </section>
+    </div> <!-- END #arbitrage-view-panel -->
+
+    <!-- SITE FOOTER & CREDITS -->
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <span>Game Trend Radar · Анализ трендов и арбитража витрин</span>
+        </div>
+        <div class="footer-right">
+          <span>Автор: <a href="https://github.com/Fuheshka" target="_blank" rel="noopener noreferrer" class="footer-author-link">Даниил К. (Fuheshka)</a></span>
+        </div>
+      </div>
+    </footer>
   </div>
 
   <!-- SCAN PROGRESS MODAL OVERLAY -->

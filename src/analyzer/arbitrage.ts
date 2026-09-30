@@ -23,7 +23,7 @@ export const CONCEPT_DICTIONARY: Record<string, string[]> = {
   speed_incremental: ['speed', 'fast', 'faster', '+1', 'скорость', 'быстрый', 'ускорение', 'бег'],
   escape: ['escape', 'breakout', 'runaway', 'побег', 'сбеги', 'убеги', 'выход'],
   toilet_cameraman: ['toilet', 'skibidi', 'cameraman', 'speaker', 'туалет', 'скибиди', 'унитаз', 'камерамен'],
-  tower_defense: ['tower', 'defense', 'td', 'башня', 'башни', 'защита', 'оборона'],
+  tower_defense: ['tower defense', 'td', 'tower defence', 'защита башни', 'оборона башни', 'tower_defense', 'защита базы'],
   ragdoll: ['ragdoll', 'рэгдолл', 'тряпичная', 'кукла', 'манекен'],
   break_bones: ['break', 'bone', 'bones', 'dismount', 'сломай', 'кости', 'костей', 'переломы', 'падение', 'травмы'],
   melon_sandbox: ['melon', 'sandbox', 'playground', 'мелон', 'песочница', 'плейграунд'],
@@ -46,6 +46,13 @@ export const CONCEPT_DICTIONARY: Record<string, string[]> = {
   eat_grow: ['eat', 'grow', 'blob', 'agar', 'snake', 'worm', 'съешь', 'расти', 'пожиратель', 'бактерии', 'червяк'],
   racing_car: ['drive', 'driver', 'car', 'race', 'racing', 'гонки', 'машина', 'автомобиль', 'водитель'],
   hide_seek: ['hide', 'seek', 'prop', 'прятки', 'ищи', 'найди'],
+  roleplay_city: ['brookhaven', 'rp', 'roleplay', 'ролеплей', 'рп', 'симулятор жизни'],
+  murder_mystery: ['murder', 'mystery', 'detective', 'killer', 'убийца', 'детектив', 'маньяк', 'мафия'],
+  pvp_shooter: ['rivals', 'fps', 'standoff', 'strike', 'дуэль стрелков', 'шутер 3d', 'стрелялка 3д', 'counter strike', '1v1', 'первого лица'],
+  anime_rpg: ['blox', 'fruits', 'one piece', 'devil fruit', 'дьявольские фрукты', 'ванпис'],
+  adopt_family: ['adopt', 'усынови', 'приюти', 'усыновление'],
+  ride_mount: ['ride', 'riding', 'mount', 'верхом', 'маунты'],
+  speed_keyboard: ['keyboard', 'клавиатура', 'клавиш', 'клавишный', 'печать', 'тайпинг', 'печатать'],
 };
 
 export class ArbitrageAnalyzer {
@@ -55,7 +62,7 @@ export class ArbitrageAnalyzer {
 
   constructor(options?: ArbitrageOptions) {
     this.minRobloxCCU = options?.minRobloxCCU ?? 100_000;
-    this.similarityThreshold = options?.similarityThreshold ?? 0.40;
+    this.similarityThreshold = options?.similarityThreshold ?? 0.80;
     this.topYandexLimit = options?.topYandexLimit ?? 100;
   }
 
@@ -157,8 +164,12 @@ export class ArbitrageAnalyzer {
     sharedConcepts: string[];
     archetypeMatch: boolean;
   } {
+    const yTitleLower = (yandexGame.title || '').toLowerCase();
+    const isBubble = yTitleLower.includes('bubble') || yTitleLower.includes('шарик') || yTitleLower.includes('пузыр');
+    const yArchetype = isBubble ? 'OTHER_CASUAL' : yandexGame.archetype;
+
     const conceptsA = this.extractConcepts(robloxGame.title, robloxGame.tags);
-    const conceptsB = this.extractConcepts(yandexGame.title, yandexGame.tags);
+    const conceptsB = this.extractConcepts(yandexGame.title, isBubble ? [] : yandexGame.tags);
 
     const sharedConcepts: string[] = [];
     for (const c of conceptsA) {
@@ -178,24 +189,31 @@ export class ArbitrageAnalyzer {
 
     // Если есть точное совпадение по 2+ концептам (например, "steal_item" + "egg")
     if (sharedConcepts.length >= 2) {
-      conceptScore = Math.max(conceptScore, 0.90);
+      conceptScore = Math.max(conceptScore, 0.85);
     } else if (sharedConcepts.length === 1 && conceptsA.size === 1 && conceptsB.size === 1) {
-      conceptScore = Math.max(conceptScore, 0.75);
+      conceptScore = Math.max(conceptScore, 0.70);
     }
 
     // Текстовая схожесть (для англоязычных или транслитерированных названий в каталоге ЯИ)
     const textScore = this.calculateDiceSimilarity(robloxGame.title, yandexGame.title);
 
-    // Совпадение архетипа
-    const archetypeMatch = robloxGame.archetype === yandexGame.archetype;
-    const isBothCasual = robloxGame.archetype === 'OTHER_CASUAL' || yandexGame.archetype === 'OTHER_CASUAL';
+    // Совпадение архетипа (бонус дается только для конкретных жанров, но НЕ для общей свалки OTHER_CASUAL)
+    const archetypeMatch = robloxGame.archetype === yArchetype;
+    const isBothCasual = robloxGame.archetype === 'OTHER_CASUAL' || yArchetype === 'OTHER_CASUAL';
+    const archetypeBonus = (archetypeMatch && !isBothCasual) ? 0.1 : 0;
 
     // Взвешенная оценка
     let combined = 0;
     if (conceptScore > 0) {
-      combined = conceptScore * 0.7 + textScore * 0.2 + (archetypeMatch ? 0.1 : 0);
+      combined = conceptScore * 0.75 + textScore * 0.15 + archetypeBonus;
+    } else if (textScore >= 0.40) {
+      // Прямая текстовая схожесть учитывается только при явном совпадении слов
+      combined = textScore * 0.8 + archetypeBonus;
     } else {
-      combined = textScore * 0.8 + (archetypeMatch ? 0.2 : 0);
+      // Если концепты не совпали и текстовой схожести нет (textScore < 0.40),
+      // игры НЕ являются аналогами. Одно лишь совпадение категории (например, OTHER_CASUAL)
+      // не должно искусственно давать схожесть несвязанным играм (Shadow Fight 2 и т.д.).
+      combined = 0;
     }
 
     // Если архетипы принципиально разные (например, шутер и словесный кроссворд), штрафуем
@@ -268,8 +286,8 @@ export class ArbitrageAnalyzer {
           robloxGame,
           robloxCCU: robloxGame.metricValue,
           archetype: robloxGame.archetype,
-          similarityWithNearestAnalog: maxSimilarity,
-          nearestAnalog: nearestAnalog && maxSimilarity > 0.05 ? nearestAnalog : null,
+          similarityWithNearestAnalog: maxSimilarity < 0.25 ? 0 : maxSimilarity,
+          nearestAnalog: nearestAnalog && maxSimilarity >= 0.25 ? nearestAnalog : null,
           hasDirectAnalog: false,
           nicheKeywords: concepts,
           nicheDescription,
@@ -297,6 +315,30 @@ export class ArbitrageAnalyzer {
       return 'Реализовать +1 симулятор с постоянным приростом скорости: каждые 10 секунд игрок преодолевает весовой рубеж и перерождается (Rebirth). Монетизация: автоклик и VIP-скорость за Rewarded Video.';
     }
 
+    if (concepts.includes('roleplay_city')) {
+      return 'Сетевой или синглплеерный лайф-сим: кастомизация дома, покупка машин, социальные взаимодействия и работа. Монетизация: элитные дома и скины за Rewarded Video.';
+    }
+
+    if (concepts.includes('murder_mystery')) {
+      return 'Социальный детектив на 8-12 игроков или с ботами: случайные роли (Шериф, Убийца, Мирный). Монетизация: ножи, скины револьверов и победные анимации.';
+    }
+
+    if (concepts.includes('pvp_shooter')) {
+      return 'Браузерный арена-шутер на Unity WebGL: динамичные дуэли 1 на 1, низкий пинг, мобильный автошут. Монетизация: камуфляжи и боевой пропуск.';
+    }
+
+    if (concepts.includes('anime_rpg')) {
+      return 'Экшен-RPG с аниме-способностями: прокачка дьявольских фруктов, гринд боссов и дуэли на мечах. Монетизация: реролл способностей и удвоение опыта за рекламу.';
+    }
+
+    if (concepts.includes('adopt_family')) {
+      return 'Казуальная симуляция ухода за питомцами: выращивание, обмен, декор детских комнат. Монетизация: яйца редких питомцев за Rewarded Video.';
+    }
+
+    if (concepts.includes('ride_mount')) {
+      return 'Веб-раннер с ездовыми питомцами: преодоление лавовых препятствий, апгрейд скорости и слияние маунтов. Монетизация: супер-ускорители и возрождение.';
+    }
+
     if (archetype === 'PHYSICS_SANDBOX' || concepts.includes('ragdoll') || concepts.includes('break_bones')) {
       return 'Веб-песочница с сочной физикой переломов: спуск с рампы, трамплины, физические повреждения манекена. Rewarded за ядерные ускорители и скины.';
     }
@@ -319,6 +361,12 @@ export class ArbitrageAnalyzer {
     if (concepts.includes('steal_item') && concepts.includes('egg')) {
       return 'Укради Яйцо: Побег от Монстра';
     }
+    if (concepts.includes('brainrot') && concepts.includes('steal_item')) {
+      return 'Укради Брейнрота: Побег с Базы';
+    }
+    if (concepts.includes('brainrot')) {
+      return 'Брейнрот Сигма: Мега Замес';
+    }
     if (concepts.includes('speed_incremental')) {
       return '+1 к Скорости: Мега Побег';
     }
@@ -334,9 +382,28 @@ export class ArbitrageAnalyzer {
     if (concepts.includes('pet') && concepts.includes('simulator')) {
       return 'Симулятор Питомцев: Эволюция';
     }
+    if (concepts.includes('roleplay_city')) {
+      return 'Город Мечты: Ролеплей и Жизнь';
+    }
+    if (concepts.includes('murder_mystery')) {
+      return 'Тайна Убийцы: Кто Предатель?';
+    }
+    if (concepts.includes('pvp_shooter')) {
+      return 'Дуэль Стрелков: Арена 1 на 1';
+    }
+    if (concepts.includes('anime_rpg')) {
+      return 'Битва Фруктов: Морские Пираты';
+    }
+    if (concepts.includes('adopt_family')) {
+      return 'Приюти Питомца: Семья и Дом';
+    }
+    if (concepts.includes('ride_mount')) {
+      return 'Верхом на Питомце: Мега Заезд';
+    }
 
     const clean = this.normalizeTitle(title)
       .split(' ')
+      .filter(w => w.length > 1)
       .slice(0, 3)
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ');
