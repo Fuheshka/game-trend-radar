@@ -4117,6 +4117,67 @@ code, pre, .mono {
   letter-spacing: -0.01em;
 }
 
+/* Arbitrage Card Footer & Pitch Button */
+.arbitrage-card-footer {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+}
+
+.btn-copy-pitch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.65rem 1.15rem;
+  background: linear-gradient(135deg, rgba(203, 166, 247, 0.12) 0%, rgba(56, 189, 248, 0.12) 100%);
+  border: 1px solid rgba(203, 166, 247, 0.35);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  user-select: none;
+}
+
+.btn-copy-pitch:hover {
+  background: linear-gradient(135deg, rgba(203, 166, 247, 0.22) 0%, rgba(56, 189, 248, 0.22) 100%);
+  border-color: var(--accent-lavender);
+  box-shadow: 0 4px 16px rgba(203, 166, 247, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-copy-pitch:active {
+  transform: scale(0.98);
+}
+
+.btn-copy-pitch svg {
+  flex-shrink: 0;
+  transition: transform 0.2s ease, stroke 0.2s ease;
+  stroke: var(--accent-lavender);
+}
+
+.btn-copy-pitch:hover svg {
+  stroke: #fff;
+}
+
+.btn-copy-pitch.copied {
+  background: rgba(16, 185, 129, 0.2) !important;
+  border-color: var(--status-green) !important;
+  color: var(--status-green-light) !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.35) !important;
+}
+
+.btn-copy-pitch.copied svg {
+  stroke: var(--status-green-light) !important;
+}
+
 /* Empty State */
 .arbitrage-empty-state {
   display: flex;

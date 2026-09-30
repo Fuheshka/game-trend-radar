@@ -243,4 +243,120 @@ describe('ArbitrageMatrixComponent (Аналитический экран «Ма
     expect(cleanDisplayTitle('99 Nights in the Forest 🔦')).toBe('99 Nights in the Forest');
     expect(cleanDisplayTitle('Steal An Egg')).toBe('Steal An Egg');
   });
+
+  it('10. Должен генерировать структурированный Markdown-питч через formatArbitragePitch', async () => {
+    const { formatArbitragePitch } = await import('../web/src/components/ArbitrageMatrix.js');
+
+    const pitch = formatArbitragePitch(sampleOpportunities[0]);
+
+    // Проверяем все обязательные блоки по критериям приемки:
+    // 1. Источник тренда
+    expect(pitch).toContain('Источник тренда');
+    expect(pitch).toContain('Steal An Egg');
+    expect(pitch).toContain('Roblox');
+
+    // 2. Доказательство спроса (CCU в Roblox)
+    expect(pitch).toContain('Доказательство спроса');
+    expect(pitch).toContain('1 600 000 CCU');
+    expect(pitch).toContain('94% 👍');
+
+    // 3. Текущий статус в Яндекс Играх / Poki
+    expect(pitch).toContain('Текущий статус на целевых витринах');
+    expect(pitch).toContain('Turbo Weave');
+    expect(pitch).toContain('36%');
+
+    // 4. Предлагаемая адаптация
+    expect(pitch).toContain('Предлагаемая адаптация');
+    expect(pitch).toContain('Укради Яйцо: Побег от Монстра');
+    expect(pitch).toContain(sampleOpportunities[0].adaptationStrategy);
+
+    // 5. Технологический стек
+    expect(pitch).toContain('Технологический стек');
+    expect(pitch).toContain('< 15 МБ');
+    expect(pitch).toContain('Rewarded Video');
+
+    // 6. Оценка окупаемости
+    expect(pitch).toContain('Оценка окупаемости');
+    expect(pitch).toContain('1–2 месяца');
+    expect(pitch).toContain('1–3 недели');
+  });
+
+  it('11. Должен рендерить кнопку «Скопировать питч» на каждой карточке арбитража', () => {
+    new ArbitrageMatrixComponent({
+      container: mockContainer as any,
+      opportunities: sampleOpportunities,
+    });
+
+    expect(mockContainer.innerHTML).toContain('btn-copy-pitch');
+    expect(mockContainer.innerHTML).toContain('data-game-id="roblox_egg"');
+    expect(mockContainer.innerHTML).toContain('data-game-id="roblox_pet"');
+    expect(mockContainer.innerHTML).toContain('data-game-id="roblox_small"');
+    expect(mockContainer.innerHTML).toContain('Скопировать питч');
+  });
+
+  it('12. Должен вызывать copyPitch и останавливать всплытие при клике на кнопку питча', async () => {
+    const onSelect = vi.fn();
+    const onToast = vi.fn();
+    const component = new ArbitrageMatrixComponent({
+      container: mockContainer as any,
+      opportunities: sampleOpportunities,
+      onSelectGame: onSelect,
+      showToast: onToast,
+    });
+
+    const copySpy = vi.spyOn(component, 'copyPitch').mockImplementation(async () => 'pitch markdown');
+
+    const fakeBtn = {
+      getAttribute: (attr: string) => (attr === 'data-game-id' ? 'roblox_egg' : null),
+      closest: (sel: string) => {
+        if (sel.includes('btn-copy-pitch')) return fakeBtn;
+        if (sel.includes('arbitrage-card')) return { getAttribute: () => 'roblox_egg' };
+        return null;
+      },
+      classList: { add: vi.fn(), remove: vi.fn() },
+      querySelector: vi.fn(() => ({ textContent: 'Скопировать питч' })),
+    };
+
+    const stopPropagation = vi.fn();
+
+    expect(listeners['click']).toBeDefined();
+    await listeners['click']({
+      target: fakeBtn,
+      stopPropagation,
+    });
+
+    expect(stopPropagation).toHaveBeenCalled();
+    expect(copySpy).toHaveBeenCalledWith(sampleOpportunities[0], fakeBtn);
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it('13. Должен копировать питч в буфер и вызывать тост через copyPitch', async () => {
+    const onToast = vi.fn();
+    const component = new ArbitrageMatrixComponent({
+      container: mockContainer as any,
+      opportunities: sampleOpportunities,
+      showToast: onToast,
+    });
+
+    // Мокаем navigator.clipboard
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: writeTextMock,
+      },
+    });
+
+    const fakeBtnEl = {
+      classList: { add: vi.fn(), remove: vi.fn() },
+      querySelector: vi.fn(() => ({ textContent: 'Скопировать питч' })),
+    } as any;
+
+    const result = await component.copyPitch(sampleOpportunities[0], fakeBtnEl);
+
+    expect(result).toContain('Steal An Egg');
+    expect(writeTextMock).toHaveBeenCalledWith(result);
+    expect(onToast).toHaveBeenCalledWith(expect.stringContaining('скопирован'));
+    expect(fakeBtnEl.classList.add).toHaveBeenCalledWith('copied');
+  });
 });
+

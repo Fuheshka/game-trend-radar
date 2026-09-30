@@ -5,9 +5,11 @@ export interface ArbitrageMatrixOptions {
   opportunities: ArbitrageOpportunity[];
   onSelectGame?: (game: NormalizedGame) => void;
   onOpenRoblox?: (url: string) => void;
+  onCopyPitch?: (pitch: string, opp: ArbitrageOpportunity) => void;
+  showToast?: (message: string) => void;
 }
 
-const ARCHETYPE_RU: Record<GameArchetype, string> = {
+export const ARCHETYPE_RU: Record<GameArchetype, string> = {
   SIMULATION_INCREMENTAL: 'Симуляторы и +1',
   PHYSICS_SANDBOX: 'Сендбокс и физика',
   MERGE_IDLE: 'Мёрдж и крафт',
@@ -29,11 +31,123 @@ export function cleanDisplayTitle(title: string): string {
     .trim();
 }
 
+export function formatCCU(val: number): string {
+  const formatted = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return `${formatted} CCU`;
+}
+
+export function formatRating(likeRatio?: number): string {
+  if (likeRatio === undefined || likeRatio === null) return '—';
+  return `${Math.round(likeRatio * 100)}% 👍`;
+}
+
+export function resolveEngineRecommendation(archetype: GameArchetype): string {
+  switch (archetype) {
+    case 'PHYSICS_SANDBOX':
+    case 'ACTION_SHOOTER':
+    case 'SURVIVAL_HORROR':
+      return 'Unity WebGL (URP)';
+    case 'SIMULATION_INCREMENTAL':
+    case 'MERGE_IDLE':
+    case 'WORD_PUZZLE':
+    case 'OBBY_PARKOUR':
+    case 'OTHER_CASUAL':
+    default:
+      return 'Vite / Canvas 2D';
+  }
+}
+
+export function resolveWindowLeadTime(potential: string): { label: string; time: string; badgeClass: string } {
+  switch (potential) {
+    case 'CRITICAL_FIRST_MOVER':
+      return {
+        label: 'Критическое преимущество (Первый ход)',
+        time: 'Запас до клонов: 1-2 недели',
+        badgeClass: 'potential-critical',
+      };
+    case 'VERY_HIGH':
+      return {
+        label: 'Свободная ниша (Высокий спрос)',
+        time: 'Запас до клонов: 2-4 недели',
+        badgeClass: 'potential-very-high',
+      };
+    case 'HIGH':
+    default:
+      return {
+        label: 'Перспективная ниша',
+        time: 'Запас до клонов: 3-6 недель',
+        badgeClass: 'potential-high',
+      };
+  }
+}
+
+export function formatArbitragePitch(opp: ArbitrageOpportunity): string {
+  const displayDonorTitle = cleanDisplayTitle(opp.robloxGame.title);
+  const donorPlatform = opp.robloxGame.platform === 'roblox' ? 'Roblox' : 'YouTube Shorts';
+  const archetypeLabel = ARCHETYPE_RU[opp.archetype] || opp.archetype;
+  const donorCcu = formatCCU(opp.robloxCCU || opp.robloxGame.metricValue || 0);
+  const donorRating = formatRating(opp.robloxGame.likeRatio);
+
+  const similarityPercent = Math.round((opp.similarityWithNearestAnalog || 0) * 100);
+  const hasAnalog = opp.nearestAnalog !== null && opp.nearestAnalog !== undefined && similarityPercent >= 20;
+  const displayAnalogTitle = hasAnalog ? cleanDisplayTitle(opp.nearestAnalog!.title) : 'Аналог отсутствует';
+
+  let competitiveStatus = '100% свободная ниша в каталоге (прямых аналогов нет)';
+  if (hasAnalog) {
+    competitiveStatus =
+      similarityPercent >= 65
+        ? `Частично занята: есть клон «${displayAnalogTitle}» (${similarityPercent}% схожести)`
+        : `Свободна: косвенный аналог «${displayAnalogTitle}» (${similarityPercent}% схожести) без доминирования`;
+  }
+
+  const windowInfo = resolveWindowLeadTime(opp.organicPotential);
+  const engine = resolveEngineRecommendation(opp.archetype);
+  const donorUrl = opp.robloxGame.url ? `\n- **Ссылка на оригинал:** ${opp.robloxGame.url}` : '';
+
+  return `# 🚀 Питч арбитражной ниши: ${opp.suggestedRuTitle}
+
+### 📌 Резюме проекта
+Адаптация мирового хита из ${donorPlatform} под браузерные веб-витрины (Яндекс Игры, Poki) с подтвержденным спросом и захватом органического поискового трафика без прямой конкуренции.
+
+### 1. Источник тренда
+- **Оригинальная игра:** ${displayDonorTitle}
+- **Платформа источника:** ${donorPlatform}
+- **Игровой архетип:** ${archetypeLabel}${donorUrl}
+
+### 2. Доказательство спроса (CCU в Roblox)
+- **Активный онлайн:** **${donorCcu}** (подтвержденный устойчивый интерес аудитории)
+- **Одобрение игроков:** ${donorRating}
+- **Фактор спроса:** Сформированная база игроков, которые ищут эту механику на веб-порталах.
+
+### 3. Текущий статус на целевых витринах (Яндекс Игры / Poki)
+- **Конкурентная ситуация:** ${competitiveStatus}
+- **Ближайший аналог:** ${displayAnalogTitle} (${similarityPercent}% схожести)
+- **Окно возможностей:** ${windowInfo.time} (${windowInfo.label})
+
+### 4. Предлагаемая адаптация
+- **Локализованное название (РФ):** ${opp.suggestedRuTitle}
+- **Стратегия адаптации:** ${opp.adaptationStrategy}
+
+### 5. Технологический стек
+- **Рекомендуемый движок:** ${engine}
+- **Целевой вес билда:** < 15 МБ (мгновенный старт на мобильных и слабых ПК)
+- **Модель монетизации:** Rewarded Video (удвоение наград, бустеры) + Interstitial (между игровыми сессиями)
+- **Целевые платформы:** Яндекс Игры, Poki (Web / HTML5 Mobile-First)
+
+### 6. Оценка окупаемости
+- **Срок разработки MVP:** 1–3 недели (быстрый релиз на пике тренда)
+- **Оценка окупаемости:** 1–2 месяца с момента релиза за счет бесплатного органического трафика из поиска витрин
+- **Преимущество первого хода (First-Mover Advantage):** Занять топ каталога по ключевым запросам до появления волны клонов.
+`.trim();
+}
+
 export class ArbitrageMatrixComponent {
   private container: HTMLElement;
   private opportunities: ArbitrageOpportunity[] = [];
   private onSelectGame?: (game: NormalizedGame) => void;
   private onOpenRoblox?: (url: string) => void;
+  private onCopyPitch?: (pitch: string, opp: ArbitrageOpportunity) => void;
+  private showToastFn?: (message: string) => void;
   private min100kOnly: boolean = false;
 
   constructor(options: ArbitrageMatrixOptions) {
@@ -41,6 +155,8 @@ export class ArbitrageMatrixComponent {
     this.opportunities = options.opportunities || [];
     this.onSelectGame = options.onSelectGame;
     this.onOpenRoblox = options.onOpenRoblox;
+    this.onCopyPitch = options.onCopyPitch;
+    this.showToastFn = options.showToast;
 
     this.initEvents();
     this.render();
@@ -107,6 +223,18 @@ export class ArbitrageMatrixComponent {
         return;
       }
 
+      // Copy pitch button click
+      const copyPitchBtn = target.closest('.btn-copy-pitch') as HTMLElement;
+      if (copyPitchBtn) {
+        e.stopPropagation();
+        const gameId = copyPitchBtn.getAttribute('data-game-id');
+        const opp = this.opportunities.find(o => o.robloxGame.id === gameId);
+        if (opp) {
+          this.copyPitch(opp, copyPitchBtn);
+        }
+        return;
+      }
+
       // Card click -> inspect game
       const card = target.closest('.arbitrage-card') as HTMLElement;
       if (card) {
@@ -117,6 +245,76 @@ export class ArbitrageMatrixComponent {
         }
       }
     });
+  }
+
+  public async copyPitch(opp: ArbitrageOpportunity, buttonEl?: HTMLElement): Promise<string> {
+    const pitch = formatArbitragePitch(opp);
+    await this.copyToClipboard(pitch);
+
+    if (buttonEl) {
+      buttonEl.classList.add('copied');
+      const textSpan = buttonEl.querySelector('span');
+      const originalText = textSpan ? textSpan.textContent : 'Скопировать питч';
+      if (textSpan) textSpan.textContent = 'Питч скопирован!';
+      setTimeout(() => {
+        buttonEl.classList.remove('copied');
+        if (textSpan) textSpan.textContent = originalText;
+      }, 2000);
+    }
+
+    this.showToast('Питч ниши скопирован в буфер обмена');
+    if (this.onCopyPitch) {
+      this.onCopyPitch(pitch, opp);
+    }
+
+    return pitch;
+  }
+
+  private async copyToClipboard(text: string): Promise<boolean> {
+    if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        // fallback
+      }
+    }
+
+    if (typeof document !== 'undefined') {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (successful) return true;
+      } catch {
+        // ignore
+      }
+    }
+    return false;
+  }
+
+  private showToast(message: string): void {
+    if (this.showToastFn) {
+      this.showToastFn(message);
+      return;
+    }
+
+    if (typeof document === 'undefined') return;
+    const toast = document.getElementById('toast-notification');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+
+    toastText.textContent = message;
+    toast.classList.add('show');
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 4000);
   }
 
   private formatCCU(val: number): string {
@@ -379,6 +577,17 @@ export class ArbitrageMatrixComponent {
               <span>Название для РФ</span>
             </div>
             <div class="suggested-title-text">${opp.suggestedRuTitle}</div>
+          </div>
+
+          <!-- Card Actions: Copy Pitch -->
+          <div class="arbitrage-card-footer">
+            <button type="button" class="btn-copy-pitch" data-game-id="${opp.robloxGame.id}" title="Скопировать структурированный Markdown-питч для инвестора или издателя">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Скопировать питч</span>
+            </button>
           </div>
         </article>
       `;
