@@ -9,6 +9,12 @@ import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
+import {
+  exportSnapshotToMarkdown,
+  exportSnapshotToJson,
+  generateExportFilename,
+  downloadBlob,
+} from './services/exporter.js';
 
 export interface PopularSearchTag {
   id: string;
@@ -148,6 +154,46 @@ class App {
     btnScan?.addEventListener('click', () => {
       soundService.playClick();
       this.triggerLiveScan();
+    });
+
+    // Export dropdown button and options
+    const exportDropdownWrapper = document.getElementById('export-dropdown-wrapper');
+    const btnExportDropdown = document.getElementById('btn-export-dropdown');
+    const btnExportMd = document.getElementById('btn-export-md');
+    const btnExportJson = document.getElementById('btn-export-json');
+
+    const closeExportDropdown = () => {
+      exportDropdownWrapper?.classList.remove('open');
+      btnExportDropdown?.setAttribute('aria-expanded', 'false');
+    };
+
+    btnExportDropdown?.addEventListener('click', e => {
+      e.stopPropagation();
+      soundService.playClick();
+      const isOpen = exportDropdownWrapper?.classList.toggle('open');
+      btnExportDropdown.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', e => {
+      if (exportDropdownWrapper && !exportDropdownWrapper.contains(e.target as Node)) {
+        closeExportDropdown();
+      }
+    });
+
+    btnExportMd?.addEventListener('click', () => {
+      soundService.playClick();
+      closeExportDropdown();
+      const md = exportSnapshotToMarkdown(this.snapshot);
+      const filename = generateExportFilename(this.snapshot, 'md');
+      downloadBlob(md, filename, 'text/markdown;charset=utf-8');
+    });
+
+    btnExportJson?.addEventListener('click', () => {
+      soundService.playClick();
+      closeExportDropdown();
+      const json = exportSnapshotToJson(this.snapshot);
+      const filename = generateExportFilename(this.snapshot, 'json');
+      downloadBlob(json, filename, 'application/json;charset=utf-8');
     });
 
     // Search input & quick clear button

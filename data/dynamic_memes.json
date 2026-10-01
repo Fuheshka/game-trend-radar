@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-29T21:40:29.809Z",
-  "totalMemes": 1,
+  "updatedAt": "2026-10-01T11:05:09.925Z",
+  "totalMemes": 30,
   "memes": [
     {
       "id": "на_bmw",
@@ -12,18 +12,569 @@
       "associatedArchetypes": [
         "OTHER_CASUAL"
       ],
-      "confidenceScore": 44,
+      "confidenceScore": 54,
       "firstSeen": "2026-09-29T21:40:29.809Z",
-      "lastSeen": "2026-09-29T21:40:29.809Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
       "trendStatus": "EMERGING",
       "sources": [
         "roblox_ngram"
       ],
       "sampleTitles": [
         "ГТАРП: Дрифт на BMW M5 F90",
-        "ACR: Гонки и Дрифт в Городе на BMW",
-        "Суета на BMW M5"
+        "Суета на BMW M5",
+        "ACR: Гонки и Дрифт в Городе на BMW"
       ]
+    },
+    {
+      "id": "истории",
+      "name": "истории",
+      "keywords": [
+        "истории"
+      ],
+      "regexPattern": "истории",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "обход",
+      "name": "обход",
+      "keywords": [
+        "обход"
+      ],
+      "regexPattern": "обход",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "удалила_мне_мама",
+      "name": "удалила мне мама",
+      "keywords": [
+        "удалила мне мама"
+      ],
+      "regexPattern": "удалила\\s+мне\\s+мама",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "99_ночей_в_лесу",
+      "name": "99 ночей в лесу",
+      "keywords": [
+        "99 ночей в лесу"
+      ],
+      "regexPattern": "99\\s+ночей\\s+в\\s+лесу",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "укради_яйцо",
+      "name": "укради яйцо",
+      "keywords": [
+        "укради яйцо"
+      ],
+      "regexPattern": "укради\\s+яйцо",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "студио",
+      "name": "студио",
+      "keywords": [
+        "студио"
+      ],
+      "regexPattern": "студио",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "квин",
+      "name": "квин",
+      "keywords": [
+        "квин"
+      ],
+      "regexPattern": "квин",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "сериал",
+      "name": "сериал",
+      "keywords": [
+        "сериал"
+      ],
+      "regexPattern": "сериал",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "укради_брейнрот",
+      "name": "укради брейнрот",
+      "keywords": [
+        "укради брейнрот"
+      ],
+      "regexPattern": "укради\\s+брейнрот",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "заблокировали",
+      "name": "заблокировали",
+      "keywords": [
+        "заблокировали"
+      ],
+      "regexPattern": "заблокировали",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "заблокируют",
+      "name": "заблокируют",
+      "keywords": [
+        "заблокируют"
+      ],
+      "regexPattern": "заблокируют",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "егор",
+      "name": "егор",
+      "keywords": [
+        "егор"
+      ],
+      "regexPattern": "егор",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "истории_про_кекс",
+      "name": "истории про кекс",
+      "keywords": [
+        "истории про кекс"
+      ],
+      "regexPattern": "истории\\s+про\\s+кекс",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "хоррор",
+      "name": "хоррор",
+      "keywords": [
+        "хоррор"
+      ],
+      "regexPattern": "хоррор",
+      "associatedArchetypes": [
+        "SURVIVAL_HORROR"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "game_dev_shorts",
+      "name": "game dev shorts",
+      "keywords": [
+        "game dev shorts"
+      ],
+      "regexPattern": "game\\s+dev\\s+shorts",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "game_dev_log_shorts",
+      "name": "game dev log shorts",
+      "keywords": [
+        "game dev log shorts"
+      ],
+      "regexPattern": "game\\s+dev\\s+log\\s+shorts",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "studio_tutorial",
+      "name": "studio tutorial",
+      "keywords": [
+        "studio tutorial"
+      ],
+      "regexPattern": "studio\\s+tutorial",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "studio",
+      "name": "studio",
+      "keywords": [
+        "studio"
+      ],
+      "regexPattern": "studio",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "uncopylocked",
+      "name": "uncopylocked",
+      "keywords": [
+        "uncopylocked"
+      ],
+      "regexPattern": "uncopylocked",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "egor",
+      "name": "egor",
+      "keywords": [
+        "egor"
+      ],
+      "regexPattern": "egor",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "script",
+      "name": "script",
+      "keywords": [
+        "script"
+      ],
+      "regexPattern": "script",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "2025",
+      "name": "2025",
+      "keywords": [
+        "2025"
+      ],
+      "regexPattern": "2025",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "noob_to_pro",
+      "name": "noob to pro",
+      "keywords": [
+        "noob to pro"
+      ],
+      "regexPattern": "noob\\s+to\\s+pro",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "games",
+      "name": "games",
+      "keywords": [
+        "games"
+      ],
+      "regexPattern": "games",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "2026",
+      "name": "2026",
+      "keywords": [
+        "2026"
+      ],
+      "regexPattern": "2026",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "tutorial",
+      "name": "tutorial",
+      "keywords": [
+        "tutorial"
+      ],
+      "regexPattern": "tutorial",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "studio_kit",
+      "name": "studio kit",
+      "keywords": [
+        "studio kit"
+      ],
+      "regexPattern": "studio\\s+kit",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "egor_script",
+      "name": "egor script",
+      "keywords": [
+        "egor script"
+      ],
+      "regexPattern": "egor\\s+script",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
+    },
+    {
+      "id": "anime",
+      "name": "anime",
+      "keywords": [
+        "anime"
+      ],
+      "regexPattern": "anime",
+      "associatedArchetypes": [
+        "OTHER_CASUAL"
+      ],
+      "confidenceScore": 40,
+      "firstSeen": "2026-10-01T11:05:09.925Z",
+      "lastSeen": "2026-10-01T11:05:09.925Z",
+      "trendStatus": "EMERGING",
+      "sources": [
+        "youtube_autocomplete"
+      ],
+      "sampleTitles": []
     }
   ]
 }
