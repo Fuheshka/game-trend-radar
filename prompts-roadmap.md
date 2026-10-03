@@ -444,3 +444,342 @@
 > - Зафиксируй изменения в `implementation-notes.md`, обнови `/Users/fuheshka/Documents/Obsidian Vault/.agents/MEMORY.md`.
 > - Категорический запрет автокоммитов без прямого подтверждения.
 > ```
+
+---
+
+## Спринт 11: Премиальный редизайн интерфейса (Linear & SteamDB Precision Dark)
+
+> [!abstract] Избавление от «нейрослопа» и переход к инструментальному Dark UI
+> Перевод сайта из бесконечного одностраничника в модульное рабочее пространство по стандартам **Linear**, **Raycast** и **SteamDB**:
+> - Отказ от фиолетового неонового шума в пользу графитовой палитры Void `#08090a` и Carbon `#0f1011`.
+> - Волосковые границы `1px solid #23252a` и тактильные внутренние тени клавиш.
+> - Плотная таблица каталога 473+ игр со спарклайнами динамики CCU.
+> - Сегментированные вкладки с мгновенным переключением и горячими клавишами `1`-`4`.
+
+- [x] **Промпт 11.1: Дизайн-токены Komorebi Slate и типографика Tabular Nums**
+
+> [!note]+ Текст промпта 11.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Полностью обновить CSS дизайн-систему в `web/src/style.css`, удалив все фиолетовые и лавандовые неоновые свечения, и внедрив строгие токены Linear & Raycast Precision Dark.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `:root` файла `web/src/style.css` определены поверхности:
+>   - `--surface-void: #08090a` (базовый холст).
+>   - `--surface-carbon: #0f1011` (карточки и контейнеры).
+>   - `--surface-obsidian: #161718` (приподнятые панели и drawer).
+>   - `--surface-recessed: #111214` (поля ввода и поиск).
+>   - `--border-hairline: #23252a` (структурные границы 1px).
+>   - `--border-focus: #383b3f` (акцентные границы).
+> - Цвета типографики: `--text-paper: #ffffff`, `--text-mist: #d0d6e0`, `--text-fog: #8a8f98`, `--text-ash: #62666d`.
+> - Семантические акценты: `--accent-lime: #e4f222` (единственный хроматический CTA), `--status-growth: #27a644`, `--status-warning: #f59e0b`, `--status-danger: #eb5757`.
+> - Типографика: для числовых колонок онлайна и бейджей подключен `JetBrains Mono` со строгим свойством `font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1;`.
+> - Полностью удалены классы с фиолетовыми тенями (`--accent-lavender-glow`, `box-shadow: 0 0 18px ...`).
+> - Добавлены тактильные псевдоклассы `:active { transform: scale(0.98); }` для кнопок и табов.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/style.css`.
+> - **Чего НЕ трогаем**: логику скриптов TypeScript.
+> 
+> ### 4. Проверка
+> - Открой страницу и убедись, что пропал фиолетовый шум, интерфейс выглядит сдержанно и строго в стиле Linear/Raycast.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 11.2: Модульная навигация по рабочим пространствам (Workspaces & Segmented Tabs)**
+
+> [!note]+ Текст промпта 11.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Разделить монолитный вертикальный скролл страницы на 4 изолированных экрана рабочих пространств с мгновенным переключением через сегментированные табы и горячие клавиши.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/components/WorkspaceTabs.ts` создан компонент вкладок:
+>   - `[ 🛰️ Обзор и Радар ]` (активен по умолчанию)
+>   - `[ 📈 Лидеры роста ]`
+>   - `[ 🎮 Каталог игр ]`
+>   - `[ ⚡ Матрица арбитража ]`
+> - В `web/index.html` контент сгруппирован в контейнеры `<section id="view-radar">`, `<section id="view-movers">`, `<section id="view-catalog">`, `<section id="view-arbitrage">`.
+> - Переключение вкладок скрывает неактивные экраны (`display: none` / `display: block`), сохраняя состояние скролла каждого экрана.
+> - Поддержка клавиатурных шорткатов: нажатие клавиш `1`, `2`, `3`, `4` переключает соответствующие табы; `Esc` закрывает открытый drawer.
+> - Сегментированный переключатель оформлен по канону Linear: фон `--surface-carbon`, активная вкладка подсвечена аккуратной рамкой `--border-focus` с легким сдвигом без дерганий верстки.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/WorkspaceTabs.ts`, `web/src/main.ts`, `web/index.html`, `web/src/style.css`.
+> - **Чего НЕ трогаем**: генерацию данных и аналитику скоринга.
+> 
+> ### 4. Проверка
+> - Проверь переключение табов мышью и клавишами `1`-`4`. Убедись, что на странице больше нет бесконечного скролла.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 11.3: Плавающий Glass Header и компактная полоса KPI**
+
+> [!note]+ Текст промпта 11.3
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Собрать компактную шапку (высота 48px) с полупрозрачным размытием, LED индикатором подключения, селектором дат, кнопкой сканирования в стиле Linear Acid Lime и узкой строкой ключевых KPI.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/components/HeaderStatusBar.ts` реализован компактный компонент шапки:
+>   - Логотип `Game Trend Radar` с версией `v2.0` (шрифт JetBrains Mono 11px).
+>   - Живой диод статуса SSE: зеленый пульсирующий LED (`--status-growth`) при активности соединения, серый при оффлайне.
+>   - Селектор исторических снимков из `data/snapshots/`.
+>   - Высококонтрастная кнопка `⚡ Запустить скан`: фон `--accent-lime (#e4f222)`, текст `--accent-lime-text (#08090a)`, скругление 6px, тактильный отклик.
+>   - Кнопка выпадающего меню экспорта отчета (`.md` / `.json`).
+> - Под шапкой размещена узкая строка KPI (высота 32-36px):
+>   `Всего игр: 473` | `Онлайн: 1.42M (+4.2%)` | `Ниш арбитража: 14` | `Топ дня: Steal An Egg` | `Обновлено: X мин назад`.
+> - Старый навязчивый гигантский тикер убран из фиксированной шапки.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/HeaderStatusBar.ts`, `web/src/main.ts`, `web/index.html`, `web/src/style.css`.
+> - **Чего НЕ трогаем**: алгоритмы расчета метрик.
+> 
+> ### 4. Проверка
+> - Проверь клик по кнопкам, смену снимков и адаптивность шапки при изменении ширины окна.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 11.4: Высокоплотная таблица каталога игр со спарклайнами (SteamDB Data Grid)**
+
+> [!note]+ Текст промпта 11.4
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Переработать каталог 473+ игр в сверхплотную, информативную интерактивную таблицу по эталону SteamDB Charts со спарклайнами трендов и быстрой сортировкой.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/components/GameTableView.ts` реализована таблица высокой плотности (50+ видимых строк без пустых отступов):
+>   - Колонки: `# Ранг`, `Платформа` (компактный бейдж), `Название игры` (с иконкой витрины), `Жанр/Архетип`, `Онлайн CCU` (моноширинный `tabular-nums`), `7d Тренд` (инлайн SVG спарклайн зеленого/красного цвета), `Opportunity Score` (число + микро-индикатор), `Лайки %`, `Действия` (кнопка открытия Drawer).
+>   - Клик по заголовкам колонок выполняет мгновенную сортировку (по CCU, по Opportunity, по названию, по лайкам).
+>   - Быстрый поиск в шапке таблицы с горячей клавишей `Ctrl+K` / `⌘K` (поле ввода в колодце `--surface-recessed`).
+>   - Фильтр-чипсы по платформам: `[Все]`, `[Roblox]`, `[Яндекс Игры]`, `[Poki]`, `[Shorts]`.
+>   - Переключатель отображения: `[Таблица (по умолчанию)]` и `[Сетка карточек]`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/GameTableView.ts`, `web/src/main.ts`, `web/src/style.css`.
+> - **Чего НЕ трогаем**: формат объектов в `MarketSnapshot`.
+> 
+> ### 4. Проверка
+> - Проверь рендеринг таблицы со спарклайнами, сортировку по всем колонкам и быстрый фильтр по клавише `Ctrl+K`.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 11.5: Редизайн радар-секции и вердиктов (Split View Overview & Blueprints)**
+
+> [!note]+ Текст промпта 11.5
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Объединить SVG-радар и карточки вердиктов в компактный двухколоночный сплит-экран, устранив огромные пустые поля и применив тактильные стили карточек Raycast.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/components/RadarOverviewView.ts` экран обзора скомпонован в 2 колонки:
+>   - **Левая колонка (42%):** оптимизированный по размеру SVG-радар (Spider & Polar режимы) с лучом сканирования. При наведении или клике на лепесток архетипа правая колонка мгновенно скроллится к соответствующему вердикту.
+>   - **Правая колонка (58%):** карточки вердиктов с тактильной структурой (инсетные тени `--shadow-key`, границы `--border-hairline`, статус-бейджи Green/Yellow/Red).
+>   - Каждая карточка содержит: название архетипа, шкалу Opportunity Score, дельту прироста CCU, ключевые хиты ниши, стратегию монетизации и кнопку «Сгенерировать ТЗ для ИИ».
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/RadarOverviewView.ts`, `web/src/components/RadarChart.ts`, `web/src/components/VerdictCards.ts`, `web/src/style.css`.
+> - **Чего НЕ трогаем**: алгоритм расчета очков Opportunity Scorer.
+> 
+> ### 4. Проверка
+> - Проверь синхронизацию кликов на радаре и подсветки карточек справа.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 11.6: Экран лидеров роста и социальных аномалий (Movers, Shakers & Viral Velocity)**
+
+> [!note]+ Текст промпта 11.6
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Создать вкладку лидеров роста и опережающих социальных индикаторов рынка (в духе DefiLlama Movers & Shakers).
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/components/MoversView.ts` реализован экран из 3 секций:
+>   1. **Топ лидеров роста CCU (24h Gainers):** проекты с максимальным абсолютным и процентным приростом онлайна.
+>   2. **Вирусные сигналы YouTube Shorts:** карточки мемов с множителем `viralMultiplier` (>1.5x) до их массового выхода в топы витрин.
+>   3. **Взрывные новинки (< 14 дней на платформе):** молодые проекты, быстро набирающие аудиторию.
+> - Для каждой карточки отображается спарклайн тренда, теги архетипа и кнопка инспектора.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/MoversView.ts`, `web/src/main.ts`, `web/src/style.css`.
+> - **Чего НЕ трогаем**: сборщики данных.
+> 
+> ### 4. Проверка
+> - Проверь корректность ранжирования лидеров роста по снимкам рынка.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+---
+
+## Спринт 12: Real-time архитектура на Server-Sent Events (SSE) и потоковый сбор
+
+> [!abstract] Честный стриминг данных от Node.js к браузеру
+> Замена имитационных таймеров на нативный потоковый протокол Server-Sent Events (`text/event-stream`):
+> - Сервер транслирует реальный ход парсинга по каждой витрине (Roblox, Яндекс, Poki, YouTube).
+> - Браузер автоматически получает свежий снимок и обновляет интерфейс без перезагрузки страницы.
+
+- [ ] **Промпт 12.1: Бэкенд-шина событий и эндпоинт SSE в `src/server.ts`**
+
+> [!note]+ Текст промпта 12.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail) [/test-driven-development](slashCommand;test-driven-development)
+> 
+> ### 1. Цель
+> Реализовать нативный SSE эндпоинт `GET /api/events` в `src/server.ts` на стандартном модуле `node:http` (без Express/Socket.io) и шину событий `MarketEventBus`.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Создан класс `MarketEventBus` на базе нативного `node:events.EventEmitter`.
+> - В `src/server.ts` добавлен маршрут `GET /api/events`:
+>   - Заголовки: `Content-Type: text/event-stream`, `Cache-Control: no-cache`, `Connection: keep-alive`, CORS заголовки.
+>   - Регулярный heartbeat-комментарий (`: ping\n\n`) каждые 15 секунд для поддержания соединения через прокси.
+>   - Регистрация подключенных клиентов и корректное удаление при `req.on('close')`.
+> - Метод `broadcast(event: string, data: any)` рассылает форматированное SSE сообщение (`event: ...\ndata: ...\n\n`) всем активным клиентам.
+> - Написаны тесты `tests/SSEStream.test.ts` с проверкой подключения клиента, получения событий и отключения.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `src/server.ts`, `src/events/event_bus.ts`, `tests/SSEStream.test.ts`.
+> - **Чего НЕ трогаем**: существующие REST эндпоинты `GET /api/snapshots`.
+> 
+> ### 4. Проверка
+> - Запусти тесты Vitest: `npx vitest run tests/SSEStream.test.ts` (100% pass).
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 12.2: Потоковая оркестрация сбора данных в `src/scanner.ts`**
+
+> [!note]+ Текст промпта 12.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail) [/test-driven-development](slashCommand;test-driven-development)
+> 
+> ### 1. Цель
+> Интегрировать шину событий в `MarketScanner`, чтобы сервер отправлял реальный статус парсинга каждой витрины в процессе сканирования.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - `MarketScanner` принимает экземпляр `MarketEventBus` или коллбэк `onProgress`.
+> - В процессе сканирования транслируются реальные события:
+>   - `scan:started`: время запуска.
+>   - `collector:progress`: `{ source: 'roblox', count: 120, pct: 25 }`.
+>   - `collector:progress`: `{ source: 'yandex_games', count: 240, pct: 55 }`.
+>   - `collector:progress`: `{ source: 'poki', count: 310, pct: 75 }`.
+>   - `collector:progress`: `{ source: 'youtube_shorts', count: 473, pct: 90 }`.
+>   - `scan:completed`: `{ snapshotId: 'snapshot-YYYY-MM-DD', totalGames: 473 }`.
+> - Написаны тесты `tests/ScannerEvents.test.ts` с эмуляцией последовательности событий.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `src/scanner.ts`, `tests/ScannerEvents.test.ts`.
+> - **Чего НЕ трогаем**: парсинг конкретных HTML/JSON страниц.
+> 
+> ### 4. Проверка
+> - Запусти тесты Vitest: `npx vitest run tests/ScannerEvents.test.ts` (100% pass).
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 12.3: Клиентский EventSource подписчик и реактивное автообновление дашборда**
+
+> [!note]+ Текст промпта 12.3
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Подключить нативный браузерный `EventSource` к `/api/events`, отображать реальный ход парсинга и обновлять все графики и таблицы без перезагрузки страницы.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/services/liveEventService.ts` создан сервис управления SSE соединением.
+> - Автоматический реконнект с экспоненциальной задержкой при обрыве соединения.
+> - При получении `scan:progress` прогресс-бар в шапке плавно заполняется на реальные проценты с отображением текущей витрины («Парсинг Яндекс Игр...»).
+> - Полностью удален старый фейковый таймер `setInterval` из `triggerLiveScan()`.
+> - При получении `scan:completed` клиент автоматически запрашивает свежий снимок, проигрывает процедурный звуковой сигнал завершения сканирования и обновляет данные в активной вкладке.
+> - Пульсирующий зеленый LED диод в шапке визуализирует активность канала.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/services/liveEventService.ts`, `web/src/main.ts`, `web/src/components/HeaderStatusBar.ts`.
+> - **Чего НЕ трогаем**: стили таблиц и радара.
+> 
+> ### 4. Проверка
+> - Запусти сервер и клиент, нажми «⚡ Запустить скан» и убедись, что прогресс синхронизирован с реальными логами бэкенда, а данные обновляются на лету.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+---
+
+## Спринт 13: Развертывание на сервере и домен `fuheshka.qd.je` (Production Deployment)
+
+> [!abstract] Развертывание боевого инстанса с авто-SSL и фоновым обновлением
+> Настройка production окружения на сервере пользователя с обратным прокси и SSE стримингом:
+> - Запуск сервиса под управлением PM2.
+> - Конфигурация Nginx/Caddy с поддержкой отключения буферизации для SSE (`proxy_buffering off;`).
+> - Автоматический SSL Let's Encrypt для домена `fuheshka.qd.je`.
+
+- [ ] **Промпт 13.1: Серверная конфигурация PM2 и автоматический планировщик сбора**
+
+> [!note]+ Текст промпта 13.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Подготовить production конфигурацию запуска сервера через PM2 и cron-задачу для регулярного фонового сканирования рынка.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В корне создан файл `ecosystem.config.cjs`:
+>   - Имя приложения: `game-trend-radar`.
+>   - Скрипт: `node --loader tsx src/server.ts` или скомпилированный `dist/server.js`.
+>   - Переменные окружения: `PORT=4200`, `NODE_ENV=production`.
+>   - Авто-перезапуск при падении, лимит памяти 512MB, ротация логов.
+> - В `scripts/deploy.sh` подготовлен скрипт развертывания: `git pull`, `npm install`, `npm run build`, `pm2 restart ecosystem.config.cjs`.
+> - Документирована настройка cron для ночного запуска полного сканирования рынка в 03:00 UTC с уведомлением подключенных пользователей по SSE.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `ecosystem.config.cjs`, `scripts/deploy.sh`, `README.md`.
+> - **Чего НЕ трогаем**: логику компонентов фронтенда.
+> 
+> ### 4. Проверка
+> - Проверь локальный запуск через `pm2 start ecosystem.config.cjs` (или `node src/server.ts`), убедись в корректности портов и переменных окружения.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 13.2: Обратный прокси Nginx / Caddy с поддержкой SSE для домена `fuheshka.qd.je`**
+
+> [!note]+ Текст промпта 13.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> ### 1. Цель
+> Подготовить готовые конфигурационные файлы веб-сервера (Nginx и Caddy) для домена `fuheshka.qd.je` с корректной поддержкой постоянного SSE стриминга без буферизации.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В папке `deploy/` созданы конфигурационные файлы:
+>   - `deploy/nginx.conf`: блок `server_name fuheshka.qd.je;`, проксирование статики и API на `http://127.0.0.1:4200`, отключение буферизации `proxy_buffering off; chunked_transfer_encoding off;` для маршрута `/api/events`, заголовки gzip и security headers.
+>   - `deploy/Caddyfile`: альтернативный вариант с автоматическим HTTPS через Caddy (`fuheshka.qd.je { reverse_proxy 127.0.0.1:4200 }`).
+> - В `README.md` и `README.ru.md` добавлена пошаговая инструкция по привязке DNS A-записи домена `fuheshka.qd.je` к IP сервера и выпуску SSL сертификата через Certbot.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `deploy/nginx.conf`, `deploy/Caddyfile`, `README.md`, `README.ru.md`.
+> - **Чего НЕ трогаем**: исходный код приложений.
+> 
+> ### 4. Проверка
+> - Проверь синтаксис конфигов Nginx и Caddy на отсутствие ошибок директив.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
