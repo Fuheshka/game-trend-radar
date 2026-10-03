@@ -5,6 +5,7 @@ import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { DetailDrawerComponent } from './components/DetailDrawer.js';
 import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
+import { GameTableViewComponent } from './components/GameTableView.js';
 import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
 import { WorkspaceTabsComponent, WorkspaceId } from './components/WorkspaceTabs.js';
@@ -80,6 +81,7 @@ class App {
   private liveTicker!: LiveTickerComponent;
   private detailDrawer!: DetailDrawerComponent;
   private gameCatalog!: GameCatalogComponent;
+  private gameTableView!: GameTableViewComponent;
   private arbitrageMatrix!: ArbitrageMatrixComponent;
   private promptModal!: PromptGeneratorModalComponent;
   private workspaceTabs!: WorkspaceTabsComponent;
@@ -348,10 +350,19 @@ class App {
   private initShortcuts(): void {
     window.addEventListener('keydown', e => {
       // Cmd/Ctrl + K to focus search
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
+        if (this.currentView === 'catalog') {
+          const tableSearchInput = document.querySelector('.steamdb-search-input') as HTMLInputElement;
+          if (tableSearchInput) {
+            tableSearchInput.focus();
+            tableSearchInput.select();
+            return;
+          }
+        }
         const searchInput = document.getElementById('search-input') as HTMLInputElement;
         searchInput?.focus();
+        searchInput?.select();
       }
       // Note: Escape и 1-4 обрабатываются в WorkspaceTabsComponent
     });
@@ -561,12 +572,14 @@ class App {
       });
     }
 
-    // Game Catalog Component setup
+    // Game Table View Component setup (SteamDB Charts high density view)
     const catalogContainer = document.getElementById('catalog-container');
     if (catalogContainer) {
-      this.gameCatalog = new GameCatalogComponent({
+      this.gameTableView = new GameTableViewComponent({
         container: catalogContainer,
         games: this.snapshot.games || [],
+        verdicts: this.snapshot.verdicts || [],
+        initialViewMode: 'table',
         onSelectGame: game => {
           soundService.playClick();
           this.detailDrawer.openGame(game, this.snapshot.games);
@@ -577,10 +590,15 @@ class App {
           if (catalogSearchInput) {
             catalogSearchInput.value = tag;
           }
-          this.gameCatalog.setSearchQuery(tag);
+          this.gameTableView.setSearchQuery(tag);
+          this.updateCatalogCountUI();
+        },
+        onFilterChange: () => {
           this.updateCatalogCountUI();
         },
       });
+      // Backward compatibility pointer
+      this.gameCatalog = this.gameTableView as any;
       this.updateCatalogCountUI();
     }
 
@@ -920,6 +938,7 @@ class App {
     this.liveTicker?.updateData(this.snapshot);
     this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
     this.gameCatalog?.updateData(this.snapshot.games || []);
+    this.gameTableView?.updateData(this.snapshot.games || [], this.snapshot.verdicts || []);
     this.updateCatalogCountUI();
     this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
     this.updateArbitrageCountUI();
@@ -1051,6 +1070,7 @@ class App {
         this.liveTicker?.updateData(this.snapshot);
         this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
         this.gameCatalog?.updateData(this.snapshot.games || []);
+        this.gameTableView?.updateData(this.snapshot.games || [], this.snapshot.verdicts || []);
         this.updateCatalogCountUI();
         this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
         this.updateArbitrageCountUI();

@@ -3809,94 +3809,599 @@ kbd.tab-hotkey {
 }
 
 /* ==========================================================================
-   GAME CATALOG COMPACT TABLE
+   STEAMDB HIGH DENSITY TABLE VIEW (GameTableView)
    ========================================================================== */
 
-.catalog-table-wrapper {
-  background: var(--bg-card);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
-  overflow-x: auto;
-  box-shadow: var(--shadow-card);
+.steamdb-table-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-.catalog-table {
-  width: 100%;
-  border-collapse: collapse;
+.steamdb-header-toolbar {
+  background: var(--surface-carbon, #0f1011);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: var(--radius-card, 12px);
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.steamdb-toolbar-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.steamdb-search-well {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 260px;
+  max-width: 560px;
+  background: var(--surface-recessed, #111214);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: var(--radius-control, 6px);
+  padding: 0.4rem 0.75rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.steamdb-search-well:focus-within {
+  border-color: var(--border-focus, #383b3f);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.steamdb-search-well .search-icon {
+  color: var(--text-ash, #62666d);
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.steamdb-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-paper, #ffffff);
+  font-family: var(--font-sans);
   font-size: 0.85rem;
 }
 
-.catalog-table th {
-  background: var(--bg-surface);
-  padding: 0.75rem 1rem;
-  color: var(--text-muted);
-  font-size: 0.74rem;
-  font-weight: 600;
+.steamdb-search-input::placeholder {
+  color: var(--text-ash, #62666d);
+}
+
+.steamdb-kbd-badge {
   font-family: var(--font-mono);
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border-default);
+  font-size: 0.7rem;
+  padding: 2px 5px;
+  background: var(--surface-tint, #1c1d20);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: 4px;
+  color: var(--text-fog, #8a8f98);
+  pointer-events: none;
+  box-shadow: var(--shadow-key);
+}
+
+.steamdb-view-toggles {
+  display: flex;
+  align-items: center;
+  background: var(--surface-recessed, #111214);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: var(--radius-control, 6px);
+  padding: 2px;
+  gap: 2px;
+}
+
+.table-view-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-fog, #8a8f98);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-view-toggle-btn:hover {
+  color: var(--text-mist, #d0d6e0);
+}
+
+.table-view-toggle-btn.active {
+  background: var(--surface-tint, #1c1d20);
+  color: var(--text-paper, #ffffff);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.steamdb-toolbar-row-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.steamdb-chips-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.chips-label {
+  font-size: 0.76rem;
+  color: var(--text-ash, #62666d);
+  font-family: var(--font-mono);
+  margin-right: 0.2rem;
+}
+
+.table-platform-chip {
+  padding: 0.25rem 0.65rem;
+  background: var(--surface-recessed, #111214);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: var(--radius-pill, 9999px);
+  color: var(--text-fog, #8a8f98);
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-platform-chip:hover {
+  border-color: var(--border-focus, #383b3f);
+  color: var(--text-mist, #d0d6e0);
+}
+
+.table-platform-chip.active {
+  background: var(--surface-tint, #1c1d20);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-paper, #ffffff);
+}
+
+.steamdb-counter-badge {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-fog, #8a8f98);
+  padding: 0.2rem 0.5rem;
+  background: var(--surface-recessed, #111214);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   STEAMDB HIGH DENSITY TABLE (50+ VISIBLE ROWS, STEAMDB/LINEAR STANDARD)
+   ========================================================================== */
+
+.steamdb-table-wrapper {
+  background: var(--surface-carbon, #0f1011);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: var(--radius-card, 12px);
+  overflow-x: auto;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  box-shadow: var(--shadow-key);
+}
+
+.steamdb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
   text-align: left;
 }
 
-.catalog-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-subtle);
-  vertical-align: middle;
+.steamdb-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.catalog-table-row {
+.steamdb-table th {
+  background: var(--surface-obsidian, #161718);
+  padding: 7px 10px;
+  color: var(--text-fog, #8a8f98);
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border-hairline, #23252a);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.steamdb-table th.sortable {
   cursor: pointer;
-  transition: background 0.15s ease;
 }
 
-.catalog-table-row:hover {
-  background: var(--bg-hover);
+.steamdb-table th.sortable:hover {
+  color: var(--text-paper, #ffffff);
+  background: #1c1d20;
 }
 
-.catalog-table-row:last-child td {
+.steamdb-table th.sort-active {
+  color: var(--accent-lime, #e4f222);
+}
+
+.th-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.th-inner.justify-end {
+  justify-content: flex-end;
+}
+
+.th-inner.justify-center {
+  justify-content: center;
+}
+
+.sort-indicator {
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.sort-indicator.neutral {
+  opacity: 0.3;
+}
+
+.sort-indicator.active {
+  color: var(--accent-lime, #e4f222);
+  opacity: 1;
+}
+
+/* Rows & Cells: compact 34px-36px height */
+.steamdb-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-hairline, #23252a);
+  vertical-align: middle;
+  white-space: nowrap;
+  color: var(--text-mist, #d0d6e0);
+}
+
+.steamdb-table-row {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.steamdb-table-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.steamdb-table-row:active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.steamdb-table-row:last-child td {
   border-bottom: none;
+}
+
+/* Rank column */
+.td-rank {
+  width: 48px;
+  text-align: center;
+}
+
+.table-rank-num {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-ash, #62666d);
+}
+
+/* Platform badge */
+.td-platform {
+  width: 110px;
+}
+
+.table-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Title cell */
+.td-title {
+  max-width: 260px;
 }
 
 .table-title-cell {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
 }
 
 .table-game-title {
   font-weight: 600;
-  color: #fff;
+  color: var(--text-paper, #ffffff);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-store-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-ash, #62666d);
+  padding: 2px;
+  border-radius: 3px;
+  transition: color 0.15s ease, background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.table-store-link:hover {
+  color: var(--text-paper, #ffffff);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Genre / Archetype cell */
+.td-genre {
+  max-width: 190px;
 }
 
 .table-genre-cell {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  line-height: 1.2;
 }
 
 .table-arch-badge {
-  font-size: 0.72rem;
-  color: var(--text-secondary);
+  font-size: 0.74rem;
+  color: var(--text-mist, #d0d6e0);
+  font-weight: 500;
 }
 
 .table-genre-text {
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  font-size: 0.68rem;
+  color: var(--text-ash, #62666d);
 }
 
-.table-metric-val {
+/* CCU cell */
+.td-ccu {
+  width: 100px;
+  text-align: right;
+}
+
+.table-ccu-val {
   font-family: var(--font-mono);
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-paper, #ffffff);
 }
 
-.table-metric-val.ccu {
-  color: var(--status-green-light);
+/* 7d Trend & Sparkline */
+.td-trend {
+  width: 140px;
+}
+
+.table-trend-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.sparkline-svg {
+  display: block;
+  overflow: visible;
+}
+
+.table-trend-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  min-width: 42px;
+  text-align: right;
+}
+
+.table-trend-badge.sparkline-growth {
+  color: var(--status-growth, #27a644);
+}
+
+.table-trend-badge.sparkline-drop {
+  color: var(--status-danger, #eb5757);
+}
+
+/* Opportunity Score cell */
+.td-opportunity {
+  width: 120px;
+}
+
+.table-opp-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.opp-score {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: right;
+}
+
+.opp-score.score-high {
+  color: var(--status-growth, #27a644);
+}
+
+.opp-score.score-med {
+  color: var(--status-warning, #f59e0b);
+}
+
+.opp-score.score-low {
+  color: var(--status-danger, #eb5757);
+}
+
+.opp-meter {
+  width: 44px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.opp-meter-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.opp-meter-fill.score-high {
+  background: var(--status-growth, #27a644);
+}
+
+.opp-meter-fill.score-med {
+  background: var(--status-warning, #f59e0b);
+}
+
+.opp-meter-fill.score-low {
+  background: var(--status-danger, #eb5757);
+}
+
+/* Likes cell */
+.td-likes {
+  width: 70px;
+  text-align: center;
 }
 
 .table-likes-val {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--accent-cyan);
+  font-size: 0.78rem;
+  color: var(--text-mist, #d0d6e0);
+}
+
+/* Actions cell */
+.td-actions {
+  width: 95px;
+  text-align: right;
+}
+
+.table-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--surface-recessed, #111214);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: 4px;
+  color: var(--text-fog, #8a8f98);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-action-btn:hover {
+  background: var(--surface-tint, #1c1d20);
+  border-color: var(--border-focus, #383b3f);
+  color: var(--text-paper, #ffffff);
+}
+
+/* Card Sparkline Row for Grid view */
+.card-sparkline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: var(--surface-recessed, #111214);
+  border-radius: 6px;
+  margin: 6px 0;
+}
+
+.card-trend-label {
+  font-size: 0.72rem;
+  color: var(--text-ash, #62666d);
+}
+
+.card-trend-delta {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.card-trend-delta.sparkline-growth {
+  color: var(--status-growth, #27a644);
+}
+
+.card-trend-delta.sparkline-drop {
+  color: var(--status-danger, #eb5757);
+}
+
+/* SteamDB pagination row */
+.steamdb-pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 1rem 0;
+}
+
+.btn-steamdb-more,
+.btn-steamdb-all {
+  padding: 6px 14px;
+  background: var(--surface-recessed, #111214);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: var(--radius-control, 6px);
+  color: var(--text-mist, #d0d6e0);
+  font-size: 0.78rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-steamdb-more:hover,
+.btn-steamdb-all:hover {
+  background: var(--surface-tint, #1c1d20);
+  border-color: var(--border-focus, #383b3f);
+  color: var(--text-paper, #ffffff);
+}
+
+/* Empty state */
+.steamdb-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background: var(--surface-carbon, #0f1011);
+  border: 1px solid var(--border-hairline, #23252a);
+  border-radius: var(--radius-card, 12px);
+  gap: 0.5rem;
+}
+
+.steamdb-empty-state h3 {
+  font-size: 1rem;
+  color: var(--text-paper, #ffffff);
+  margin: 0;
+}
+
+.steamdb-empty-state p {
+  font-size: 0.82rem;
+  color: var(--text-fog, #8a8f98);
+  margin: 0;
+}
+
+/* Hide legacy external catalog toolbar to prioritize unified SteamDB toolbar */
+.catalog-controls-strip {
+  display: none !important;
 }
 
 /* ==========================================================================
