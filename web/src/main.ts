@@ -8,6 +8,7 @@ import { DetailDrawerComponent } from './components/DetailDrawer.js';
 import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
 import { GameTableViewComponent } from './components/GameTableView.js';
 import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
+import { MoversViewComponent } from './components/MoversView.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
 import { WorkspaceTabsComponent, WorkspaceId } from './components/WorkspaceTabs.js';
 import { HeaderStatusBarComponent, formatMinutesAgo } from './components/HeaderStatusBar.js';
@@ -85,6 +86,7 @@ class App {
   private gameCatalog!: GameCatalogComponent;
   private gameTableView!: GameTableViewComponent;
   private arbitrageMatrix!: ArbitrageMatrixComponent;
+  private moversView!: MoversViewComponent;
   private promptModal!: PromptGeneratorModalComponent;
   private workspaceTabs!: WorkspaceTabsComponent;
   private headerStatusBar!: HeaderStatusBarComponent;
@@ -326,6 +328,8 @@ class App {
           this.updateCatalogCountUI();
         } else if (workspace === 'arbitrage') {
           this.updateArbitrageCountUI();
+        } else if (workspace === 'movers') {
+          this.updateMoversCountUI();
         }
       },
       onEscape: () => {
@@ -690,6 +694,28 @@ class App {
       this.updateArbitrageCountUI();
     }
 
+    // Movers View Component setup (DefiLlama Movers & Shakers)
+    const moversContainer = document.getElementById('view-movers');
+    if (moversContainer) {
+      this.moversView = new MoversViewComponent({
+        container: moversContainer,
+        currentSnapshot: this.snapshot,
+        previousSnapshot: this.previousSnapshot,
+        onSelectGame: game => {
+          soundService.playClick();
+          this.detailDrawer.openGame(game, this.snapshot.games);
+        },
+        onSelectArchetype: archetype => {
+          soundService.playClick();
+          const verdict = this.snapshot.verdicts.find(v => v.archetype === archetype);
+          if (verdict) {
+            this.detailDrawer.openArchetype(verdict, this.snapshot.games);
+          }
+        },
+      });
+      this.updateMoversCountUI();
+    }
+
     // Prompt Generator Modal Component setup
     this.promptModal = new PromptGeneratorModalComponent({
       showToast: msg => this.showToast(msg),
@@ -708,6 +734,14 @@ class App {
       const count = this.arbitrageMatrix
         ? this.arbitrageMatrix.getTotalCount()
         : (this.snapshot.arbitrageOpportunities?.length ?? 0);
+      tabBadge.textContent = count.toString();
+    }
+  }
+
+  private updateMoversCountUI(): void {
+    const tabBadge = document.getElementById('tab-movers-count');
+    if (tabBadge && this.moversView) {
+      const count = this.moversView.getGainers().length;
       tabBadge.textContent = count.toString();
     }
   }
@@ -988,6 +1022,7 @@ class App {
       document.getElementById('metrics-hero-grid'),
       document.getElementById('catalog-content'),
       document.getElementById('arbitrage-matrix-container'),
+      document.getElementById('view-movers'),
     ].filter(Boolean) as HTMLElement[];
 
     targets.forEach(el => {
@@ -1012,6 +1047,8 @@ class App {
     this.updateCatalogCountUI();
     this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
     this.updateArbitrageCountUI();
+    this.moversView?.updateData(this.snapshot, this.previousSnapshot);
+    this.updateMoversCountUI();
     this.applyFiltersAndSort();
   }
 
@@ -1144,6 +1181,8 @@ class App {
         this.updateCatalogCountUI();
         this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
         this.updateArbitrageCountUI();
+        this.moversView?.updateData(this.snapshot, this.previousSnapshot);
+        this.updateMoversCountUI();
         this.applyFiltersAndSort();
       }, 700);
     }
