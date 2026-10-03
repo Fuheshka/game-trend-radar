@@ -7,6 +7,7 @@ import { DetailDrawerComponent } from './components/DetailDrawer.js';
 import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
 import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
+import { WorkspaceTabsComponent, WorkspaceId } from './components/WorkspaceTabs.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
 import {
@@ -65,7 +66,7 @@ class App {
   private searchQuery: string = '';
   private sortBy: 'score_desc' | 'score_asc' | 'ccu_desc' | 'velocity_desc' | 'title_asc' = 'score_desc';
   private isScanning: boolean = false;
-  private currentView: 'niches' | 'catalog' | 'arbitrage' = 'niches';
+  private currentView: WorkspaceId = 'radar';
   private prevMetrics = {
     totalGames: 0,
     totalCcu: 0,
@@ -80,6 +81,7 @@ class App {
   private gameCatalog!: GameCatalogComponent;
   private arbitrageMatrix!: ArbitrageMatrixComponent;
   private promptModal!: PromptGeneratorModalComponent;
+  private workspaceTabs!: WorkspaceTabsComponent;
   private currentDrawerVerdict: MarketVerdict | null = null;
 
   constructor() {
@@ -88,6 +90,7 @@ class App {
 
   private async init(): Promise<void> {
     this.initElements();
+    this.initWorkspaceTabs();
     this.initShortcuts();
 
     // Initial render with fallback data while fetching live snapshot
@@ -259,27 +262,10 @@ class App {
       });
     });
 
-    // Main View Mode Tabs
-    const tabBtnNiches = document.getElementById('tab-btn-niches');
-    const tabBtnCatalog = document.getElementById('tab-btn-catalog');
-    const tabBtnArbitrage = document.getElementById('tab-btn-arbitrage');
-    tabBtnNiches?.addEventListener('click', () => {
-      this.switchView('niches');
-      soundService.playClick();
-    });
-    tabBtnCatalog?.addEventListener('click', () => {
-      this.switchView('catalog');
-      soundService.playClick();
-    });
-    tabBtnArbitrage?.addEventListener('click', () => {
-      this.switchView('arbitrage');
-      soundService.playClick();
-    });
-
     // Global Metric Card: Arbitrage shortcut click
     const metricArbitrageCard = document.querySelector('.metric-card.orange');
     metricArbitrageCard?.addEventListener('click', () => {
-      this.switchView('arbitrage');
+      this.workspaceTabs?.switchTo('arbitrage');
       soundService.playClick();
     });
 
@@ -389,6 +375,47 @@ class App {
     });
   }
 
+  private initWorkspaceTabs(): void {
+    this.workspaceTabs = new WorkspaceTabsComponent({
+      initial: 'radar',
+      onSwitch: (workspace: WorkspaceId) => {
+        this.currentView = workspace;
+        soundService.playClick();
+        if (workspace === 'catalog') {
+          this.updateCatalogCountUI();
+        } else if (workspace === 'arbitrage') {
+          this.updateArbitrageCountUI();
+        }
+      },
+      onEscape: () => {
+        // Close drawer if open, otherwise clear search
+        const drawer = document.getElementById('game-drawer');
+        if (drawer && drawer.getAttribute('aria-hidden') === 'false') {
+          this.detailDrawer?.close?.();
+          return;
+        }
+        const searchInput = document.getElementById('search-input') as HTMLInputElement;
+        const searchClearBtn = document.getElementById('search-clear-btn');
+        const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
+        const catalogClearBtn = document.getElementById('catalog-search-clear-btn');
+        if (searchInput) searchInput.value = '';
+        if (searchClearBtn) searchClearBtn.classList.remove('visible');
+        if (catalogSearchInput) catalogSearchInput.value = '';
+        if (catalogClearBtn) catalogClearBtn.classList.remove('visible');
+        this.searchQuery = '';
+        this.activeArchetype = null;
+        this.updateActiveSearchTagUI();
+        this.radarChart?.updateData(this.getFilteredVerdicts(), null);
+        this.applyFiltersAndSort();
+        this.renderLegend();
+        if (this.gameCatalog) {
+          this.gameCatalog.setSearchQuery('');
+          this.updateCatalogCountUI();
+        }
+      },
+    });
+  }
+
   private initShortcuts(): void {
     window.addEventListener('keydown', e => {
       // Cmd/Ctrl + K to focus search
@@ -397,30 +424,7 @@ class App {
         const searchInput = document.getElementById('search-input') as HTMLInputElement;
         searchInput?.focus();
       }
-
-      // Escape to reset filters & clear search
-      if (e.key === 'Escape') {
-        const searchInput = document.getElementById('search-input') as HTMLInputElement;
-        const searchClearBtn = document.getElementById('search-clear-btn');
-        const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
-        const catalogClearBtn = document.getElementById('catalog-search-clear-btn');
-
-        if (searchInput) searchInput.value = '';
-        if (searchClearBtn) searchClearBtn.classList.remove('visible');
-        if (catalogSearchInput) catalogSearchInput.value = '';
-        if (catalogClearBtn) catalogClearBtn.classList.remove('visible');
-
-        this.searchQuery = '';
-        this.activeArchetype = null;
-        this.updateActiveSearchTagUI();
-        this.radarChart.updateData(this.getFilteredVerdicts(), null);
-        this.applyFiltersAndSort();
-        this.renderLegend();
-        if (this.gameCatalog) {
-          this.gameCatalog.setSearchQuery('');
-          this.updateCatalogCountUI();
-        }
-      }
+      // Note: Escape и 1-4 обрабатываются в WorkspaceTabsComponent
     });
 
     // Drawer click delegation for AI spec generator button
@@ -629,30 +633,9 @@ class App {
     });
   }
 
-  private switchView(view: 'niches' | 'catalog' | 'arbitrage'): void {
-    if (this.currentView === view) return;
-    this.currentView = view;
-
-    const tabNiches = document.getElementById('tab-btn-niches');
-    const tabCatalog = document.getElementById('tab-btn-catalog');
-    const tabArbitrage = document.getElementById('tab-btn-arbitrage');
-    const panelNiches = document.getElementById('niches-view-panel');
-    const panelCatalog = document.getElementById('catalog-view-panel');
-    const panelArbitrage = document.getElementById('arbitrage-view-panel');
-
-    tabNiches?.classList.toggle('active', view === 'niches');
-    tabCatalog?.classList.toggle('active', view === 'catalog');
-    tabArbitrage?.classList.toggle('active', view === 'arbitrage');
-
-    if (panelNiches) panelNiches.style.display = view === 'niches' ? 'block' : 'none';
-    if (panelCatalog) panelCatalog.style.display = view === 'catalog' ? 'block' : 'none';
-    if (panelArbitrage) panelArbitrage.style.display = view === 'arbitrage' ? 'block' : 'none';
-
-    if (view === 'catalog') {
-      this.updateCatalogCountUI();
-    } else if (view === 'arbitrage') {
-      this.updateArbitrageCountUI();
-    }
+  /** Программный переход к вкладке — делегируем WorkspaceTabsComponent. */
+  private switchView(view: WorkspaceId): void {
+    this.workspaceTabs?.switchTo(view);
   }
 
   private updateArbitrageCountUI(): void {

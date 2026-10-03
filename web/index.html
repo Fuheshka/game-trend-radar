@@ -151,16 +151,25 @@
       </div>
     </section>
 
-    <!-- MAIN VIEW MODE TABS -->
-    <nav class="main-tabs-nav" aria-label="Режимы отображения">
+    <!-- MAIN WORKSPACE TABS (горячие клавиши: 1, 2, 3, 4) -->
+    <nav class="main-tabs-nav" aria-label="Рабочие пространства">
       <div class="tabs-segmented-control">
-        <button class="view-tab-btn active" id="tab-btn-niches" data-view="niches">
+        <button class="view-tab-btn active" id="tab-btn-radar" data-view="radar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="2" x2="12" y2="22"></line>
             <line x1="2" y1="12" x2="22" y2="12"></line>
           </svg>
-          <span>Ниши и вердикты</span>
+          <span>Обзор и Радар</span>
+          <kbd class="tab-hotkey">1</kbd>
+        </button>
+        <button class="view-tab-btn" id="tab-btn-movers" data-view="movers">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+          <span>Лидеры роста</span>
+          <kbd class="tab-hotkey">2</kbd>
         </button>
         <button class="view-tab-btn" id="tab-btn-catalog" data-view="catalog">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -169,18 +178,20 @@
             <line x1="12" y1="17" x2="12" y2="21"></line>
           </svg>
           <span>Каталог игр <span class="tab-count-badge" id="tab-games-count">0</span></span>
+          <kbd class="tab-hotkey">3</kbd>
         </button>
         <button class="view-tab-btn" id="tab-btn-arbitrage" data-view="arbitrage">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
           <span>Матрица арбитража <span class="tab-count-badge tab-arbitrage-badge" id="tab-arbitrage-count">0</span></span>
+          <kbd class="tab-hotkey">4</kbd>
         </button>
       </div>
     </nav>
 
-    <!-- 1. NICHES & VERDICTS VIEW PANEL -->
-    <div id="niches-view-panel" class="view-panel active">
+    <!-- 1. ОБЗОР И РАДАР (tab 1) -->
+    <section id="view-radar" class="view-panel active">
       <!-- RADAR & ANALYTICAL HUB -->
       <section class="radar-hub-card">
       <div class="radar-header">
@@ -314,10 +325,28 @@
         <!-- Rendered dynamically by VerdictCardsComponent -->
       </div>
     </section>
-    </div> <!-- END #niches-view-panel -->
+    </section> <!-- END #view-radar -->
 
-    <!-- 2. GAME CATALOG VIEW PANEL -->
-    <div id="catalog-view-panel" class="view-panel" style="display: none;">
+    <!-- 2. ЛИДЕРЫ РОСТА (tab 2) -->
+    <section id="view-movers" class="view-panel" style="display: none;">
+      <div class="movers-placeholder">
+        <div class="movers-placeholder-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+        </div>
+        <h2 class="movers-placeholder-title">Лидеры роста и тренды</h2>
+        <p class="movers-placeholder-desc">
+          Скринер аномалий рынка: топ-10 суточных лидеров по дельте онлайна,<br>
+          вирусные сигналы YouTube Shorts и взрывные новинки.
+        </p>
+        <span class="movers-placeholder-badge">Coming in Sprint 7</span>
+      </div>
+    </section> <!-- END #view-movers -->
+
+    <!-- 3. КАТАЛОГ ИГР (tab 3) -->
+    <section id="view-catalog" class="view-panel" style="display: none;">
       <section class="catalog-toolbar">
         <div class="catalog-toolbar-top">
           <!-- Min CCU Slider -->
@@ -427,16 +456,17 @@
           <!-- Rendered dynamically by GameCatalogComponent -->
         </div>
       </section>
-    </div> <!-- END #catalog-view-panel -->
+    </section> <!-- END #view-catalog -->
 
-    <!-- 3. ARBITRAGE MATRIX VIEW PANEL -->
-    <div id="arbitrage-view-panel" class="view-panel" style="display: none;">
+    <!-- 4. МАТРИЦА АРБИТРАЖА (tab 4) -->
+    <section id="view-arbitrage" class="view-panel" style="display: none;">
       <section class="arbitrage-content-section">
         <div id="arbitrage-matrix-container" class="arbitrage-matrix-container">
           <!-- Rendered dynamically by ArbitrageMatrixComponent -->
         </div>
       </section>
-    </div> <!-- END #arbitrage-view-panel -->
+    </section> <!-- END #view-arbitrage -->
+
 
     <!-- SITE FOOTER & CREDITS -->
     <footer class="site-footer">
