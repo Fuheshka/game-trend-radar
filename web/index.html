@@ -10,146 +10,136 @@
 </head>
 <body>
   <div class="app-container">
-    <!-- SITE HEADER -->
-    <header class="site-header">
-      <div class="brand-section">
-        <div class="brand-logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-            <path d="M2 12h20"></path>
-          </svg>
-        </div>
-        <div class="brand-text">
-          <div class="jp-kicker">ゲーム・トレンド・レーダー</div>
-          <h1>GAME TREND RADAR</h1>
-        </div>
-      </div>
-
-      <div class="header-right">
-        <!-- SNAPSHOT HISTORY SELECTOR -->
-        <div class="snapshot-selector-wrapper" id="snapshot-selector-wrapper" title="Выбор исторического среза рынка">
-          <div class="snapshot-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
+    <!-- TOP NAVIGATION STACK (48px Header + 34px KPI Strip) -->
+    <div class="top-nav-stack">
+      <!-- SITE HEADER (48px) -->
+      <header class="site-header" id="site-header">
+        <div class="brand-section">
+          <div class="brand-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+              <path d="M2 12h20"></path>
             </svg>
           </div>
-          <span class="snapshot-label">Срез:</span>
-          <select id="snapshot-select" class="snapshot-select" aria-label="Выберите срез рынка">
-            <option value="" disabled selected>Загрузка срезов...</option>
-          </select>
+          <div class="brand-text">
+            <span class="brand-name">Game Trend Radar</span>
+            <span class="brand-version-badge">v2.0</span>
+          </div>
+
+          <!-- SSE LIVE STATUS LED DIODE -->
+          <div class="sse-status-pill" id="sse-status-indicator" title="SSE Real-time соединение с сервером">
+            <span class="status-led connected" id="status-led"></span>
+            <span class="sse-status-text" id="sse-label">SSE Live</span>
+          </div>
         </div>
 
-        <div class="server-status-pill" id="server-status-indicator">
-          <span class="status-dot" id="status-dot"></span>
-          <span id="server-status-text">Локальный сервер :4200</span>
-        </div>
+        <div class="header-right">
+          <!-- SNAPSHOT HISTORY SELECTOR -->
+          <div class="snapshot-selector-wrapper" id="snapshot-selector-wrapper" title="Выбор исторического среза рынка">
+            <div class="snapshot-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <span class="snapshot-label">Срез:</span>
+            <select id="snapshot-select" class="snapshot-select" aria-label="Выберите срез рынка">
+              <option value="" disabled selected>Загрузка срезов...</option>
+            </select>
+          </div>
 
-        <button class="btn-sound-toggle" id="btn-sound-toggle" aria-label="Переключатель звуковых эффектов" title="Звуковые эффекты интерфейса (Web Audio API)">
-          <span class="sound-icon-wrapper">
-            <svg class="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-              <line x1="23" y1="9" x2="17" y2="15"></line>
-              <line x1="17" y1="9" x2="23" y2="15"></line>
-            </svg>
-            <svg class="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-            </svg>
-          </span>
-          <span class="sound-toggle-label" id="sound-toggle-label">Mute</span>
-        </button>
-
-        <!-- КНОПКА ЭКСПОРТА ОТЧЕТА -->
-        <div class="export-dropdown-wrapper" id="export-dropdown-wrapper">
-          <button class="btn-export" id="btn-export-dropdown" aria-haspopup="true" aria-expanded="false" title="Экспорт аналитического среза рынка">
-            <svg class="export-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>Экспорт отчета</span>
-            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
+          <!-- SOUND TOGGLE BUTTON -->
+          <button class="btn-sound-toggle" id="btn-sound-toggle" aria-label="Переключатель звуковых эффектов" title="Звуковые эффекты интерфейса (Web Audio API)">
+            <span class="sound-icon-wrapper">
+              <svg class="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+              </svg>
+              <svg class="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+              </svg>
+            </span>
+            <span class="sound-toggle-label" id="sound-toggle-label">Mute</span>
           </button>
-          <div class="export-menu" id="export-menu" role="menu" aria-label="Форматы экспорта отчета">
-            <button class="export-menu-item" id="btn-export-md" role="menuitem" title="Скачать отчет в формате Markdown (готов для Obsidian, Notion, GitHub)">
-              <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
+
+          <!-- EXPORT REPORT DROPDOWN -->
+          <div class="export-dropdown-wrapper" id="export-dropdown-wrapper">
+            <button class="btn-export" id="btn-export-dropdown" aria-haspopup="true" aria-expanded="false" title="Экспорт аналитического среза рынка">
+              <svg class="export-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              <span class="export-item-title">Скачать .md</span>
-            </button>
-            <button class="export-menu-item" id="btn-export-json" role="menuitem" title="Скачать сырые данные среза в формате JSON">
-              <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <path d="M10 13l-2 2 2 2"></path>
-                <path d="M14 13l2 2-2 2"></path>
+              <span>Экспорт отчета</span>
+              <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
-              <span class="export-item-title">Скачать .json</span>
             </button>
+            <div class="export-menu" id="export-menu" role="menu" aria-label="Форматы экспорта отчета">
+              <button class="export-menu-item" id="btn-export-md" role="menuitem" title="Скачать отчет в формате Markdown (готов для Obsidian, Notion, GitHub)">
+                <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span class="export-item-title">Скачать .md</span>
+              </button>
+              <button class="export-menu-item" id="btn-export-json" role="menuitem" title="Скачать сырые данные среза в формате JSON">
+                <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <path d="M10 13l-2 2 2 2"></path>
+                  <path d="M14 13l2 2-2 2"></path>
+                </svg>
+                <span class="export-item-title">Скачать .json</span>
+              </button>
+            </div>
           </div>
+
+          <!-- HIGH-CONTRAST LINEAR ACID LIME SCAN CTA -->
+          <button class="btn-scan-lime" id="btn-live-scan" title="Запустить сканирование рынков">
+            <span class="btn-scan-icon">⚡</span>
+            <span>Запустить скан</span>
+          </button>
         </div>
+      </header>
 
-        <button class="btn-scan" id="btn-live-scan">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 0a6 6 0 0 0-12 0"></path>
-            <circle cx="12" cy="12" r="1"></circle>
-            <line x1="12" y1="12" x2="19" y2="5"></line>
-          </svg>
-          <span>Запустить живое сканирование</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- LIVE TICKER BAR (РЫНОЧНЫЙ ТИКЕР) -->
-    <section class="live-ticker-bar" id="live-ticker-bar" aria-label="Ключевые сигналы рынка">
-      <div class="ticker-kicker">
-        <span class="ticker-pulse-dot"></span>
-        <span class="ticker-kicker-label">LIVE ТИКЕР</span>
-      </div>
-      <div class="ticker-viewport" id="ticker-viewport">
-        <div class="ticker-track" id="ticker-track">
-          <!-- Populated dynamically by LiveTickerComponent -->
+      <!-- NARROW KPI STRIP (34px) -->
+      <div class="header-kpi-strip" id="header-kpi-strip" aria-label="Ключевые показатели рынка">
+        <div class="kpi-strip-item">
+          <span class="kpi-strip-label">Всего игр:</span>
+          <span class="kpi-strip-value" id="kpi-total-games">0</span>
+        </div>
+        <span class="kpi-strip-divider" aria-hidden="true">|</span>
+        <div class="kpi-strip-item">
+          <span class="kpi-strip-label">Онлайн:</span>
+          <span class="kpi-strip-value" id="kpi-total-ccu">0</span>
+        </div>
+        <span class="kpi-strip-divider" aria-hidden="true">|</span>
+        <div class="kpi-strip-item">
+          <span class="kpi-strip-label">Ниш арбитража:</span>
+          <span class="kpi-strip-value" id="kpi-arbitrage-count">0</span>
+        </div>
+        <span class="kpi-strip-divider" aria-hidden="true">|</span>
+        <div class="kpi-strip-item">
+          <span class="kpi-strip-label">Топ дня:</span>
+          <span class="kpi-strip-value kpi-strip-highlight" id="kpi-top-game">—</span>
+        </div>
+        <span class="kpi-strip-divider" aria-hidden="true">|</span>
+        <div class="kpi-strip-item">
+          <span class="kpi-strip-label">Обновлено:</span>
+          <span class="kpi-strip-value" id="kpi-updated-time">—</span>
         </div>
       </div>
-    </section>
-
-    <!-- GLOBAL METRICS BAR -->
-    <section class="metrics-grid">
-      <div class="metric-card green">
-        <span class="metric-label">Всего игр в каталоге</span>
-        <span class="metric-value" id="metric-total-games">0</span>
-        <span class="metric-hint" id="metric-platforms-hint">Roblox, Yandex, Poki</span>
-      </div>
-
-      <div class="metric-card cyan">
-        <span class="metric-label">Суммарный онлайн (CCU)</span>
-        <span class="metric-value" id="metric-total-ccu">0</span>
-        <span class="metric-hint">Игроков прямо сейчас</span>
-      </div>
-
-      <div class="metric-card purple">
-        <span class="metric-label">Топ Opportunity Score</span>
-        <span class="metric-value" id="metric-top-score">0</span>
-        <span class="metric-hint" id="metric-top-genre">Расчет по формуле</span>
-      </div>
-
-      <div class="metric-card orange">
-        <span class="metric-label">Арбитражных ниш</span>
-        <span class="metric-value" id="metric-arbitrage-count">0</span>
-        <span class="metric-hint">Спрос без клонов в РФ</span>
-      </div>
-    </section>
+    </div>
 
     <!-- MAIN WORKSPACE TABS (горячие клавиши: 1, 2, 3, 4) -->
     <nav class="main-tabs-nav" aria-label="Рабочие пространства">
@@ -192,6 +182,33 @@
 
     <!-- 1. ОБЗОР И РАДАР (tab 1) -->
     <section id="view-radar" class="view-panel active">
+      <!-- GLOBAL METRICS CARDS -->
+      <section class="metrics-grid">
+        <div class="metric-card green">
+          <span class="metric-label">Всего игр в каталоге</span>
+          <span class="metric-value" id="metric-total-games">0</span>
+          <span class="metric-hint" id="metric-platforms-hint">Roblox, Yandex, Poki</span>
+        </div>
+
+        <div class="metric-card cyan">
+          <span class="metric-label">Суммарный онлайн (CCU)</span>
+          <span class="metric-value" id="metric-total-ccu">0</span>
+          <span class="metric-hint">Игроков прямо сейчас</span>
+        </div>
+
+        <div class="metric-card purple">
+          <span class="metric-label">Топ Opportunity Score</span>
+          <span class="metric-value" id="metric-top-score">0</span>
+          <span class="metric-hint" id="metric-top-genre">Расчет по формуле</span>
+        </div>
+
+        <div class="metric-card orange">
+          <span class="metric-label">Арбитражных ниш</span>
+          <span class="metric-value" id="metric-arbitrage-count">0</span>
+          <span class="metric-hint">Спрос без клонов в РФ</span>
+        </div>
+      </section>
+
       <!-- RADAR & ANALYTICAL HUB -->
       <section class="radar-hub-card">
       <div class="radar-header">

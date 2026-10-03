@@ -8,6 +8,7 @@ import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './componen
 import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
 import { WorkspaceTabsComponent, WorkspaceId } from './components/WorkspaceTabs.js';
+import { HeaderStatusBarComponent, formatMinutesAgo } from './components/HeaderStatusBar.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
 import {
@@ -82,6 +83,7 @@ class App {
   private arbitrageMatrix!: ArbitrageMatrixComponent;
   private promptModal!: PromptGeneratorModalComponent;
   private workspaceTabs!: WorkspaceTabsComponent;
+  private headerStatusBar!: HeaderStatusBarComponent;
   private currentDrawerVerdict: MarketVerdict | null = null;
 
   constructor() {
@@ -105,34 +107,8 @@ class App {
   }
 
   private initElements(): void {
-    // Snapshot history selector
-    const snapshotSelect = document.getElementById('snapshot-select') as HTMLSelectElement | null;
-    snapshotSelect?.addEventListener('change', async e => {
-      const selectedId = (e.target as HTMLSelectElement).value;
-      soundService.playClick();
-      await this.selectSnapshot(selectedId, true);
-    });
-
-    // Sound toggle button
-    const btnSoundToggle = document.getElementById('btn-sound-toggle');
-    const soundToggleLabel = document.getElementById('sound-toggle-label');
-
-    const updateSoundUI = (muted: boolean) => {
-      btnSoundToggle?.classList.toggle('active', !muted);
-      if (soundToggleLabel) {
-        soundToggleLabel.textContent = muted ? 'Mute' : 'Sound On';
-      }
-    };
-
-    updateSoundUI(soundService.isMuted());
-
-    btnSoundToggle?.addEventListener('click', () => {
-      const isMuted = soundService.toggleMute();
-      updateSoundUI(isMuted);
-      if (!isMuted) {
-        soundService.playClick();
-      }
-    });
+    // Sound toggle initial state
+    this.updateSoundUI(soundService.isMuted());
 
     // Mode toggles for Radar Chart
     const toggleSpider = document.getElementById('toggle-spider');
@@ -150,53 +126,6 @@ class App {
       toggleSpider?.classList.remove('active');
       this.radarChart.setMode('polar');
       soundService.playClick();
-    });
-
-    // Scan button
-    const btnScan = document.getElementById('btn-live-scan');
-    btnScan?.addEventListener('click', () => {
-      soundService.playClick();
-      this.triggerLiveScan();
-    });
-
-    // Export dropdown button and options
-    const exportDropdownWrapper = document.getElementById('export-dropdown-wrapper');
-    const btnExportDropdown = document.getElementById('btn-export-dropdown');
-    const btnExportMd = document.getElementById('btn-export-md');
-    const btnExportJson = document.getElementById('btn-export-json');
-
-    const closeExportDropdown = () => {
-      exportDropdownWrapper?.classList.remove('open');
-      btnExportDropdown?.setAttribute('aria-expanded', 'false');
-    };
-
-    btnExportDropdown?.addEventListener('click', e => {
-      e.stopPropagation();
-      soundService.playClick();
-      const isOpen = exportDropdownWrapper?.classList.toggle('open');
-      btnExportDropdown.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    });
-
-    document.addEventListener('click', e => {
-      if (exportDropdownWrapper && !exportDropdownWrapper.contains(e.target as Node)) {
-        closeExportDropdown();
-      }
-    });
-
-    btnExportMd?.addEventListener('click', () => {
-      soundService.playClick();
-      closeExportDropdown();
-      const md = exportSnapshotToMarkdown(this.snapshot);
-      const filename = generateExportFilename(this.snapshot, 'md');
-      downloadBlob(md, filename, 'text/markdown;charset=utf-8');
-    });
-
-    btnExportJson?.addEventListener('click', () => {
-      soundService.playClick();
-      closeExportDropdown();
-      const json = exportSnapshotToJson(this.snapshot);
-      const filename = generateExportFilename(this.snapshot, 'json');
-      downloadBlob(json, filename, 'application/json;charset=utf-8');
     });
 
     // Search input & quick clear button
@@ -454,6 +383,27 @@ class App {
     }
   }
 
+  private updateSoundUI(muted: boolean): void {
+    const btnSoundToggle = document.getElementById('btn-sound-toggle');
+    const soundToggleLabel = document.getElementById('sound-toggle-label');
+    btnSoundToggle?.classList.toggle('active', !muted);
+    if (soundToggleLabel) {
+      soundToggleLabel.textContent = muted ? 'Mute' : 'Sound On';
+    }
+  }
+
+  private exportMarketReportMd(): void {
+    const md = exportSnapshotToMarkdown(this.snapshot);
+    const filename = generateExportFilename(this.snapshot, 'md');
+    downloadBlob(md, filename, 'text/markdown;charset=utf-8');
+  }
+
+  private exportRawJson(): void {
+    const json = exportSnapshotToJson(this.snapshot);
+    const filename = generateExportFilename(this.snapshot, 'json');
+    downloadBlob(json, filename, 'application/json;charset=utf-8');
+  }
+
   private setupComponents(): void {
     const radarContainer = document.getElementById('radar-chart-container');
     const verdictsContainer = document.getElementById('verdicts-container');
@@ -477,6 +427,32 @@ class App {
         },
       });
     }
+
+    this.headerStatusBar = new HeaderStatusBarComponent({
+      onScan: () => {
+        soundService.playClick();
+        this.triggerLiveScan();
+      },
+      onSnapshotSelect: async selectedId => {
+        soundService.playClick();
+        await this.selectSnapshot(selectedId, true);
+      },
+      onExport: format => {
+        soundService.playClick();
+        if (format === 'md') {
+          this.exportMarketReportMd();
+        } else {
+          this.exportRawJson();
+        }
+      },
+      onSoundToggle: () => {
+        const isMuted = soundService.toggleMute();
+        this.updateSoundUI(isMuted);
+        if (!isMuted) {
+          soundService.playClick();
+        }
+      },
+    });
 
     if (tickerTrack) {
       this.liveTicker = new LiveTickerComponent({
@@ -854,20 +830,13 @@ class App {
   }
 
   private populateSnapshotSelect(): void {
-    const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
-    if (!select) return;
-
-    select.innerHTML = '';
-    this.snapshotsList.forEach((s, idx) => {
-      const opt = document.createElement('option');
-      opt.value = s.id;
-      const formattedDate = formatSnapshotDateRu(s.date);
-      opt.textContent = `${formattedDate} (${s.totalGamesScanned} игр)`;
-      if (idx === 0) {
-        opt.selected = true;
-      }
-      select.appendChild(opt);
-    });
+    const options = this.snapshotsList.map(s => ({
+      id: s.id,
+      label: `${formatSnapshotDateRu(s.date)} (${s.totalGamesScanned} игр)`,
+      date: s.date,
+      gamesCount: s.totalGamesScanned,
+    }));
+    this.headerStatusBar?.setSnapshots(options, this.snapshotsList[0]?.id);
   }
 
   private async selectSnapshot(snapshotId: string, animate: boolean = true): Promise<void> {
@@ -970,16 +939,17 @@ class App {
         this.snapshotsCache.set(data.id, data);
         statusDot?.classList.remove('offline');
         if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
+        this.headerStatusBar?.setSseStatus(true, 'SSE Live');
 
         // Populate single fallback option if snapshotsList is empty
         const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
         if (select && select.options.length <= 1) {
-          select.innerHTML = '';
-          const opt = document.createElement('option');
-          opt.value = data.id;
-          opt.textContent = `${formatSnapshotDateRu(data.timestamp)} (${data.totalGamesScanned} игр)`;
-          opt.selected = true;
-          select.appendChild(opt);
+          this.headerStatusBar?.setSnapshots([
+            {
+              id: data.id,
+              label: `${formatSnapshotDateRu(data.timestamp)} (${data.totalGamesScanned} игр)`,
+            },
+          ], data.id);
         }
       } else {
         await this.tryStaticSnapshotFallback(statusDot, statusText);
@@ -1002,6 +972,7 @@ class App {
         this.snapshot = staticData;
         statusDot?.classList.remove('offline');
         if (statusText) statusText.textContent = 'GitHub Pages (Статика)';
+        this.headerStatusBar?.setSseStatus(true, 'Статика');
         return;
       }
     } catch {
@@ -1010,11 +981,13 @@ class App {
 
     statusDot?.classList.add('offline');
     if (statusText) statusText.textContent = 'Демонстрационный режим';
+    this.headerStatusBar?.setSseStatus(false, 'Оффлайн');
   }
 
   private async triggerLiveScan(): Promise<void> {
     if (this.isScanning) return;
     this.isScanning = true;
+    this.headerStatusBar?.setScanning(true);
 
     const overlay = document.getElementById('scan-overlay');
     const phaseText = document.getElementById('scan-phase-text');
@@ -1068,6 +1041,7 @@ class App {
         if (progressInner) progressInner.style.width = '0%';
         if (btnScan) btnScan.disabled = false;
         this.isScanning = false;
+        this.headerStatusBar?.setScanning(false);
 
         soundService.playScanFinish();
 
@@ -1164,6 +1138,34 @@ class App {
     this.updateCatalogCountUI();
     this.updateArbitrageCountUI();
     this.triggerMetricCardsPulse();
+
+    let topGameTitle = 'Steal An Egg';
+    if (this.snapshot.games && this.snapshot.games.length > 0) {
+      const sortedGames = [...this.snapshot.games].sort((a, b) => (b.metricValue || 0) - (a.metricValue || 0));
+      if (sortedGames[0]) {
+        topGameTitle = sortedGames[0].title;
+      }
+    } else if (sortedVerdicts.length > 0 && sortedVerdicts[0].sampleTitles?.[0]) {
+      topGameTitle = sortedVerdicts[0].sampleTitles[0];
+    }
+
+    let ccuChangePercent = 4.2;
+    if (this.previousSnapshot && this.previousSnapshot.robloxTotalCCU > 0) {
+      const delta = totalCCU - this.previousSnapshot.robloxTotalCCU;
+      ccuChangePercent = Number(((delta / this.previousSnapshot.robloxTotalCCU) * 100).toFixed(1));
+    } else if (this.prevMetrics.totalCcu > 0 && totalCCU > 0) {
+      const delta = totalCCU - this.prevMetrics.totalCcu;
+      ccuChangePercent = Number(((delta / this.prevMetrics.totalCcu) * 100).toFixed(1));
+    }
+
+    this.headerStatusBar?.updateKpi({
+      totalGames,
+      totalCcu: totalCCU,
+      ccuChangePercent,
+      arbitrageCount,
+      topDayGameTitle: topGameTitle,
+      updatedText: formatMinutesAgo(this.snapshot.timestamp),
+    });
   }
 
   private triggerMetricCardsPulse(): void {
