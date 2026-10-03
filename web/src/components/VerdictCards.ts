@@ -250,9 +250,41 @@ export class VerdictCardsComponent {
             : ''
         }
       </div>
+
+      <!-- Action Footer: AI GDD Spec Generator Button -->
+      <div class="verdict-card-footer">
+        <button type="button" class="btn-generate-ai-spec" data-archetype="${v.archetype}" title="Сгенерировать ТЗ для ИИ по архетипу ${this.escapeHtml(v.titleRu)}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Сгенерировать ТЗ для ИИ</span>
+        </button>
+      </div>
     `;
 
     return card;
+  }
+
+  public scrollToCard(archetype: GameArchetype): void {
+    const cards = this.container.querySelectorAll<HTMLElement>('.verdict-card');
+    let targetCard: HTMLElement | null = null;
+    cards.forEach(card => {
+      if (card.getAttribute('data-archetype') === archetype) {
+        card.classList.add('is-focused');
+        targetCard = card;
+      } else {
+        card.classList.remove('is-focused');
+      }
+    });
+
+    if (targetCard && typeof targetCard.scrollIntoView === 'function') {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  public clearHighlight(): void {
+    const cards = this.container.querySelectorAll<HTMLElement>('.verdict-card');
+    cards.forEach(card => card.classList.remove('is-focused'));
   }
 
   private escapeHtml(str: string): string {

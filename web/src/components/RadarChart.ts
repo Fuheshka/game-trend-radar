@@ -7,6 +7,7 @@ export interface RadarChartOptions {
   verdicts: MarketVerdict[];
   activeArchetype: GameArchetype | null;
   onSelectArchetype: (archetype: GameArchetype | null) => void;
+  onHoverArchetype?: (archetype: GameArchetype | null) => void;
 }
 
 export interface RadarBlipItem {
@@ -31,6 +32,7 @@ export class RadarChartComponent {
   private activeArchetype: GameArchetype | null = null;
   private mode: ChartMode = 'spider';
   private onSelectArchetype: (archetype: GameArchetype | null) => void;
+  private onHoverArchetype?: (archetype: GameArchetype | null) => void;
   private tooltipEl: HTMLElement | null = null;
   private animFrameId: number | null = null;
   private blips: RadarBlipItem[] = [];
@@ -48,6 +50,7 @@ export class RadarChartComponent {
     this.verdicts = options.verdicts;
     this.activeArchetype = options.activeArchetype;
     this.onSelectArchetype = options.onSelectArchetype;
+    this.onHoverArchetype = options.onHoverArchetype;
 
     this.createTooltip();
     this.render();
@@ -87,7 +90,9 @@ export class RadarChartComponent {
       this.tooltipEl = document.createElement('div');
       this.tooltipEl.id = 'radar-tooltip';
       this.tooltipEl.className = 'chart-tooltip';
-      document.body.appendChild(this.tooltipEl);
+      if (document.body) {
+        document.body.appendChild(this.tooltipEl);
+      }
     } else {
       this.tooltipEl = existing;
     }
@@ -429,6 +434,7 @@ export class RadarChartComponent {
         poly.style.opacity = '1';
         poly.style.filter = `drop-shadow(0 0 16px ${color})`;
         this.showTooltip(e, v);
+        this.onHoverArchetype?.(v.archetype);
       });
 
       poly.addEventListener('mousemove', (e: MouseEvent) => {
@@ -439,6 +445,7 @@ export class RadarChartComponent {
         poly.style.opacity = isDimmed ? '0.18' : isSelected ? '1' : '0.82';
         poly.style.filter = isSelected ? `drop-shadow(0 0 14px ${color})` : 'none';
         this.hideTooltip();
+        this.onHoverArchetype?.(null);
       });
 
       poly.addEventListener('click', () => {
@@ -503,6 +510,7 @@ export class RadarChartComponent {
           poly.style.opacity = '1';
           poly.style.filter = `drop-shadow(0 0 16px ${color})`;
           this.showTooltip(e, v, { axisLabel: axisInfo.label, axisValue: axisScore });
+          this.onHoverArchetype?.(v.archetype);
         });
 
         blipGroup.addEventListener('mousemove', (e: MouseEvent) => {
@@ -515,6 +523,7 @@ export class RadarChartComponent {
           poly.style.opacity = isDimmed ? '0.18' : isSelected ? '1' : '0.82';
           poly.style.filter = isSelected ? `drop-shadow(0 0 14px ${color})` : 'none';
           this.hideTooltip();
+          this.onHoverArchetype?.(null);
         });
 
         blipGroup.addEventListener('click', () => {
@@ -639,6 +648,7 @@ export class RadarChartComponent {
         path.style.transformOrigin = `${cx}px ${cy}px`;
         path.style.filter = `drop-shadow(0 0 16px ${color})`;
         this.showTooltip(e, v);
+        this.onHoverArchetype?.(v.archetype);
       });
 
       path.addEventListener('mousemove', (e: MouseEvent) => {
@@ -650,6 +660,7 @@ export class RadarChartComponent {
         path.style.transform = isSelected ? 'scale(1.04)' : 'none';
         path.style.filter = isSelected ? `drop-shadow(0 0 16px ${color})` : 'none';
         this.hideTooltip();
+        this.onHoverArchetype?.(null);
       });
 
       path.addEventListener('click', () => {
@@ -711,6 +722,7 @@ export class RadarChartComponent {
         path.style.transformOrigin = `${cx}px ${cy}px`;
         path.style.filter = `drop-shadow(0 0 16px ${color})`;
         this.showTooltip(e, v);
+        this.onHoverArchetype?.(v.archetype);
       });
 
       blipGroup.addEventListener('mousemove', (e: MouseEvent) => {
@@ -724,6 +736,7 @@ export class RadarChartComponent {
         path.style.transform = isSelected ? 'scale(1.04)' : 'none';
         path.style.filter = isSelected ? `drop-shadow(0 0 16px ${color})` : 'none';
         this.hideTooltip();
+        this.onHoverArchetype?.(null);
       });
 
       blipGroup.addEventListener('click', () => {

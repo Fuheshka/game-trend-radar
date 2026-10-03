@@ -2,6 +2,7 @@ import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType, NormalizedG
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
+import { RadarOverviewViewComponent } from './components/RadarOverviewView.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { DetailDrawerComponent } from './components/DetailDrawer.js';
 import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
@@ -76,6 +77,7 @@ class App {
     arbitrageCount: 0,
   };
 
+  private radarOverviewView?: RadarOverviewViewComponent;
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
   private liveTicker!: LiveTickerComponent;
@@ -119,14 +121,22 @@ class App {
     toggleSpider?.addEventListener('click', () => {
       toggleSpider.classList.add('active');
       togglePolar?.classList.remove('active');
-      this.radarChart.setMode('spider');
+      if (this.radarOverviewView) {
+        this.radarOverviewView.setMode('spider');
+      } else {
+        this.radarChart?.setMode('spider');
+      }
       soundService.playClick();
     });
 
     togglePolar?.addEventListener('click', () => {
       togglePolar.classList.add('active');
       toggleSpider?.classList.remove('active');
-      this.radarChart.setMode('polar');
+      if (this.radarOverviewView) {
+        this.radarOverviewView.setMode('polar');
+      } else {
+        this.radarChart?.setMode('polar');
+      }
       soundService.playClick();
     });
 
@@ -475,10 +485,12 @@ class App {
       });
     }
 
-    if (radarContainer) {
-      this.radarChart = new RadarChartComponent({
-        container: radarContainer,
-        verdicts: this.snapshot.verdicts,
+    const radarOverviewContainer = document.getElementById('radar-overview-container');
+    if (radarOverviewContainer) {
+      this.radarOverviewView = new RadarOverviewViewComponent({
+        container: radarOverviewContainer,
+        verdicts: this.getFilteredVerdicts(),
+        previousVerdicts: this.previousSnapshot?.verdicts,
         activeArchetype: this.activeArchetype,
         onSelectArchetype: archetype => {
           this.activeArchetype = archetype;
@@ -492,26 +504,19 @@ class App {
           this.applyFiltersAndSort();
           this.renderLegend();
         },
-      });
-
-      // Delegated click on radar chart blips/points
-      radarContainer.addEventListener('click', e => {
-        const target = e.target as SVGElement;
-        const blip = target.closest('.radar-blip-group, .polar-blip-group') as SVGElement;
-        if (blip) {
-          // If a blip was clicked, open the detail drawer for the active archetype or determine from blip
-          if (this.activeArchetype) {
-            this.openArchetypeDetail(this.activeArchetype);
+        onHoverArchetype: archetype => {
+          if (archetype) {
+            this.radarOverviewView?.highlightArchetype(archetype, true);
+          } else if (!this.activeArchetype) {
+            this.verdictCards?.clearHighlight();
           }
-        }
-      });
-    }
-
-    if (verdictsContainer) {
-      this.verdictCards = new VerdictCardsComponent({
-        container: verdictsContainer,
-        verdicts: this.getFilteredVerdicts(),
-        previousVerdicts: this.previousSnapshot?.verdicts,
+        },
+        onCardClick: archetype => {
+          this.openArchetypeDetail(archetype);
+        },
+        onGeneratePrompt: archetype => {
+          this.openPromptModalForArchetype(archetype);
+        },
         onSelectTag: tag => {
           soundService.playClick();
           const searchInput = document.getElementById('search-input') as HTMLInputElement;
@@ -521,55 +526,120 @@ class App {
             this.applyFiltersAndSort();
           }
         },
+        onSelectGame: (title, archetype) => {
+          this.openGameDetail(title, archetype);
+        },
+        onModeChange: () => {
+          soundService.playClick();
+        },
       });
 
-      // Event delegation for clicks on chips, tags, and verdict cards
-      verdictsContainer.addEventListener('click', e => {
-        const target = e.target as HTMLElement;
+      this.radarChart = this.radarOverviewView.radarChart;
+      this.verdictCards = this.radarOverviewView.verdictCards;
 
-        // 0. Click on "Сгенерировать ТЗ для ИИ" button inside card
-        const promptBtn = target.closest('.btn-generate-ai-spec') as HTMLElement;
-        if (promptBtn) {
-          e.stopPropagation();
-          const arch = promptBtn.getAttribute('data-archetype') as GameArchetype;
-          if (arch) {
-            this.openPromptModalForArchetype(arch);
-          }
-          return;
-        }
-
-        // 1. Click on game sample chip
-        const chip = target.closest('.game-sample-chip') as HTMLElement;
-        if (chip) {
-          e.stopPropagation();
-          const card = chip.closest('.verdict-card') as HTMLElement;
-          const arch = card?.getAttribute('data-archetype') as GameArchetype | undefined;
-          const title = chip.getAttribute('title') || chip.textContent?.trim() || '';
-          this.openGameDetail(title, arch);
-          return;
-        }
-
-        // 2. Click on archetype tag inside card
-        const tagChip = target.closest('.card-archetype-tag') as HTMLElement;
-        if (tagChip) {
-          e.stopPropagation();
-          const card = tagChip.closest('.verdict-card') as HTMLElement;
-          const arch = card?.getAttribute('data-archetype') as GameArchetype;
-          if (arch) {
-            this.openArchetypeDetail(arch);
-          }
-          return;
-        }
-
-        // 3. Click on verdict card itself
-        const card = target.closest('.verdict-card') as HTMLElement;
-        if (card) {
-          const arch = card.getAttribute('data-archetype') as GameArchetype;
-          if (arch) {
-            this.openArchetypeDetail(arch);
-          }
+      radarContainer?.addEventListener('click', e => {
+        const target = e.target as SVGElement;
+        const blip = target.closest('.radar-blip-group, .polar-blip-group') as SVGElement;
+        if (blip && this.activeArchetype) {
+          this.openArchetypeDetail(this.activeArchetype);
         }
       });
+    } else {
+      if (radarContainer) {
+        this.radarChart = new RadarChartComponent({
+          container: radarContainer,
+          verdicts: this.snapshot.verdicts,
+          activeArchetype: this.activeArchetype,
+          onSelectArchetype: archetype => {
+            this.activeArchetype = archetype;
+            if (archetype) {
+              soundService.playRadarPing();
+              this.openArchetypeDetail(archetype);
+            } else {
+              soundService.playClick();
+            }
+            this.radarChart.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+            this.applyFiltersAndSort();
+            this.renderLegend();
+          },
+        });
+
+        // Delegated click on radar chart blips/points
+        radarContainer.addEventListener('click', e => {
+          const target = e.target as SVGElement;
+          const blip = target.closest('.radar-blip-group, .polar-blip-group') as SVGElement;
+          if (blip) {
+            if (this.activeArchetype) {
+              this.openArchetypeDetail(this.activeArchetype);
+            }
+          }
+        });
+      }
+
+      if (verdictsContainer) {
+        this.verdictCards = new VerdictCardsComponent({
+          container: verdictsContainer,
+          verdicts: this.getFilteredVerdicts(),
+          previousVerdicts: this.previousSnapshot?.verdicts,
+          onSelectTag: tag => {
+            soundService.playClick();
+            const searchInput = document.getElementById('search-input') as HTMLInputElement;
+            if (searchInput) {
+              searchInput.value = tag;
+              this.searchQuery = tag.toLowerCase();
+              this.applyFiltersAndSort();
+            }
+          },
+        });
+
+        // Event delegation for clicks on chips, tags, and verdict cards
+        verdictsContainer.addEventListener('click', e => {
+          const target = e.target as HTMLElement;
+
+          // 0. Click on "Сгенерировать ТЗ для ИИ" button inside card
+          const promptBtn = target.closest('.btn-generate-ai-spec') as HTMLElement;
+          if (promptBtn) {
+            e.stopPropagation();
+            const arch = promptBtn.getAttribute('data-archetype') as GameArchetype;
+            if (arch) {
+              this.openPromptModalForArchetype(arch);
+            }
+            return;
+          }
+
+          // 1. Click on game sample chip
+          const chip = target.closest('.game-sample-chip') as HTMLElement;
+          if (chip) {
+            e.stopPropagation();
+            const card = chip.closest('.verdict-card') as HTMLElement;
+            const arch = card?.getAttribute('data-archetype') as GameArchetype | undefined;
+            const title = chip.getAttribute('title') || chip.textContent?.trim() || '';
+            this.openGameDetail(title, arch);
+            return;
+          }
+
+          // 2. Click on archetype tag inside card
+          const tagChip = target.closest('.card-archetype-tag') as HTMLElement;
+          if (tagChip) {
+            e.stopPropagation();
+            const card = tagChip.closest('.verdict-card') as HTMLElement;
+            const arch = card?.getAttribute('data-archetype') as GameArchetype;
+            if (arch) {
+              this.openArchetypeDetail(arch);
+            }
+            return;
+          }
+
+          // 3. Click on verdict card itself
+          const card = target.closest('.verdict-card') as HTMLElement;
+          if (card) {
+            const arch = card.getAttribute('data-archetype') as GameArchetype;
+            if (arch) {
+              this.openArchetypeDetail(arch);
+            }
+          }
+        });
+      }
     }
 
     // Game Table View Component setup (SteamDB Charts high density view)
@@ -1305,7 +1375,11 @@ class App {
       countText.textContent = `Отображается ${filtered.length} из ${this.snapshot.verdicts?.length || 0}`;
     }
 
-    this.verdictCards?.updateData(filtered, this.previousSnapshot?.verdicts);
+    if (this.radarOverviewView) {
+      this.radarOverviewView.updateData(filtered, this.previousSnapshot?.verdicts, this.activeArchetype);
+    } else {
+      this.verdictCards?.updateData(filtered, this.previousSnapshot?.verdicts);
+    }
     this.enhanceVerdictCardsWithPromptButton();
   }
 
