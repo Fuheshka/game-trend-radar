@@ -5,5 +5,7 @@ data/snapshots/*.json
 !data/snapshots/.gitkeep
 .DS_Store
 *.log
+logs/*.log
+!logs/.gitkeep
 .env
 .env.local

@@ -20,7 +20,9 @@
     "update-trends": "tsx src/cron/trend_scheduler.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "build": "tsc"
+    "build": "tsc",
+    "deploy": "bash scripts/deploy.sh",
+    "nightly-scan": "bash scripts/nightly_scan.sh"
   },
   "keywords": [
     "gamedev",

@@ -1105,5 +1105,81 @@
     - Получены реальные события: `scan:started` -> `collector:progress` (Roblox 247 игр, 25%) -> `collector:progress` (Яндекс Игры 396 игр, 55%) -> `collector:progress` (Poki 495 игр, 75%) -> `collector:progress` (YouTube Shorts 500 игр, 90%) -> `scan:completed` (500 игр) -> `snapshot:updated`.
   - Полный регрессионный прогон: 24 тестовых сьюта, 268 из 268 тестов Vitest PASS (100% green), сборка `vite build` 100% OK.
 
+---
+
+## 27. Production конфигурация PM2 и регулярное фоновое сканирование (Cron & SSE)
+
+- **Контекст и цель:**
+  - Подготовка надежного production-окружения для долговременной работы Game Trend Radar на сервере (`fuheshka.qd.je`).
+  - Оркестрация серверного процесса под управлением PM2 с авто-перезапуском при сбоях и контролем потребления оперативной памяти (512MB).
+  - Автоматизация процесса деплоя через скрипт `scripts/deploy.sh`.
+  - Организация регулярного ночного сбора данных рынка в 03:00 UTC по cron с отправкой прогресса всем активным клиентам через SSE.
+- **Инженерные решения и реализация (Ponytail):**
+  1. *Конфигурация PM2 (`ecosystem.config.cjs`):*
+     - Приложение: `game-trend-radar`.
+     - Целевой скрипт: динамическое определение скомпилированного бандла `dist/server.js` (минимальный оверхед по памяти и процессору в prod) с плавным fallback на `src/server.ts` через аргумент Node.js `--import tsx` (с учетом deprecation флага `--loader` в современных версиях Node.js 20.6+).
+     - Переменные окружения: `PORT: 4200`, `NODE_ENV: 'production'`.
+     - Надежность: `autorestart: true`, `max_memory_restart: '512M'`, `min_uptime: '5s'`, `max_restarts: 10`.
+     - Логирование: форматированные временные метки `YYYY-MM-DD HH:mm:ss Z`, раздельные файлы `logs/pm2-out.log` и `logs/pm2-error.log` с объединенным потоком `merge_logs: true`.
+  2. *Скрипт развертывания (`scripts/deploy.sh`):*
+     - Единая команда для обновления сервера: `git pull` -> `npm install` -> `npm run build` & `npm run web:build` -> `pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs`.
+     - Автоматическое создание каталога `logs/` и вывод статуса процесса `pm2 status`.
+     - Права на исполнение `chmod +x scripts/deploy.sh`.
+  3. *Регулярное ночное сканирование рынка через Cron:*
+     - Расписание: ежедневно в 03:00 UTC (`0 3 * * *`).
+     - Механизм: вызов HTTP POST-запроса `curl -s -X POST http://127.0.0.1:4200/api/scan`.
+     - Решение на уровне шины событий: обращение к эндпоинту `/api/scan` задействует экземпляр `MarketScanner` внутри активного сервера и автоматически транслирует полный поток событий (`scan:started`, прогресс по витринам, `scan:completed`, `snapshot:updated`) через шину `MarketEventBus` всем подключенным пользователям дашборда по SSE без перезагрузки страниц.
+     - Создан вспомогательный скрипт `scripts/nightly_scan.sh` с логированием в `logs/cron-scan.log` и обработкой статус-кодов HTTP.
+  4. *Документация и Nginx Reverse Proxy:*
+     - В `README.md` добавлены подробные разделы по управлению PM2, развертыванию, синтаксису crontab и конфигурации Nginx с директивой `proxy_buffering off` для корректной передачи SSE-потока без буферизации.
+     - Добавлены скрипты `deploy` и `nightly-scan` в `package.json`.
+- **Верификация:**
+  - Валидация файла конфигурации `ecosystem.config.cjs` через Node.js CommonJS engine.
+  - Проверка синтаксиса bash-скриптов через `bash -n scripts/deploy.sh` и `bash -n scripts/nightly_scan.sh`.
+  - Успешный запуск боевого сервера в продакшн-режиме (`PORT=4200 NODE_ENV=production node dist/server.js`) с отдачей production-сборки `web/dist/index.html` (HTTP 200), проверкой API `/api/snapshots/latest` (HTTP 200) и активности SSE канала `/api/events`.
+  - Полный регрессионный прогон 268/268 тестов Vitest PASS, компиляция `tsc` и `vite build` 100% OK.
+
+---
+
+## 28. Конфигурация веб-серверов Nginx и Caddy для домена fuheshka.qd.je (Production Reverse Proxy & SSE)
+
+- **Контекст и цель:**
+  - Подготовка эталонных конфигураций веб-сервера для развертывания Game Trend Radar на домене `fuheshka.qd.je`.
+  - Обеспечение непрерывной передачи потоковых Server-Sent Events без буферизации, сброса соединения или блокировок со стороны обратного прокси.
+  - Поддержка двух альтернативных веб-серверов: классического Nginx (в связке с Certbot для автоматического выпуска SSL-сертификатов) и современного Caddy (с нативным HTTPS и HTTP/3 из коробки).
+  - Пошаговые инструкции в документации (`README.md` и `README.ru.md`) по настройке DNS A-записи и проверке потока.
+- **Инженерные решения и реализация (Ponytail):**
+  1. *Конфигурация Nginx (`deploy/nginx.conf`):*
+     - Серверные блоки: порт 80 (HTTP) с перенаправлением 301 на HTTPS и пропуском ACME-запросов (`/.well-known/acme-challenge/`), порт 443 (HTTPS) с путями к сертификатам Let's Encrypt (`/etc/letsencrypt/live/fuheshka.qd.je/`).
+     - Оптимизация SSE для маршрута `/api/events`:
+       - `proxy_buffering off;` (полный запрет буферизации ответов на стороне прокси).
+       - `chunked_transfer_encoding off;` (прямая потоковая передача).
+       - `proxy_cache off;` (отключение кэширования динамического потока).
+       - `proxy_set_header Connection '';` (очистка заголовка Connection для стабильного HTTP/1.1 keep-alive).
+       - `proxy_read_timeout 86400s;` и `proxy_send_timeout 86400s;` (поддержание соединения открытым до 24 часов).
+       - `gzip off;` в блоке `/api/events` (исключение сжатия для потока, так как gzip накапливает внутренний буфер чанков и ломает мгновенный реалтайм).
+     - Сжатие Gzip для статики и API: включено на уровне сервера для CSS, JS, JSON, SVG, HTML с уровнем сжатия `gzip_comp_level 6`.
+     - Заголовки безопасности: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, `Referrer-Policy: strict-origin-when-cross-origin`, `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`, `Permissions-Policy`.
+  2. *Конфигурация Caddy (`deploy/Caddyfile`):*
+     - Блок `fuheshka.qd.je` с автоматическим выпуском сертификатов через Let's Encrypt / ZeroSSL.
+     - Немедленный сброс буфера для SSE: директива `flush_interval -1` внутри `reverse_proxy 127.0.0.1:4200` для матчера `handle /api/events`.
+     - Проксирование основного интерфейса и API через `handle { reverse_proxy 127.0.0.1:4200 }`.
+     - Сжатие `encode gzip zstd` и комплект заголовков безопасности в директиве `header`.
+  3. *Инструкции в документации (`README.md` и `README.ru.md`):*
+     - Пошаговое руководство по добавлению DNS A-записи для поддомена `fuheshka` в зоне `qd.je`.
+     - Инструкции по выпуску сертификата через `certbot --nginx -d fuheshka.qd.je`.
+     - Инструкции по запуску и валидации Caddy (`caddy validate --config /etc/caddy/Caddyfile`).
+     - Тестирование потокового SSE через команду `curl -N -H "Accept: text/event-stream" https://fuheshka.qd.je/api/events`.
+- **Верификация и тестирование (TDD):**
+  - Разработан тестовый сьют `tests/DeployConfigs.test.ts` (11 тестов Vitest, 100% PASS):
+    - Проверка наличия `deploy/nginx.conf` и `deploy/Caddyfile`.
+    - Проверка целевого домена `fuheshka.qd.je` и проксирования на `127.0.0.1:4200`.
+    - Проверка отключения буферизации Nginx (`proxy_buffering off`, `chunked_transfer_encoding off`, `gzip off`).
+    - Проверка директивы `flush_interval -1` в Caddyfile.
+    - Проверка директив сжатия и заголовков безопасности.
+    - Проверка баланса фигурных скобок `{}` и блочной структуры обоих конфигурационных файлов.
+  - Полный регрессионный прогон проекта: 25 тестовых сьютов, 279 из 279 тестов Vitest PASS (100% green), сборка `npm run build` и `npm run web:build` 100% OK.
+
+
 
 

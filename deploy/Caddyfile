@@ -1,0 +1,40 @@
+# ==============================================================================
+# Caddyfile for Game Trend Radar
+# Domain: fuheshka.qd.je
+# Upstream Server: http://127.0.0.1:4200 (Node.js / PM2)
+# Automatic HTTPS: Fully automated Let's Encrypt / ZeroSSL TLS certificates
+# ==============================================================================
+
+fuheshka.qd.je {
+    # Response compression (gzip and zstandard for static assets and JSON)
+    encode gzip zstd
+
+    # Security Headers
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    }
+
+    # --------------------------------------------------------------------------
+    # 1. Real-time Server-Sent Events (SSE) Route
+    # flush_interval -1 forces Caddy to flush data immediately after every write,
+    # preventing buffering for the persistent /api/events event-stream.
+    # --------------------------------------------------------------------------
+    handle /api/events {
+        reverse_proxy 127.0.0.1:4200 {
+            flush_interval -1
+        }
+    }
+
+    # --------------------------------------------------------------------------
+    # 2. General Reverse Proxy: Web Dashboard UI & REST API Endpoints
+    # Proxies HTML, JS, CSS, and /api/scan /api/snapshots requests to Node.js backend.
+    # --------------------------------------------------------------------------
+    handle {
+        reverse_proxy 127.0.0.1:4200
+    }
+}
