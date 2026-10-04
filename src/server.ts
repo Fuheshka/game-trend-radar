@@ -5,11 +5,15 @@ import { exec } from 'node:child_process';
 import { SnapshotStore } from './storage/snapshot_store.js';
 import { runMarketScan } from './scanner.js';
 import { MarketSnapshot } from './types/index.js';
+import { MarketEventBus } from './events/event_bus.js';
+
+export { MarketEventBus };
 
 export interface RadarServerOptions {
   port?: number;
   host?: string;
   store?: SnapshotStore;
+  eventBus?: MarketEventBus;
   staticDir?: string;
   silent?: boolean;
   open?: boolean;
@@ -75,6 +79,8 @@ export function createRadarServer(options: RadarServerOptions = {}) {
   const port = options.port ?? (process.env.PORT ? parseInt(process.env.PORT, 10) : 4200);
   const host = options.host ?? '0.0.0.0';
   const store = options.store ?? new SnapshotStore();
+  const eventBus = options.eventBus ?? new MarketEventBus();
+  eventBus.startHeartbeat();
   const defaultStaticDir = fs.existsSync(path.resolve(process.cwd(), 'web/dist'))
     ? path.resolve(process.cwd(), 'web/dist')
     : path.resolve(process.cwd(), 'web');
@@ -139,10 +145,29 @@ export function createRadarServer(options: RadarServerOptions = {}) {
           return;
         }
 
+        if (pathname === '/api/events' && req.method === 'GET') {
+          res.writeHead(200, {
+            ...CORS_HEADERS,
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          });
+          if (typeof (res as any).flushHeaders === 'function') {
+            (res as any).flushHeaders();
+          }
+
+          const unregister = eventBus.registerClient(res);
+
+          req.on('close', () => {
+            unregister();
+          });
+          return;
+        }
+
         if (pathname === '/api/scan' && req.method === 'POST') {
           log('📡 Получен запрос POST /api/scan — запуск сканирования рынка...');
           if (!activeScanPromise) {
-            activeScanPromise = runMarketScan({ store, silent: options.silent })
+            activeScanPromise = runMarketScan({ store, silent: options.silent, eventBus })
               .finally(() => {
                 activeScanPromise = null;
               });
@@ -233,6 +258,7 @@ export function createRadarServer(options: RadarServerOptions = {}) {
     <ul>
       <li><a href="/api/snapshots/latest">GET /api/snapshots/latest</a> — последний снимок рынка</li>
       <li><a href="/api/verdicts">GET /api/verdicts</a> — список вердиктов со статусами и скорингом</li>
+      <li><a href="/api/events">GET /api/events</a> — нативный SSE поток событий реального времени</li>
       <li><code>POST /api/scan</code> — инициировать живое сканирование рынка</li>
     </ul>
     <p style="color: #94a3b8; font-size: 0.9rem;">Директория клиентского бандла: <code>web/</code></p>
@@ -293,6 +319,7 @@ export function createRadarServer(options: RadarServerOptions = {}) {
   return {
     server,
     port,
+    eventBus,
     start: (): Promise<number> => {
       return new Promise((resolve, reject) => {
         server.on('error', (err: NodeJS.ErrnoException) => {
@@ -336,6 +363,7 @@ export function createRadarServer(options: RadarServerOptions = {}) {
       });
     },
     stop: (): Promise<void> => {
+      eventBus.closeAllClients();
       return new Promise((resolve, reject) => {
         server.close(err => {
           if (err) reject(err);

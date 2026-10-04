@@ -9,6 +9,8 @@
  * - Строка ключевых KPI (Всего игр, Онлайн, Ниши арбитража, Топ дня, Обновлено)
  */
 
+import { formatSourceLabel, ConnectionStatus } from '../services/liveEventService.js';
+
 export interface HeaderKpiData {
   totalGames: number;
   totalCcu: number;
@@ -92,6 +94,13 @@ export class HeaderStatusBarComponent {
   // Sound toggle
   private btnSoundToggle: HTMLElement | null = null;
 
+  // Header Progress Elements
+  private headerProgressBar: HTMLElement | null = null;
+  private headerProgressInner: HTMLElement | null = null;
+  private headerProgressLabel: HTMLElement | null = null;
+  private scanProgressInner: HTMLElement | null = null;
+  private scanPhaseText: HTMLElement | null = null;
+
   private boundDocClick: (e: MouseEvent) => void;
 
   constructor(options: HeaderStatusBarOptions) {
@@ -117,6 +126,32 @@ export class HeaderStatusBarComponent {
     this.kpiArbitrageCount = document.getElementById('kpi-arbitrage-count');
     this.kpiTopGame = document.getElementById('kpi-top-game');
     this.kpiUpdatedTime = document.getElementById('kpi-updated-time');
+
+    // Progress Elements
+    this.headerProgressBar = document.getElementById('header-progress-bar');
+    this.headerProgressInner = document.getElementById('header-progress-inner');
+    this.headerProgressLabel = document.getElementById('header-progress-label');
+    this.scanProgressInner = document.getElementById('scan-progress-inner');
+    this.scanPhaseText = document.getElementById('scan-phase-text');
+
+    const header = document.getElementById('site-header');
+    if (header && !this.headerProgressBar && typeof document.createElement === 'function') {
+      const bar = document.createElement('div');
+      bar.id = 'header-progress-bar';
+      bar.className = 'header-progress-bar';
+      const inner = document.createElement('div');
+      inner.id = 'header-progress-inner';
+      inner.className = 'header-progress-inner';
+      const label = document.createElement('span');
+      label.id = 'header-progress-label';
+      label.className = 'header-progress-label';
+      bar.appendChild(inner);
+      bar.appendChild(label);
+      header.appendChild(bar);
+      this.headerProgressBar = bar;
+      this.headerProgressInner = inner;
+      this.headerProgressLabel = label;
+    }
   }
 
   private attachEventListeners(): void {
@@ -178,20 +213,84 @@ export class HeaderStatusBarComponent {
   }
 
   /**
-   * Обновляет индикатор SSE подключения (зеленый пульсирующий LED / серый оффлайн)
+   * Обновляет индикатор SSE подключения (зеленый пульсирующий LED / серый оффлайн / реконнект)
    */
-  public setSseStatus(connected: boolean, label?: string): void {
+  public setSseStatus(statusOrConnected: boolean | ConnectionStatus, label?: string): void {
+    const isConnected = statusOrConnected === true || statusOrConnected === 'connected';
+    const isReconnecting = statusOrConnected === 'reconnecting';
+
     if (this.statusLed) {
-      if (connected) {
+      if (isConnected) {
         this.statusLed.classList.add('connected');
         this.statusLed.classList.remove('offline');
+        this.statusLed.classList.remove('reconnecting');
+      } else if (isReconnecting) {
+        this.statusLed.classList.remove('connected');
+        this.statusLed.classList.add('offline');
+        this.statusLed.classList.add('reconnecting');
       } else {
         this.statusLed.classList.remove('connected');
+        this.statusLed.classList.remove('reconnecting');
         this.statusLed.classList.add('offline');
       }
     }
-    if (this.sseLabel && label) {
-      this.sseLabel.textContent = label;
+
+    if (this.sseLabel) {
+      if (label) {
+        this.sseLabel.textContent = label;
+      } else if (isConnected) {
+        this.sseLabel.textContent = 'SSE Live';
+      } else if (isReconnecting) {
+        this.sseLabel.textContent = 'Реконнект...';
+      } else {
+        this.sseLabel.textContent = 'Оффлайн';
+      }
+    }
+  }
+
+  /**
+   * Управляет отображением реального прогресса сбора данных в шапке и оверлее
+   */
+  public setScanProgress(
+    progress: { pct: number; source?: string; label?: string } | null
+  ): void {
+    if (!progress) {
+      if (this.headerProgressBar) {
+        this.headerProgressBar.classList.remove('active');
+      }
+      if (this.headerProgressInner) {
+        this.headerProgressInner.style.width = '0%';
+      }
+      if (this.headerProgressLabel) {
+        this.headerProgressLabel.textContent = '';
+      }
+      if (this.scanProgressInner) {
+        this.scanProgressInner.style.width = '0%';
+      }
+      return;
+    }
+
+    const pct = Math.max(0, Math.min(100, Math.round(progress.pct)));
+    const label =
+      progress.label ??
+      (progress.source ? formatSourceLabel(progress.source) : 'Сканирование рынка...');
+
+    if (this.headerProgressBar) {
+      this.headerProgressBar.classList.add('active');
+    }
+    if (this.headerProgressInner) {
+      this.headerProgressInner.style.width = `${pct}%`;
+    }
+    if (this.headerProgressLabel) {
+      this.headerProgressLabel.textContent = label;
+    }
+
+    // Синхронизация с модальным оверлеем сканирования (если он открыт)
+    if (this.scanProgressInner) {
+      this.scanProgressInner.style.width = `${pct}%`;
+    }
+    if (this.scanPhaseText) {
+      this.scanPhaseText.textContent = label;
     }
   }
 

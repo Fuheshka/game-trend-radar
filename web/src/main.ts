@@ -14,6 +14,7 @@ import { WorkspaceTabsComponent, WorkspaceId } from './components/WorkspaceTabs.
 import { HeaderStatusBarComponent, formatMinutesAgo } from './components/HeaderStatusBar.js';
 import { animateCounter } from './utils/animation.js';
 import { soundService } from './services/sound.js';
+import { liveEventService, ScanProgressData, ScanCompletedData } from './services/liveEventService.js';
 import {
   exportSnapshotToMarkdown,
   exportSnapshotToJson,
@@ -107,6 +108,9 @@ class App {
     this.updateGlobalMetrics();
     this.renderLegend();
     this.renderSearchTags();
+
+    // Setup real-time SSE stream connection
+    this.setupLiveEventService();
 
     // Fetch live snapshots list & data from backend
     await this.fetchSnapshots();
@@ -1110,82 +1114,114 @@ class App {
     this.headerStatusBar?.setSseStatus(false, 'Оффлайн');
   }
 
+  private setupLiveEventService(): void {
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('server-status-text');
+
+    // 1. Статус подключения (connecting, connected, reconnecting, disconnected)
+    liveEventService.onStatusChange(status => {
+      this.headerStatusBar?.setSseStatus(status);
+      if (status === 'connected') {
+        statusDot?.classList.remove('offline');
+        if (statusText) statusText.textContent = 'HTTP :4200 (SSE Live)';
+      } else if (status === 'reconnecting') {
+        statusDot?.classList.add('offline');
+        if (statusText) statusText.textContent = 'Реконнект к SSE...';
+      } else {
+        statusDot?.classList.add('offline');
+        if (statusText) statusText.textContent = 'Демонстрационный режим';
+      }
+    });
+
+    // 2. Старт сканирования
+    liveEventService.on('scan:started', () => {
+      this.isScanning = true;
+      this.headerStatusBar?.setScanning(true);
+      this.headerStatusBar?.setScanProgress({ pct: 5, label: 'Инициализация мониторинга...' });
+      const overlay = document.getElementById('scan-overlay');
+      overlay?.classList.add('active');
+      const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
+      if (btnScan) btnScan.disabled = true;
+    });
+
+    // 3. Реальный прогресс сбора данных
+    liveEventService.on('scan:progress', (data: ScanProgressData) => {
+      this.headerStatusBar?.setScanProgress(data);
+    });
+
+    // 4. Завершение сканирования
+    liveEventService.on('scan:completed', async (data: ScanCompletedData) => {
+      soundService.playScanFinish();
+
+      const overlay = document.getElementById('scan-overlay');
+      overlay?.classList.remove('active');
+
+      const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
+      if (btnScan) btnScan.disabled = false;
+
+      this.isScanning = false;
+      this.headerStatusBar?.setScanning(false);
+      this.headerStatusBar?.setScanProgress(null);
+
+      this.showToast('Сканирование завершено! Снимок обновлен.');
+
+      // Автоматически обновляем срезы и применяем свежие данные ко всем вкладкам
+      await this.fetchSnapshots();
+      if (data.snapshotId) {
+        await this.selectSnapshot(data.snapshotId, false);
+      } else {
+        await this.fetchLatestSnapshot();
+      }
+    });
+
+    // 5. Фоновое обновление снимка рынка (cron / другой клиент)
+    liveEventService.on('snapshot:updated', async data => {
+      if (!this.isScanning) {
+        await this.fetchSnapshots();
+        if (data.snapshotId && data.snapshotId !== this.currentSnapshotId) {
+          await this.selectSnapshot(data.snapshotId, false);
+        }
+      }
+    });
+
+    liveEventService.connect();
+  }
+
   private async triggerLiveScan(): Promise<void> {
     if (this.isScanning) return;
     this.isScanning = true;
     this.headerStatusBar?.setScanning(true);
 
     const overlay = document.getElementById('scan-overlay');
-    const phaseText = document.getElementById('scan-phase-text');
-    const progressInner = document.getElementById('scan-progress-inner');
-    const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement;
+    const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
 
     if (btnScan) btnScan.disabled = true;
     overlay?.classList.add('active');
 
-    const phases = [
-      { text: 'Опрос Roblox Explore API (CCU, лайки и ранги)...', pct: 20 },
-      { text: 'Парсинг каталога и промо-блоков Яндекс Игр...', pct: 45 },
-      { text: 'Сбор чартов Poki Web Top-100...', pct: 65 },
-      { text: 'Детекция вирусных мемов в YouTube Shorts...', pct: 85 },
-      { text: 'Расчет Opportunity Score и арбитражных ниш...', pct: 95 },
-    ];
-
-    let currentPhase = 0;
-    const interval = setInterval(() => {
-      if (currentPhase < phases.length) {
-        if (phaseText) phaseText.textContent = phases[currentPhase].text;
-        if (progressInner) progressInner.style.width = `${phases[currentPhase].pct}%`;
-        currentPhase++;
-      }
-    }, 1200);
+    this.headerStatusBar?.setScanProgress({ pct: 5, label: 'Инициализация мониторинга...' });
 
     try {
       const res = await fetch('/api/scan', { method: 'POST' });
-      clearInterval(interval);
-
-      if (res.ok) {
-        const newSnapshot: MarketSnapshot = await res.json();
-        this.snapshot = newSnapshot;
-        if (progressInner) progressInner.style.width = '100%';
-        if (phaseText) phaseText.textContent = 'Сканирование успешно завершено.';
-        this.showToast('Сканирование завершено! Снимок обновлен.');
-        // Refresh snapshots list to include the newly generated snapshot
-        await this.fetchSnapshots();
-      } else {
-        if (phaseText) phaseText.textContent = 'Сервер вернул ошибку, обновляем данные из кэша.';
-        this.showToast('Ошибка внешних API, использован локальный кэш.');
+      if (!res.ok) {
+        this.showToast('Сервер вернул ошибку при сканировании.');
+        this.resetScanningState();
       }
-    } catch {
-      clearInterval(interval);
-      if (progressInner) progressInner.style.width = '100%';
-      if (phaseText) phaseText.textContent = 'Сервер недоступен, режим эмуляции завершен.';
-      this.showToast('Сервер оффлайн — отображены кэшированные данные.');
-    } finally {
-      setTimeout(() => {
-        overlay?.classList.remove('active');
-        if (progressInner) progressInner.style.width = '0%';
-        if (btnScan) btnScan.disabled = false;
-        this.isScanning = false;
-        this.headerStatusBar?.setScanning(false);
-
-        soundService.playScanFinish();
-
-        this.updateGlobalMetrics();
-        this.renderLegend();
-        this.renderSearchTags();
-        this.liveTicker?.updateData(this.snapshot);
-        this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
-        this.gameCatalog?.updateData(this.snapshot.games || []);
-        this.gameTableView?.updateData(this.snapshot.games || [], this.snapshot.verdicts || []);
-        this.updateCatalogCountUI();
-        this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
-        this.updateArbitrageCountUI();
-        this.moversView?.updateData(this.snapshot, this.previousSnapshot);
-        this.updateMoversCountUI();
-        this.applyFiltersAndSort();
-      }, 700);
+      // Успешный ход парсинга и завершение транслируются через SSE (scan:progress, scan:completed)
+    } catch (err) {
+      console.warn('[App] Ошибка запуска POST /api/scan:', err);
+      this.showToast('Сервер недоступен для запуска сканирования.');
+      this.resetScanningState();
     }
+  }
+
+  private resetScanningState(): void {
+    const overlay = document.getElementById('scan-overlay');
+    const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
+    overlay?.classList.remove('active');
+    if (btnScan) btnScan.disabled = false;
+    this.isScanning = false;
+    this.headerStatusBar?.setScanning(false);
+    this.headerStatusBar?.setScanProgress(null);
   }
 
   private updateGlobalMetrics(): void {

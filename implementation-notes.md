@@ -995,3 +995,115 @@
   - Все 21 тест-сьют проекта (238 тестов) успешно пройдены.
   - Проверка типов `tsc --noEmit` и сборка `vite build` завершены без ошибок.
 
+---
+
+## 24. Нативный SSE эндпоинт и шина событий реального времени (MarketEventBus & GET /api/events)
+
+- **Контекст и цель:**
+  - Реализация реактивного канала доставки событий реального времени по спецификации `docs/superpowers/specs/2026-10-03-modern-dashboard-and-realtime-design.md` (раздел 4).
+  - Замена холостого polling на нативный протокол Server-Sent Events (SSE) без тяжелых сторонних фреймворков (без Express, Socket.io, ws) в соответствии с философией Ponytail.
+- **Инженерные решения и архитектура:**
+  1. *Шина событий `MarketEventBus` (`src/events/event_bus.ts`):*
+     - Наследование от нативного `node:events.EventEmitter`: обеспечивает как внутреннюю диспетчеризацию событий приложения, так и внешнюю трансляцию в сокеты клиентов.
+     - Потокобезопасный пул активных подключений: `Set<http.ServerResponse>` с регистрацией через `registerClient(res)` и возвратом идиоматичной функции отписки.
+     - Метод `broadcast(event: string, data: unknown)`: форматирование сообщений по стандарту SSE (`event: ...\ndata: ...\n\n`), сериализация объектов и прозрачная передача строк, автоматическая зачистка отвалившихся клиентов при сбоях сокета.
+     - Механизм поддержания соединения (Heartbeat): метод `sendHeartbeat()` рассылает комментарий `: ping\n\n` каждые 15 секунд (`startHeartbeat()`), предотвращая таймауты со стороны reverse proxy (Nginx, Caddy, Cloudflare). Таймер помечен `unref()`, чтобы не блокировать завершение процессов Node.js.
+     - Управление жизненным циклом: метод `closeAllClients()` завершает стримы клиентов и очищает таймер при остановке сервера.
+  2. *Эндпоинт `GET /api/events` в `src/server.ts`:*
+     - Обработка в нативном `http.createServer`:
+       - Установка заголовков: `Content-Type: text/event-stream`, `Cache-Control: no-cache`, `Connection: keep-alive`, CORS заголовки.
+       - Вызов `flushHeaders()` при наличии.
+       - Регистрация клиента в `eventBus` и авто-отписка по событию `req.on('close')`.
+     - Интеграция событий сканирования рынка:
+       - В `POST /api/scan` добавлены события `scan:started`, `scan:completed` и `snapshot:updated`.
+     - Корректная остановка: `eventBus.closeAllClients()` вызывается внутри `stop()`.
+- **Верификация и тестирование (TDD RED -> GREEN -> REFACTOR):**
+  - Разработан изолированный тестовый сьют `tests/SSEStream.test.ts` (10 тестов Vitest, 100% PASS):
+    - Юнит-тесты `MarketEventBus`: событийная модель EventEmitter, регистрация/удаление, broadcast форматирование, heartbeat `: ping\n\n`, автоудаление при ошибке записи в сокет.
+    - Интеграционные тесты `GET /api/events`: валидация статус-кода 200 и HTTP-заголовков, регистрация клиента в шине, получение broadcast-события `scan:started`, очистка при обрыве соединения, получение heartbeat ping, параллельная доставка сообщений нескольким клиентам одновременно.
+  - Проверка существующих тестов сервера `tests/Server.test.ts` (17/17 PASS, 0 регрессий).
+  - Полная проверка типов `tsc --noEmit` и сборка `vite build` завершены без замечаний.
+
+---
+
+## 25. Интеграция шины событий в MarketScanner (MarketEventBus, onProgress и поэтапный прогресс)
+
+- **Контекст и цель:**
+  - Реализация поэтапной трансляции статуса сбора данных по витринам в процессе сканирования рынка по спецификации `docs/superpowers/specs/2026-10-03-modern-dashboard-and-realtime-design.md`.
+  - Отправка реальных событий парсинга каждой витрины (Roblox, Яндекс Игры, Poki, YouTube Shorts) через шину событий `MarketEventBus` клиентам SSE и в локальные обработчики `onProgress`.
+- **Инженерные решения и архитектура (Ponytail & YAGNI):**
+  1. *Класс `MarketScanner` (`src/scanner.ts`):*
+     - Наследование от нативного `node:events.EventEmitter`: экземпляр сканера сам является источником событий (`scanner.on('collector:progress')`), что обеспечивает универсальность применения.
+     - Гибкая перегрузка конструктора: принимает объект настроек `MarketScannerOptions`, либо напрямую экземпляр `MarketEventBus`, либо коллбэк `onProgress`.
+     - Полная обратная совместимость: функция `runMarketScan(options)` сохранена и прозрачно делегирует выполнение новому классу `MarketScanner`.
+     - Внедрение зависимостей (Dependency Injection): возможность передачи моков коллекторов (`robloxCollector`, `yandexCollector`, `pokiCollector`, `youtubeAnalyzer`) для изоляции и мгновенного прогона тестов без сетевых задержек.
+  2. *Последовательная трансляция реальных этапов сканирования:*
+     - `scan:started`: время запуска `{ timestamp: string }`.
+     - `collector:progress` (Roblox, 25%): `{ source: 'roblox', count: N, pct: 25 }`.
+     - `collector:progress` (Яндекс Игры, 55%): `{ source: 'yandex_games', count: N_cum, pct: 55 }`.
+     - `collector:progress` (Poki, 75%): `{ source: 'poki', count: N_cum, pct: 75 }`.
+     - `collector:progress` (YouTube Shorts, 90%): `{ source: 'youtube_shorts', count: N_cum, pct: 90 }`.
+     - `scan:completed`: `{ snapshotId: 'snapshot-YYYY-MM-DD', totalGames: N_total, timestamp: string }`.
+     - `snapshot:updated`: `{ snapshotId }`.
+  3. *Мультиплексирование доставки событий:*
+     - Одновременная отправка через `this.emit()` локальным слушателям инстанса сканера, вызов коллбэка `onProgress(payload)` и широковещательная рассылка `eventBus.broadcast()` всем подключенным SSE-клиентам дашборда.
+- **Верификация и тестирование (TDD RED -> GREEN -> REFACTOR):**
+  - Разработан тестовый сьют `tests/ScannerEvents.test.ts` (8 тестов Vitest, 100% PASS):
+    - Эмуляция полной цепочки событий с точными счетчиками из критериев приемки (120 -> 240 -> 310 -> 473 игр).
+    - Валидация подписки на именованные события `MarketEventBus`.
+    - Проверка пользовательского коллбэка `onProgress`.
+    - Тестирование различных сигнатур конструктора (с `MarketEventBus`, `onProgress`, объектом опций).
+    - Проверка обратной совместимости вызова `runMarketScan({ eventBus, onProgress })`.
+    - Прямая подписка на EventEmitter инстанса `MarketScanner`.
+  - Полный регрессионный прогон всего тестового пакета: 23 тест-сьюта (256/256 тестов Vitest PASS, 100% green).
+
+---
+
+## 26. Клиентский сервис LiveEventService и интеграция честного SSE в дашборд 2.0
+
+- **Контекст и цель:**
+  - Подключение нативного браузерного `EventSource` к эндпоинту `/api/events`.
+  - Замена старого имитационного таймера `setInterval` на честный серверный стриминг этапов сканирования рынка.
+  - Отображение реального прогресса сбора по витринам в шапке и реактивное обновление всех вкладок, графиков и таблиц без перезагрузки страницы.
+- **Инженерные решения и архитектура (Ponytail & Linear Precision):**
+  1. *Клиентский сервис `LiveEventService` (`web/src/services/liveEventService.ts`):*
+     - Нативный браузерный `EventSource` без внешних библиотек (YAGNI).
+     - Автоматический реконнект с экспоненциальной задержкой (Exponential Backoff): `initialRetryDelayMs = 1000`, `backoffMultiplier = 2`, `maxRetryDelayMs = 30000`, сброс счетчика попыток при успешном подключении.
+     - Типизированная система подписок `liveEventService.on(event, handler)` для событий `connected`, `scan:started`, `scan:progress`, `scan:completed`, `snapshot:updated`.
+     - Двунаправленная поддержка: прием `collector:progress` от бэкенда с прозрачной диспетчеризацией в `scan:progress`.
+     - Уведомление об изменении состояния канала связи: `connecting`, `connected`, `reconnecting`, `disconnected`.
+  2. *Волосковый прогресс-бар в шапке (`HeaderStatusBar.ts` и `style.css`):*
+     - Hairline полоса высотой 2.5px по нижней границе фиксированной шапки (`.header-progress-bar`, `.header-progress-inner`) с градиентом Linear Acid Lime и Cyan (`#27a644` -> `#e4f222` -> `#02b8cc`) и свечением `box-shadow: 0 0 10px rgba(228, 242, 34, 0.65)`.
+     - Плавная интерполяция `transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1)`.
+     - Хелпер `formatSourceLabel`: локализация названий витрин на русский язык («Парсинг Roblox...», «Парсинг Яндекс Игр...», «Парсинг Poki...», «Анализ YouTube Shorts...»).
+     - Двусторонняя синхронизация: одновременное обновление прогресс-бара шапки, текста CTA-кнопки сканирования и модального оверлея (`#scan-overlay`), если он открыт.
+  3. *Полное удаление фейкового `setInterval`:*
+     - Из `triggerLiveScan()` в `web/src/main.ts` полностью вырезан массив `phases` и цикл `setInterval`.
+     - Запуск скан-процесса инициирует `fetch('/api/scan', { method: 'POST' })`, а весь прогресс и фазы обновляются строго по входящим событиям от сервера.
+  4. *Реакция на `scan:completed`:*
+     - Проигрывание процедурного звукового сигнала завершения через Web Audio API (`soundService.playScanFinish()`).
+     - Автоматический запрос свежего снимка (`fetchSnapshots()` + `selectSnapshot(data.snapshotId)`).
+     - Мгновенное обновление всех 4 рабочих пространств: Spider Radar, Market Movers, SteamDB Data Grid, Arbitrage Matrix без перезагрузки страницы (`window.location.reload` исключен).
+     - Скрытие модального оверлея и сброс прогресс-бара.
+  5. *Визуализация состояния канала (LED-диод):*
+     - Пульсирующий зеленый LED-диод (`.status-led.connected`, 2s pulse) при активном SSE.
+     - Быстрый янтарный пульс (`.status-led.reconnecting`, 0.8s pulse) при обрыве соединения и попытках реконнекта.
+     - Серый LED (`.status-led.offline`) в статическом/оффлайн режиме.
+  6. *Сквозная связка сервера и сканера (`src/server.ts` & `src/scanner.ts`):*
+     - Передача `eventBus` в `runMarketScan({ store, silent, eventBus })` внутри `POST /api/scan`, обеспечивающая трансляцию реального хода парсинга в сокеты всех подключенных клиентов.
+- **Верификация и тестирование (TDD RED -> GREEN -> REFACTOR):**
+  - Разработан тестовый сьют `tests/LiveEventService.test.ts` (11 тестов Vitest, 100% PASS):
+    - Проверка жизненного цикла подключения EventSource и смены статусов.
+    - Экспоненциальный реконнект (1s -> 2s -> 4s) и ограничение по `maxRetryDelayMs`.
+    - Парсинг событий `scan:started`, `scan:progress`, `collector:progress`, `scan:completed`, `snapshot:updated`.
+    - Отписка слушателей.
+    - Хелпер `formatSourceLabel`.
+  - Расширен тестовый сьют `tests/HeaderStatusBar.test.ts` (16 тестов Vitest, 100% PASS):
+    - Тестирование метода `setScanProgress` (плавное заполнение, расчет ширины, маппинг витрин, очистка).
+    - Валидация состояний светодиода SSE (`connected`, `reconnecting`, `offline`).
+  - Проведен сквозной тест реального HTTP-сервера и SSE-стрима с реальным сканированием (`scripts/verify_realtime_sse.ts`):
+    - Получены реальные события: `scan:started` -> `collector:progress` (Roblox 247 игр, 25%) -> `collector:progress` (Яндекс Игры 396 игр, 55%) -> `collector:progress` (Poki 495 игр, 75%) -> `collector:progress` (YouTube Shorts 500 игр, 90%) -> `scan:completed` (500 игр) -> `snapshot:updated`.
+  - Полный регрессионный прогон: 24 тестовых сьюта, 268 из 268 тестов Vitest PASS (100% green), сборка `vite build` 100% OK.
+
+
+

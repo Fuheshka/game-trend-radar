@@ -213,6 +213,8 @@ button:active,
 }
 
 .site-header {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -228,6 +230,36 @@ button:active,
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   gap: 1rem;
   box-sizing: border-box;
+}
+
+/* Hairline Real-time SSE Progress Track at Header Bottom Edge */
+.header-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+.header-progress-bar.active {
+  opacity: 1;
+}
+
+.header-progress-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #27a644 0%, #e4f222 60%, #02b8cc 100%);
+  box-shadow: 0 0 10px rgba(228, 242, 34, 0.65);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header-progress-label {
+  display: none;
 }
 
 .brand-section {
@@ -314,6 +346,12 @@ button:active,
   background: var(--text-ash);
   box-shadow: none;
   animation: none;
+}
+
+.status-led.reconnecting {
+  background: var(--status-warning);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
+  animation: led-pulse 0.8s infinite ease-in-out;
 }
 
 @keyframes led-pulse {

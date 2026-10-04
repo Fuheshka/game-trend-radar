@@ -169,6 +169,13 @@ describe('HeaderStatusBar Component & Utility Functions (TDD)', () => {
         'kpi-top-game',
         'kpi-updated-time',
         'btn-sound-toggle',
+        'site-header',
+        'header-progress-bar',
+        'header-progress-inner',
+        'header-progress-label',
+        'scan-overlay',
+        'scan-progress-inner',
+        'scan-phase-text',
       ];
 
       for (const id of ids) {
@@ -177,6 +184,10 @@ describe('HeaderStatusBar Component & Utility Functions (TDD)', () => {
 
       vi.stubGlobal('document', {
         getElementById: (id: string) => elements.get(id) || null,
+        querySelector: (sel: string) => {
+          if (sel.startsWith('#')) return elements.get(sel.slice(1)) || null;
+          return null;
+        },
         createElement: (tag: string) => createMockElement(`created-${tag}`, tag),
         addEventListener: (event: string, handler: (e: any) => void) => {
           if (!docListeners[event]) docListeners[event] = [];
@@ -391,6 +402,42 @@ describe('HeaderStatusBar Component & Utility Functions (TDD)', () => {
       expect(dropdownWrapper.classList.contains('open')).toBe(false);
 
       // Очистка
+      component.destroy();
+    });
+
+    it('должен отображать и плавно заполнять прогресс-бар в шапке при вызове setScanProgress', () => {
+      const component = new HeaderStatusBarComponent({
+        onScan: vi.fn(),
+        onSnapshotSelect: vi.fn(),
+        onExport: vi.fn(),
+      });
+
+      const progressInner = elements.get('header-progress-inner')!;
+      const progressLabel = elements.get('header-progress-label')!;
+      const scanProgressInner = elements.get('scan-progress-inner')!;
+      const scanPhaseText = elements.get('scan-phase-text')!;
+
+      // Прогресс 55% для Яндекс Игр
+      component.setScanProgress({ source: 'yandex_games', pct: 55 });
+
+      expect(progressInner.style.width).toBe('55%');
+      expect(progressLabel.textContent).toBe('Парсинг Яндекс Игр...');
+      expect(scanProgressInner.style.width).toBe('55%');
+      expect(scanPhaseText.textContent).toBe('Парсинг Яндекс Игр...');
+
+      // Прогресс 90% для YouTube Shorts
+      component.setScanProgress({ source: 'youtube_shorts', pct: 90 });
+
+      expect(progressInner.style.width).toBe('90%');
+      expect(progressLabel.textContent).toBe('Анализ YouTube Shorts...');
+      expect(scanProgressInner.style.width).toBe('90%');
+      expect(scanPhaseText.textContent).toBe('Анализ YouTube Shorts...');
+
+      // Сброс прогресса (null)
+      component.setScanProgress(null);
+      expect(progressInner.style.width).toBe('0%');
+      expect(progressLabel.textContent).toBe('');
+
       component.destroy();
     });
   });
