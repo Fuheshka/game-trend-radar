@@ -85,6 +85,29 @@ The script runs:
 
 ---
 
+## 🔄 Auto-refresh & Realtime (server mode)
+
+Set env vars in `.env` on the server (see [`.env.example`](.env.example); `ecosystem.config.cjs` loads it):
+
+| Variable | Meaning |
+|---|---|
+| `SCAN_INTERVAL_MIN` | Built-in auto-scan every N minutes (`0` = off, default in PM2: 30). Failed scans retry with exponential backoff; each point is also appended to `data/history/*.jsonl` (14 days). |
+| `SCAN_TOKEN` | Bearer token required for `POST /api/scan`. Empty = unprotected (dev only). |
+| `SCAN_COOLDOWN_MS` | Min pause between manual scans (429 + `Retry-After` otherwise). |
+| `CORS_ORIGIN` | Restrict CORS to your domain (default `*`). |
+
+- `POST /api/scan` returns `202` immediately; progress arrives over SSE. Use `?wait=1` to block until the snapshot is returned.
+- A scan with an empty Roblox response is **rejected** (nothing is saved, `scan:failed` is broadcast) — a bad API day cannot overwrite good data. Per-source status is stored in `snapshot.sourceStatus`.
+- `GET /healthz` — status (`ok`/`stale`/`empty`), snapshot age, next auto-scan. Use it for uptime monitors.
+- `GET /api/history?hours=24` — intraday time series.
+- SSE events carry `id:`; reconnecting clients replay missed events via `Last-Event-ID`.
+- Static files and API JSON are gzip-compressed with ETag; hashed assets are `immutable`.
+
+### Auto-deploy
+`.github/workflows/deploy-server.yml` runs typecheck + tests on push to `main`, then SSHes into the server and runs `scripts/deploy.sh` (ff-only pull, `npm ci`, build, `pm2 reload`, healthcheck, **automatic rollback** on failure). Required repo secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (optional `DEPLOY_PORT`).
+
+---
+
 ## ⏰ Scheduled Nightly Market Scan (Cron)
 
 To keep storefront data fresh, configure a cron job to run daily at **03:00 UTC**.

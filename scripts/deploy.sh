@@ -1,45 +1,66 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "========================================="
-echo "🚀 Game Trend Radar | Production Deployment"
-echo "========================================="
+# Деплой на сервер: pull -> npm ci -> build -> pm2 reload -> healthcheck.
+# Если после перезапуска /healthz не отвечает — автоматический откат на предыдущий коммит.
 
-# Determine project root directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_ROOT"
 
-echo "📂 Project root: $PROJECT_ROOT"
+BRANCH="${DEPLOY_BRANCH:-main}"
+PORT="${PORT:-4200}"
+HEALTH_URL="http://127.0.0.1:${PORT}/healthz"
 
-# Ensure logs directory exists
-mkdir -p "$PROJECT_ROOT/logs"
+mkdir -p logs data
 
-# 1. Pull latest code from repository
-echo "📥 [1/4] Pulling latest changes from git..."
-git pull
+build_and_restart() {
+  npm ci
+  npm run build
+  npm run web:build
+  if command -v pm2 >/dev/null 2>&1; then
+    pm2 reload ecosystem.config.cjs --update-env || pm2 start ecosystem.config.cjs
+    pm2 save >/dev/null 2>&1 || true
+  else
+    echo "pm2 не найден: npm install -g pm2" >&2
+    return 1
+  fi
+}
 
-# 2. Install dependencies
-echo "📦 [2/4] Installing dependencies..."
-npm install
+healthy() {
+  for _ in $(seq 1 20); do
+    if curl -fsS --max-time 3 "$HEALTH_URL" >/dev/null 2>&1; then return 0; fi
+    sleep 1
+  done
+  return 1
+}
 
-# 3. Build backend and frontend assets
-echo "🔨 [3/4] Building production bundles..."
-npm run build
-npm run web:build
+# Тело в функции: git merge может подменить этот файл, bash должен дочитать его целиком до запуска.
+main() {
+  PREV_COMMIT="$(git rev-parse HEAD)"
+  echo "📥 Обновление ветки ${BRANCH} (сейчас ${PREV_COMMIT:0:7})"
+  git fetch origin "$BRANCH"
+  git checkout "$BRANCH"
+  git merge --ff-only "origin/${BRANCH}"
+  NEW_COMMIT="$(git rev-parse HEAD)"
 
-# 4. Restart or start PM2 process
-echo "🔄 [4/4] Restarting server via PM2..."
-if command -v pm2 >/dev/null 2>&1; then
-  pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
-  echo "📊 PM2 process status:"
-  pm2 status game-trend-radar
-else
-  echo "⚠️ PM2 not found in PATH. Server not reloaded automatically."
-  echo "👉 Install PM2 globally: npm install -g pm2"
-  echo "👉 Or start manually: npx pm2 start ecosystem.config.cjs"
-fi
+  build_and_restart
 
-echo "========================================="
-echo "✅ Deployment completed successfully!"
-echo "========================================="
+  if healthy; then
+    echo "✅ Деплой ${NEW_COMMIT:0:7} успешен: $(curl -fsS "$HEALTH_URL")"
+    return 0
+  fi
+
+  echo "❌ Healthcheck не прошёл — откат на ${PREV_COMMIT:0:7}" >&2
+  git reset --hard "$PREV_COMMIT"
+  build_and_restart || true
+  if healthy; then
+    echo "↩️ Откат выполнен, сервис жив" >&2
+  else
+    echo "🔥 Сервис не поднялся даже после отката: pm2 logs game-trend-radar" >&2
+  fi
+  return 1
+}
+
+main "$@"
+exit $?

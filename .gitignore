@@ -9,3 +9,5 @@ logs/*.log
 !logs/.gitkeep
 .env
 .env.local
+data/history/
+.trace-mcp/

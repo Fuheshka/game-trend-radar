@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from '../utils/http.js';
 import { NormalizedGame } from '../types/index.js';
 import { classifyArchetype } from '../analyzer/classifier.js';
 
@@ -7,7 +8,7 @@ export class PokiCollector {
   async fetchPopular(): Promise<NormalizedGame[]> {
     const url = 'https://poki.com/en/popular';
     try {
-      const response = await fetch(url, {
+      const response = await fetchWithTimeout(url, {
         headers: {
           'User-Agent': this.userAgent,
         },

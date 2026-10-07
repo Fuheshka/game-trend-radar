@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from '../utils/http.js';
 import { NormalizedGame } from '../types/index.js';
 import { classifyArchetype } from '../analyzer/classifier.js';
 
@@ -21,7 +22,7 @@ export class YandexGamesCollector {
     for (const cat of categories) {
       const url = cat ? `https://yandex.ru/games/${cat}` : 'https://yandex.ru/games/';
       try {
-        const response = await fetch(url, {
+        const response = await fetchWithTimeout(url, {
           headers: {
             'User-Agent': this.userAgent,
             'Accept-Language': 'ru,en;q=0.9',

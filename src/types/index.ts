@@ -105,6 +105,8 @@ export interface MarketSnapshot {
   games: NormalizedGame[];
   verdicts: MarketVerdict[];
   arbitrageOpportunities?: ArbitrageOpportunity[];
+  /** Статус каждого коллектора в этом скане (отсутствует у старых снимков). */
+  sourceStatus?: Record<string, { ok: boolean; count: number; error?: string }>;
 }
 
 export interface SnapshotSummary {

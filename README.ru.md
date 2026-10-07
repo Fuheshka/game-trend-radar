@@ -146,3 +146,27 @@ curl -N -H "Accept: text/event-stream" https://fuheshka.qd.je/api/events
 - ☕ **Поддержать чашкой кофе (СБП / T-Pay):** [pay.cloudtips.ru/p/7adeaa28](https://pay.cloudtips.ru/p/7adeaa28)
 - 💎 **TON:** `UQC-DsraaDQRjUjG9oPRkt5nGlMgxKY-pjMC6xeeYGfxiu9a`
 
+
+## 🔄 Автообновление и реалтайм (серверный режим)
+
+Переменные в `.env` на сервере (см. [`.env.example`](.env.example), `ecosystem.config.cjs` подхватывает файл сам):
+
+| Переменная | Смысл |
+|---|---|
+| `SCAN_INTERVAL_MIN` | Встроенный автоскан каждые N минут (`0` = выкл., в PM2 по умолчанию 30). При сбое — повтор с экспоненциальной паузой; каждая точка пишется в `data/history/*.jsonl` (14 дней). |
+| `SCAN_TOKEN` | Bearer-токен для `POST /api/scan`. Пусто = без защиты (только для dev). |
+| `SCAN_COOLDOWN_MS` | Минимальная пауза между ручными сканами (иначе 429 + `Retry-After`). |
+| `CORS_ORIGIN` | Ограничить CORS своим доменом (по умолчанию `*`). |
+
+- `POST /api/scan` сразу отвечает `202`, прогресс идёт по SSE. `?wait=1` — дождаться снимка в ответе.
+- Скан с пустым ответом Roblox **отклоняется** (ничего не сохраняется, в SSE уходит `scan:failed`) — плохой день API не затрёт хорошие данные. Статус каждой витрины лежит в `snapshot.sourceStatus`.
+- `GET /healthz` — статус (`ok`/`stale`/`empty`), возраст снимка, время следующего автоскана. Для мониторинга аптайма.
+- `GET /api/history?hours=24` — внутридневной ряд.
+- SSE-события имеют `id:`; при переподключении пропущенное дошлётся по `Last-Event-ID`.
+- Статика и JSON API сжимаются gzip, есть ETag; хешированные ассеты — `immutable`.
+
+### Автодеплой
+`.github/workflows/deploy-server.yml`: на push в `main` — typecheck + тесты, затем SSH на сервер и `scripts/deploy.sh` (ff-only pull, `npm ci`, сборка, `pm2 reload`, healthcheck, **автоматический откат** при сбое). Secrets репозитория: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (опционально `DEPLOY_PORT`).
+
+---
+

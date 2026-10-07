@@ -3,15 +3,24 @@ import type * as http from 'node:http';
 
 export interface MarketEventBusOptions {
   heartbeatIntervalMs?: number;
+  /** Нумеровать события (`id:`) и хранить буфер для replay по Last-Event-ID. */
+  eventIds?: boolean;
+  replayBufferSize?: number;
 }
 
 export class MarketEventBus extends EventEmitter {
   private clients: Set<http.ServerResponse> = new Set();
   private heartbeatTimer: NodeJS.Timeout | null = null;
   private readonly heartbeatIntervalMs: number;
+  private readonly eventIds: boolean;
+  private readonly replayBufferSize: number;
+  private nextEventId = 1;
+  private replayBuffer: Array<{ id: number; message: string }> = [];
 
   constructor(options: MarketEventBusOptions = {}) {
     super();
+    this.eventIds = options.eventIds ?? false;
+    this.replayBufferSize = options.replayBufferSize ?? 50;
     this.heartbeatIntervalMs = options.heartbeatIntervalMs ?? 15000;
   }
 
@@ -19,7 +28,18 @@ export class MarketEventBus extends EventEmitter {
    * Регистрирует активное SSE соединение клиента.
    * Возвращает функцию отписки для удобной очистки.
    */
-  public registerClient(res: http.ServerResponse): () => void {
+  public registerClient(res: http.ServerResponse, lastEventId?: number): () => void {
+    if (this.eventIds && lastEventId !== undefined && Number.isFinite(lastEventId)) {
+      for (const entry of this.replayBuffer) {
+        if (entry.id > lastEventId) {
+          try {
+            res.write(entry.message);
+          } catch {
+            break;
+          }
+        }
+      }
+    }
     this.clients.add(res);
     return () => this.removeClient(res);
   }
@@ -44,7 +64,13 @@ export class MarketEventBus extends EventEmitter {
    */
   public broadcast(event: string, data: unknown): void {
     const payload = typeof data === 'string' ? data : JSON.stringify(data);
-    const message = `event: ${event}\ndata: ${payload}\n\n`;
+    let message = `event: ${event}\ndata: ${payload}\n\n`;
+    if (this.eventIds) {
+      const id = this.nextEventId++;
+      message = `id: ${id}\n${message}`;
+      this.replayBuffer.push({ id, message });
+      if (this.replayBuffer.length > this.replayBufferSize) this.replayBuffer.shift();
+    }
 
     for (const client of this.clients) {
       try {

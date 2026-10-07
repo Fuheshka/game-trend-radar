@@ -250,7 +250,7 @@ describe('Radar HTTP Server (порт 4200)', () => {
   describe('4. Эндпоинт POST /api/scan', () => {
     it('должен инициировать сканирование и возвращать обновленный снимок рынка', async () => {
       // POST /api/scan triggers runMarketScan
-      const res = await fetch(`${baseUrl}/api/scan`, {
+      const res = await fetch(`${baseUrl}/api/scan?wait=1`, {
         method: 'POST',
       });
 

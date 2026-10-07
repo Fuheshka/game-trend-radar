@@ -35,6 +35,7 @@ export interface LiveEventMap {
   'scan:started': ScanStartedData;
   'scan:progress': ScanProgressData;
   'scan:completed': ScanCompletedData;
+  'scan:failed': { error?: string };
   'snapshot:updated': SnapshotUpdatedData;
 }
 
@@ -200,6 +201,7 @@ export class LiveEventService {
       'scan:progress',
       'collector:progress',
       'scan:completed',
+      'scan:failed',
       'snapshot:updated',
     ];
 

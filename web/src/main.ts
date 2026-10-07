@@ -72,6 +72,8 @@ class App {
   private sortBy: 'score_desc' | 'score_asc' | 'ccu_desc' | 'velocity_desc' | 'title_asc' = 'score_desc';
   private isScanning: boolean = false;
   private currentView: WorkspaceId = 'radar';
+  private metricsInitialized = false;
+  private localScanRequested = false;
   private prevMetrics = {
     totalGames: 0,
     totalCcu: 0,
@@ -111,6 +113,7 @@ class App {
 
     // Setup real-time SSE stream connection
     this.setupLiveEventService();
+    setInterval(() => this.refreshFreshness(), 60_000);
 
     // Fetch live snapshots list & data from backend
     await this.fetchSnapshots();
@@ -1138,10 +1141,19 @@ class App {
       this.isScanning = true;
       this.headerStatusBar?.setScanning(true);
       this.headerStatusBar?.setScanProgress({ pct: 5, label: 'Инициализация мониторинга...' });
-      const overlay = document.getElementById('scan-overlay');
-      overlay?.classList.add('active');
+      // Фоновый автоскан не должен блокировать экран всем зрителям — оверлей только у инициатора
+      if (this.localScanRequested) {
+        document.getElementById('scan-overlay')?.classList.add('active');
+      }
       const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
       if (btnScan) btnScan.disabled = true;
+    });
+
+    // Скан отклонён валидацией или упал — снимаем блокировки и объясняем причину
+    liveEventService.on('scan:failed', (data: { error?: string }) => {
+      this.localScanRequested = false;
+      this.resetScanningState();
+      this.showToast(data?.error || 'Сканирование не удалось. Прежние данные сохранены.');
     });
 
     // 3. Реальный прогресс сбора данных
@@ -1152,6 +1164,7 @@ class App {
     // 4. Завершение сканирования
     liveEventService.on('scan:completed', async (data: ScanCompletedData) => {
       soundService.playScanFinish();
+      this.localScanRequested = false;
 
       const overlay = document.getElementById('scan-overlay');
       overlay?.classList.remove('active');
@@ -1200,16 +1213,44 @@ class App {
 
     this.headerStatusBar?.setScanProgress({ pct: 5, label: 'Инициализация мониторинга...' });
 
+    this.localScanRequested = true;
     try {
-      const res = await fetch('/api/scan', { method: 'POST' });
-      if (!res.ok) {
+      const headers: Record<string, string> = {};
+      let token = '';
+      try {
+        token = localStorage.getItem('radar_scan_token') || '';
+      } catch {
+        // localStorage недоступен (приватный режим)
+      }
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const res = await fetch('/api/scan', { method: 'POST', headers });
+      if (res.status === 401) {
+        const entered = window.prompt('Для запуска скана нужен токен доступа (SCAN_TOKEN):');
+        try {
+          if (entered) localStorage.setItem('radar_scan_token', entered);
+          else localStorage.removeItem('radar_scan_token');
+        } catch {
+          // ignore
+        }
+        this.showToast(entered ? 'Токен сохранён — нажмите «Запустить скан» ещё раз.' : 'Нужен токен доступа.');
+        this.localScanRequested = false;
+        this.resetScanningState();
+      } else if (res.status === 429) {
+        const body = (await res.json().catch(() => ({}))) as { retryAfterSec?: number };
+        this.showToast(`Скан недавно выполнялся. Повторите через ${body.retryAfterSec ?? 30} с.`);
+        this.localScanRequested = false;
+        this.resetScanningState();
+      } else if (!res.ok) {
         this.showToast('Сервер вернул ошибку при сканировании.');
+        this.localScanRequested = false;
         this.resetScanningState();
       }
-      // Успешный ход парсинга и завершение транслируются через SSE (scan:progress, scan:completed)
+      // Ход и завершение транслируются через SSE (scan:progress, scan:completed, scan:failed)
     } catch (err) {
       console.warn('[App] Ошибка запуска POST /api/scan:', err);
       this.showToast('Сервер недоступен для запуска сканирования.');
+      this.localScanRequested = false;
       this.resetScanningState();
     }
   }
@@ -1249,10 +1290,16 @@ class App {
       this.snapshot.arbitrageOpportunities?.length ??
       this.snapshot.verdicts.filter(v => v.hasArbitrageOpportunity).length;
 
+    const first = !this.metricsInitialized;
+    const from = first
+      ? { totalGames, totalCcu: totalCCU, topScore, arbitrageCount }
+      : this.prevMetrics;
+    this.metricsInitialized = true;
+
     if (totalGamesEl) {
       animateCounter(
         totalGamesEl,
-        this.prevMetrics.totalGames,
+        from.totalGames,
         totalGames,
         1000,
         val => Math.round(val).toLocaleString()
@@ -1262,7 +1309,7 @@ class App {
     if (totalCcuEl) {
       animateCounter(
         totalCcuEl,
-        this.prevMetrics.totalCcu,
+        from.totalCcu,
         totalCCU,
         1000,
         val => this.formatNumber(val)
@@ -1272,7 +1319,7 @@ class App {
     if (topScoreEl) {
       animateCounter(
         topScoreEl,
-        this.prevMetrics.topScore,
+        from.topScore,
         topScore,
         1000,
         val => `${Math.round(val)}/100`
@@ -1282,7 +1329,7 @@ class App {
     if (arbitrageCountEl) {
       animateCounter(
         arbitrageCountEl,
-        this.prevMetrics.arbitrageCount,
+        from.arbitrageCount,
         arbitrageCount,
         1000,
         val => Math.round(val).toString()
@@ -1314,7 +1361,7 @@ class App {
       topGameTitle = sortedVerdicts[0].sampleTitles[0];
     }
 
-    let ccuChangePercent = 4.2;
+    let ccuChangePercent = 0;
     if (this.previousSnapshot && this.previousSnapshot.robloxTotalCCU > 0) {
       const delta = totalCCU - this.previousSnapshot.robloxTotalCCU;
       ccuChangePercent = Number(((delta / this.previousSnapshot.robloxTotalCCU) * 100).toFixed(1));
@@ -1331,6 +1378,18 @@ class App {
       topDayGameTitle: topGameTitle,
       updatedText: formatMinutesAgo(this.snapshot.timestamp),
     });
+    this.refreshFreshness();
+  }
+
+  /** Обновляет «N мин назад» и подсвечивает устаревшие данные (старше 3 ч). */
+  private refreshFreshness(): void {
+    const el = document.getElementById('kpi-updated-time');
+    const ts = Date.parse(this.snapshot?.timestamp ?? '');
+    if (!el || !Number.isFinite(ts)) return;
+    el.textContent = formatMinutesAgo(this.snapshot.timestamp);
+    const stale = Date.now() - ts > 3 * 3600_000;
+    el.classList.toggle('is-stale', stale);
+    el.title = stale ? 'Данные устарели — снимок рынка давно не обновлялся' : '';
   }
 
   private triggerMetricCardsPulse(): void {

@@ -18,6 +18,21 @@ export interface CollectorProgressEvent {
   pct: number;
 }
 
+export interface SourceStatus {
+  ok: boolean;
+  count: number;
+  error?: string;
+}
+
+export const MIN_TOTAL_GAMES = 5;
+
+export class ScanValidationError extends Error {
+  constructor(message: string, public readonly sourceStatus: Record<string, SourceStatus>) {
+    super(message);
+    this.name = 'ScanValidationError';
+  }
+}
+
 export interface ScanStartedEvent {
   timestamp: string;
 }
@@ -112,32 +127,67 @@ export class MarketScanner extends EventEmitter {
 
     log('⏳ Опрос витрин данных...');
 
+    // Все витрины стартуют параллельно; прогресс публикуется в фиксированном порядке.
+    const sourceStatus = {} as Record<CollectorSource, SourceStatus>;
+    const settle = <T>(source: CollectorSource, work: () => Promise<T[]>): Promise<T[]> =>
+      Promise.resolve()
+        .then(work)
+        .then(items => {
+          sourceStatus[source] = { ok: items.length > 0, count: items.length };
+          return items;
+        })
+        .catch((err: unknown) => {
+          const error = err instanceof Error ? err.message : String(err);
+          sourceStatus[source] = { ok: false, count: 0, error };
+          log(`  [!] ${source}: ошибка сбора — ${error}`);
+          return [] as T[];
+        });
+
+    const robloxP = settle('roblox', () => robloxCollector.fetchAllKeySorts());
+    const yandexP = settle('yandex_games', () => yandexCollector.fetchCatalog());
+    const pokiP = settle('poki', () => pokiCollector.fetchPopular());
+    const youtubeP = Promise.all([
+      settle('youtube_shorts', () => youtubeAnalyzer.getViralShortsTrends()),
+      Promise.resolve()
+        .then(() => youtubeAnalyzer.scanTrendingSlices(['#shorts', '#roblox', '#gamedev']))
+        .catch((): any[] => []),
+    ]);
+
     // 1. Roblox (pct: 25)
-    const robloxGames = await robloxCollector.fetchAllKeySorts();
+    const robloxGames = await robloxP;
     log(`  [+] Roblox: получено ${robloxGames.length} игр из ключевых чартов`);
     let cumulativeCount = robloxGames.length;
     this.emitProgress('roblox', cumulativeCount, 25);
 
     // 2. Яндекс Игры (pct: 55)
-    const yandexGames = await yandexCollector.fetchCatalog();
+    const yandexGames = await yandexP;
     log(`  [+] Яндекс Игры: получено ${yandexGames.length} карточек каталога`);
     cumulativeCount += yandexGames.length;
     this.emitProgress('yandex_games', cumulativeCount, 55);
 
     // 3. Poki (pct: 75)
-    const pokiGames = await pokiCollector.fetchPopular();
+    const pokiGames = await pokiP;
     log(`  [+] Poki: получено ${pokiGames.length} популярных веб-игр`);
     cumulativeCount += pokiGames.length;
     this.emitProgress('poki', cumulativeCount, 75);
 
     // 4. YouTube Shorts (pct: 90)
-    const [ytTrends, shortsVideos] = await Promise.all([
-      youtubeAnalyzer.getViralShortsTrends(),
-      youtubeAnalyzer.scanTrendingSlices(['#shorts', '#roblox', '#gamedev']),
-    ]);
+    const [ytTrends, shortsVideos] = await youtubeP;
     log(`  [+] YouTube Shorts: получено ${ytTrends.length} вирусных позиций`);
     cumulativeCount += ytTrends.length;
     this.emitProgress('youtube_shorts', cumulativeCount, 90);
+
+    // Валидация: пустой Roblox (ядро метрик) = сбой API, такой снимок хуже, чем его отсутствие.
+    if (robloxGames.length === 0 || cumulativeCount < MIN_TOTAL_GAMES) {
+      const reason =
+        robloxGames.length === 0
+          ? 'Roblox вернул 0 игр'
+          : `собрано всего ${cumulativeCount} игр (минимум ${MIN_TOTAL_GAMES})`;
+      const failure = new ScanValidationError(`Скан отклонён: ${reason}. Снимок не сохранён.`, sourceStatus);
+      this.emit('scan:failed', { error: failure.message, sourceStatus });
+      this.eventBus?.broadcast('scan:failed', { error: failure.message, sourceStatus });
+      throw failure;
+    }
 
     const detectedMemes = youtubeAnalyzer.detectViralMemes(shortsVideos);
     const activeMemes = detectedMemes.filter(m => m.occurrences > 0);
@@ -233,6 +283,7 @@ export class MarketScanner extends EventEmitter {
       games: allGames,
       verdicts,
       arbitrageOpportunities,
+      sourceStatus,
     };
 
     const savedJsonPath = store.saveSnapshot(snapshot);

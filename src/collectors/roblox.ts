@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from '../utils/http.js';
 import { NormalizedGame, RawRobloxGame } from '../types/index.js';
 import { classifyArchetype } from '../analyzer/classifier.js';
 import { randomUUID } from 'node:crypto';
@@ -16,7 +17,7 @@ export class RobloxCollector {
   async fetchSort(sortId: RobloxSortType = 'top-playing-now'): Promise<NormalizedGame[]> {
     const url = `https://apis.roblox.com/explore-api/v1/get-sort-content?sessionId=${this.sessionId}&sortId=${sortId}`;
     try {
-      const response = await fetch(url, {
+      const response = await fetchWithTimeout(url, {
         headers: {
           'User-Agent': this.userAgent,
           'Accept': 'application/json',

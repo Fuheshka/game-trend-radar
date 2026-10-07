@@ -6383,3 +6383,73 @@ kbd.tab-hotkey {
 
 
 
+
+/* ==========================================================================
+   FRESHNESS BADGE + MOBILE HEADER / TABS (≤ 720px)
+   ========================================================================== */
+.kpi-strip-value.is-stale {
+  color: #fbbf24;
+  padding: 0 0.4rem;
+  border-radius: 4px;
+  background: rgba(251, 191, 36, 0.12);
+  outline: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+@media (max-width: 720px) {
+  .site-header {
+    height: auto;
+    min-height: 48px;
+    max-height: none;
+    flex-wrap: wrap;
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .brand-version-badge,
+  .sound-toggle-label,
+  .export-btn-icon + span,
+  .snapshot-label {
+    display: none;
+  }
+
+  .header-right {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    width: 100%;
+  }
+
+  .header-right .btn-scan-lime {
+    margin-left: auto;
+  }
+
+  .header-kpi-strip {
+    justify-content: flex-start;
+  }
+
+  .main-tabs-nav {
+    margin: 0.9rem 0 1.1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs-segmented-control {
+    flex-wrap: nowrap;
+  }
+
+  .view-tab-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.82rem;
+  }
+
+  .tab-hotkey {
+    display: none;
+  }
+}
