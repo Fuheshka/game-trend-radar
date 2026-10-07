@@ -39,6 +39,8 @@ healthy() {
 main() {
   PREV_COMMIT="$(git rev-parse HEAD)"
   echo "📥 Обновление ветки ${BRANCH} (сейчас ${PREV_COMMIT:0:7})"
+  # vite build перезаписывает этот отслеживаемый файл на сервере; без сброса ff-merge упадёт на конфликте
+  git checkout -- web/public/data/latest_snapshot.json 2>/dev/null || true
   git fetch origin "$BRANCH"
   git checkout "$BRANCH"
   git merge --ff-only "origin/${BRANCH}"
