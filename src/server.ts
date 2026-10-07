@@ -124,7 +124,7 @@ interface StaticEntry {
 
 export function createRadarServer(options: RadarServerOptions = {}) {
   const port = options.port ?? (process.env.PORT ? parseInt(process.env.PORT, 10) : 4200);
-  const host = options.host ?? '0.0.0.0';
+  const host = options.host ?? process.env.HOST ?? '0.0.0.0';
   const store = options.store ?? new SnapshotStore();
   const eventBus = options.eventBus ?? new MarketEventBus({ eventIds: true });
   eventBus.startHeartbeat();
