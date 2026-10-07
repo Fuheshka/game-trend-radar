@@ -516,12 +516,14 @@ export function createRadarServer(options: RadarServerOptions = {}) {
   });
 
   const isDirectRun =
+    Boolean(process.env.pm_id) ||
     Boolean(process.argv[1] &&
     (process.argv[1].endsWith('server.ts') || process.argv[1].endsWith('server.js')));
 
   const shouldOpen =
     options.open ??
     (!options.silent &&
+      process.env.NODE_ENV !== 'production' &&
       !process.env.CI &&
       !process.env.VITEST &&
       (process.argv.includes('--open') || (isDirectRun && !process.argv.includes('--no-open'))));
@@ -590,9 +592,12 @@ export function createRadarServer(options: RadarServerOptions = {}) {
   };
 }
 
+// Под PM2 (cluster/fork) argv[1] — это контейнер PM2, а не server.js, поэтому проверяем и pm_id.
 const isDirectRun =
-  process.argv[1] &&
-  (process.argv[1].endsWith('server.ts') || process.argv[1].endsWith('server.js'));
+  Boolean(process.env.pm_id) ||
+  Boolean(
+    process.argv[1] && (process.argv[1].endsWith('server.ts') || process.argv[1].endsWith('server.js'))
+  );
 
 if (isDirectRun) {
   const radarServer = createRadarServer();

@@ -27,6 +27,7 @@ module.exports = {
             node_args: '--import tsx',
           }),
       instances: 1,
+      exec_mode: 'fork', // один процесс: SSE-клиенты и скан живут в памяти одного воркера
       autorestart: true,
       watch: false,
       max_memory_restart: '512M',
