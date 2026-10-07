@@ -783,3 +783,459 @@
 > - Зафиксируй изменения в `implementation-notes.md`.
 > - Категорический запрет автокоммитов без прямого подтверждения.
 > ```
+
+
+---
+
+## Спринт 14: Экспорт аналитических данных (CSV и Printable PDF)
+
+> [!abstract] Выгрузка структурированных данных для внешнего анализа и отчетов
+> Расширение возможностей экспорта дашборда для продуктовых аналитиков, инди-разработчиков и инвесторов:
+> - Экспорт каталога игр и матрицы арбитража в формат CSV с поддержкой UTF-8 BOM для корректного открытия в Excel и Google Таблицах.
+> - Генерация чистого печатного PDF/HTML отчета со сводкой ниш, ключевыми метриками и графиками для питчей.
+
+- [ ] **Промпт 14.1: Полноценный экспорт каталога и арбитража в CSV**
+
+> [!note]+ Текст промпта 14.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md и web/src/services/exporter.ts.
+> 
+> ### 1. Цель
+> Реализовать экспорт отфильтрованных данных каталога игр и матрицы арбитража в CSV с поддержкой кодировки UTF-8 BOM.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/services/exporter.ts` реализованы функции:
+>   - `exportGamesToCsv(games: NormalizedGame[]): string` (колонки: Rank, Title, Platform, Genre, Archetype, CCU/Metric, LikeRatio, URL).
+>   - `exportArbitrageToCsv(opportunities: ArbitrageOpportunity[]): string` (колонки: Concept, DonorTitle, DonorCCU, BestMatchTitle, Similarity, LeadTime, Status, Recipe).
+> - Строки корректно экранируются кавычками при наличии запятых, точек с запятой или переносов строк. В начало файла добавляется UTF-8 BOM (`\uFEFF`) для корректного открытия в Excel.
+> - В шапку `HeaderStatusBar.ts` в выпадающее меню экспорта или рядом с кнопками экспорта добавлены пункты: «Экспорт каталога (CSV)» и «Экспорт арбитража (CSV)».
+> - Добавлены unit-тесты в `tests/Exporter.test.ts` (проверка BOM, структуры колонок, экранирования специальных символов).
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/services/exporter.ts`, `web/src/components/HeaderStatusBar.ts`, `tests/Exporter.test.ts`.
+> - **Чего НЕ трогаем**: серверные роуты, стили графиков.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/Exporter.test.ts` (все тесты должны быть GREEN).
+> - Проверь скачивание CSV в браузере и открой его в текстовом редакторе.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 14.2: Экспорт чистого печатного PDF/HTML отчета со сводкой рынка**
+
+> [!note]+ Текст промпта 14.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md и web/src/services/exporter.ts.
+> 
+> ### 1. Цель
+> Реализовать генерацию презентабельного печатного отчета (Printable HTML / PDF) с ключевыми KPI, распределением ниш и вердиктами рынка.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `web/src/services/exporter.ts` реализована функция `openPrintableReport(snapshot: MarketSnapshot): void`.
+> - Функция формирует чистое изолированное окно/вкладку с оптимизированной для печати разметкой (`@media print`):
+>   - Шапка отчета с датой среза и общим онлайном.
+>   - Сводные KPI (Всего игр, Топ Opportunity Score, Арбитражные ниши).
+>   - Светофор вердиктов (Green / Yellow / Red Light) с ключевыми рекомендациями.
+>   - Таблица топ-10 арбитражных ниш.
+>   - Кнопка «Печать / Сохранить в PDF» (`window.print()`).
+> - В `HeaderStatusBar.ts` пункт «Печатный отчет (PDF)» запускает генерацию.
+> - Написаны тесты формирования печатной разметки в `tests/Exporter.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/services/exporter.ts`, `web/src/components/HeaderStatusBar.ts`, `tests/Exporter.test.ts`.
+> - **Чего НЕ трогаем**: логику сбора данных.
+> 
+> ### 4. Проверка
+> - Запусти тесты экспорта и убедись в их успешном прохождении.
+> - Нажми «Печатный отчет (PDF)» в UI и проверь предварительный просмотр печати браузера.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+---
+
+## Спринт 15: Реальные спарклайны и аналитика дельт во времени (Time-Series)
+
+> [!abstract] Переход от синтетических графиков к реальной истории сохраненных снимков
+> Замена математической синусоиды на реальные исторические данные:
+> - Бэкенд-индексация истории игр по накопленным снимкам в `data/snapshots/`.
+> - Интерактивные SVG-спарклайны с визиром (crosshair) и отображением даты и онлайна при наведении.
+
+- [ ] **Промпт 15.1: Бэкенд-сервис истории метрик и дельт онлайна**
+
+> [!note]+ Текст промпта 15.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md, src/storage/snapshot_store.ts и src/server.ts.
+> 
+> ### 1. Цель
+> Создать серверный сервис агрегации исторических точек метрик игр по существующим снимкам и новый эндпоинт `/api/history`.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `src/storage/snapshot_store.ts` реализован метод `getGameHistory(limitDays = 14): Map<string, Array<{ date: string; value: number }>>`.
+> - Метод считывает метаданные снимков из `data/snapshots/` и строит временной ряд для каждой уникальной игры (`id` или `platform:id`).
+> - В `src/server.ts` добавлен эндпоинт `GET /api/history`:
+>   - Возвращает компактный JSON с историческими точками онлайна игр.
+>   - Добавлено кэширование в памяти с инвалидацией при создании нового снимка.
+> - Написаны тесты в `tests/HistoryService.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `src/storage/snapshot_store.ts`, `src/server.ts`, `tests/HistoryService.test.ts`.
+> - **Чего НЕ трогаем**: существующие эндпоинты `/api/snapshot/latest` и `/api/scan`.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/HistoryService.test.ts`.
+> - Выполни запрос `curl http://localhost:4200/api/history` и убедись в корректности структуры данных.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 15.2: Интерактивные реальные SVG-спарклайны в каталоге и таблице**
+
+> [!note]+ Текст промпта 15.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md, web/src/components/GameTableView.ts и web/src/components/MoversView.ts.
+> 
+> ### 1. Цель
+> Подключить реальные исторические данные к спарклайнам в таблице каталога и экране лидеров роста, добавив интерактивный тултип при наведении.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Компонент рендеринга спарклайнов принимает реальный массив точек `{ date, value }`. Если история содержит менее 2 точек, отображается аккуратный плоский индикатор старта.
+> - При наведении курсора на спарклайн отображается вертикальная линия-визир (crosshair) и всплывающий бейдж с точной датой и значением CCU.
+> - Цвет линии отражает реальный тренд: изумрудный при росте, янтарный при стабильности, приглушенный красный при падении онлайна.
+> - Написаны unit-тесты в `tests/Sparkline.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/GameTableView.ts`, `web/src/components/MoversView.ts`, `web/src/main.ts`, `tests/Sparkline.test.ts`.
+> - **Чего НЕ трогаем**: радарные чарты на вкладке «Обзор».
+> 
+> ### 4. Проверка
+> - Запусти тесты спарклайна и компонентов таблицы: `npm test tests/Sparkline.test.ts tests/MoversView.test.ts`.
+> - Открой страницу каталога в браузере и наведи курсор на спарклайн в таблице.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+---
+
+## Спринт 16: Инструменты продуктовой аналитики (Сравнение игр и Избранное)
+
+> [!abstract] Рабочие инструменты для глубокого сопоставления проектов и отслеживания гипотез
+> Функции для системной работы аналитика и геймдизайнера:
+> - Избранное (Watchlist) с сохранением в браузере и быстрым переключением вида.
+> - Режим сравнения игр (Game Comparison Matrix) бок о бок до 4 проектов.
+
+- [ ] **Промпт 16.1: Избранное и закладки (Watchlist) с сохранением в браузере**
+
+> [!note]+ Текст промпта 16.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md, web/src/components/GameCatalog.ts и web/src/components/SearchPanel.ts.
+> 
+> ### 1. Цель
+> Реализовать механизм добавления игр в избранное (Watchlist) с сохранением в `localStorage` и быстрым фильтром «Только избранное ⭐».
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Создан сервис `web/src/services/watchlistService.ts`:
+>   - Методы: `toggleWatchlist(gameId: string)`, `isBookmarked(gameId: string): boolean`, `getWatchlist(): string[]`.
+>   - Реактивное оповещение подписчиков об изменении списка избранного.
+> - В карточках каталога и строках таблицы добавлена тактильная кнопка-звезда ⭐ с hover-эффектом и звуковым кликом.
+> - В панели фильтров `SearchPanel.ts` добавлен фильтр «⭐ В закладках (N)».
+> - Написаны тесты сервиса и фильтрации в `tests/Watchlist.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/services/watchlistService.ts`, `web/src/components/GameCatalog.ts`, `web/src/components/GameTableView.ts`, `web/src/components/SearchPanel.ts`, `tests/Watchlist.test.ts`.
+> - **Чего НЕ трогаем**: матрицу арбитража и серверную часть.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/Watchlist.test.ts`.
+> - Добавь игры в избранное в браузере, перезагрузи страницу и проверь сохранение состояния.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 16.2: Режим сравнения игр (Game Comparison Matrix)**
+
+> [!note]+ Текст промпта 16.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md, web/src/components/DetailDrawer.ts и web/src/components/GameTableView.ts.
+> 
+> ### 1. Цель
+> Реализовать режим сравнения 2-4 выбранных игр с плавающей панелью действий и сравнительной модальной матрицей параметров.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В таблице каталога добавлен столбец чекбоксов выбора для сравнения (максимум 4 игры).
+> - При выборе 2+ игр внизу экрана появляется плавающая плашка (Floating Bar) с мини-аватарками выбранных игр, кнопкой «Сравнить (N)» и «Очистить».
+> - При нажатии «Сравнить» открывается сравнительная шторка/модальное окно:
+>   - Колонки для каждой игры: платформа, текущий CCU, темп роста, рейтинг, архетип, теги.
+>   - Подсветка лидера по каждому параметру зеленым бейджем.
+> - Написаны unit-тесты логики выбора и сравнения в `tests/GameComparison.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/GameTableView.ts`, `web/src/components/GameComparisonModal.ts`, `web/src/main.ts`, `tests/GameComparison.test.ts`.
+> - **Чего НЕ трогаем**: генератор промптов GDD.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/GameComparison.test.ts`.
+> - Выбери 3 игры в каталоге, нажми «Сравнить» и убедись в корректности отображения таблицы.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+---
+
+## Спринт 17: Локализация RU/EN, авторские стандарты и визуальная полировка
+
+> [!abstract] Соответствие глобальным стандартам проектов и доведение UX/UI до идеала
+> Интернационализация, авторские блоки и кинематографичные микро-анимации:
+> - Внедрение словаря `i18n.ts` и переключателя языков RU / EN по скиллу `app-i18n-localization`.
+> - Окно «О программе» с подтвержденным авторством Даниила К. (Fuheshka).
+> - Каскадные stagger-анимации появления карточек и тактильный пружинящий отклик интерфейса.
+
+- [ ] **Промпт 17.1: Двуязычная локализация RU / EN и переключатель языка**
+
+> [!note]+ Текст промпта 17.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md и правилом app-i18n-localization.
+> 
+> ### 1. Цель
+> Реализовать чистую двуязычность интерфейса (русский и английский языки) с автоматическим определением языка системы и ручным переключателем.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Создан модуль `web/src/i18n.ts`:
+>   - Типизированный словарь переводов (навигация, вкладки, тултипы, статусы светофора, архетипы, фильтры).
+>   - Автоопределение языка через `navigator.language` с приоритетом сохранения в `localStorage`.
+>   - Метод `t(key: TranslationKey): string`.
+> - В шапку `HeaderStatusBar.ts` добавлен компактный переключатель `RU | EN`.
+> - Все текстовые блоки UI переводятся динамически без полной перезагрузки страницы.
+> - Написаны тесты переводов и словаря в `tests/I18n.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/i18n.ts`, `web/src/components/HeaderStatusBar.ts`, `web/src/main.ts`, все UI-компоненты при замене строк на `t(...)`, `tests/I18n.test.ts`.
+> - **Чего НЕ трогаем**: структуру снимков бэкенда (`MarketSnapshot`).
+> 
+> ### 4. Проверка
+> - Запусти тесты локализации: `npm test tests/I18n.test.ts`.
+> - Переключи язык в UI на EN и обратно на RU, проверив обновление шапки, табов, фильтров и карточек.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 17.2: Модальное окно «О программе» и обязательные авторские реквизиты**
+
+> [!note]+ Текст промпта 17.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md и правилом Mandatory Authorship & Credits.
+> 
+> ### 1. Цель
+> Добавить в интерфейс стильное модальное окно «О программе» (About / Credits) с полной информацией о проекте, версией и ссылками на автора.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Создан компонент `web/src/components/AboutModal.ts`:
+>   - Название: Game Trend Radar, версия по SemVer, описание назначения.
+>   - Авторский блок:
+>     - RU: «Автор: Даниил К. (Fuheshka)» со ссылкой на `https://github.com/Fuheshka`.
+>     - EN: «Created by Daniil K. (Fuheshka)».
+>     - Ссылки на Telegram ([@fuheshka](https://t.me/fuheshka)), Email ([me@kuviko.ru](mailto:me@kuviko.ru)), поддержку проекта и репозиторий.
+>   - Кнопка проверки обновлений репозитория через GitHub API по скиллу `app-update-checker`.
+> - В шапку `HeaderStatusBar.ts` добавлена кнопка вызова окна «О программе» (иконка информации или логотип).
+> - Написаны тесты в `tests/AboutModal.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/components/AboutModal.ts`, `web/src/components/HeaderStatusBar.ts`, `tests/AboutModal.test.ts`.
+> - **Чего НЕ трогаем**: логику аналитических экранов.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/AboutModal.test.ts`.
+> - Открой модальное окно в браузере и проверь кликабельность ссылок и поддержку темы.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 17.3: Микро-анимации Stagger, тактильный отклик и FLIP-сортировка**
+
+> [!note]+ Текст промпта 17.3
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md, скиллами better-ui, uitripled и motion-design.
+> 
+> ### 1. Цель
+> Добавить интерфейсу тактильности и кинематографичности за счет каскадного появления элементов (stagger) и пружинящего отклика кнопок.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Для карточек вердиктов и сетки каталога внедрена CSS/JS stagger-анимация:
+>   - Смещение `translateY(8px) -> translateY(0)` и `opacity: 0 -> 1` с шагом задержки 30-35 мс на элемент.
+>   - Кривая плавности `cubic-bezier(0.16, 1, 0.3, 1)` длительностью 240 мс.
+> - Для интерактивных кнопок (`.btn-inspect`, `.btn-action`, фильтр-чипсы) добавлен пружинящий микро-отклик:
+>   `:active { transform: scale(0.97); }` с мгновенным возвратом.
+> - Учтено системное медиа-выражение `@media (prefers-reduced-motion: reduce)` (отключение анимаций при требовании системы).
+> - Написаны тесты стилей и анимационных классов в `tests/Animations.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `web/src/style.css`, анимационные утилиты, `tests/Animations.test.ts`.
+> - **Чего НЕ трогаем**: логику расчетов метрик.
+> 
+> ### 4. Проверка
+> - Запусти тесты анимаций.
+> - Проверь плавность переключения фильтров и кликов кнопок в браузере при 60 FPS.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+---
+
+## Спринт 18: Новые источники данных (CrazyGames и Steam Spy)
+
+> [!abstract] Расширение охвата веб-витрин и подключение ПК-инди сегмента
+> Подключение дополнительных платформ для всестороннего анализа игровых трендов:
+> - Коллектор CrazyGames для отслеживания мировых хитов браузерного гейминга.
+> - Коллектор Steam Spy Top 100 за 2 недели для сопоставления мобильных и ПК-трендов.
+
+- [ ] **Промпт 18.1: Коллектор веб-портала CrazyGames**
+
+> [!note]+ Текст промпта 18.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md и src/collectors/poki.ts.
+> 
+> ### 1. Цель
+> Реализовать надежный коллектор топ-игр международного портала CrazyGames и интегрировать его в общий пайплайн нормализации данных.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Создан коллектор `src/collectors/crazygames.ts`, реализующий интерфейс сбора популярных игр.
+> - Корректно извлекаются название игры, жанр, теги, рейтинг и относительная позиция в чарте.
+> - Добавлена изоляция сетевых сбоев (таймаут 6000 мс через `AbortController`, безопасный fallback).
+> - Коллектор подключен в `src/scanner.ts` с маппингом на платформу `CRAZYGAMES`.
+> - Написаны тесты парсера и обработки ошибок в `tests/CrazyGamesCollector.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `src/collectors/crazygames.ts`, `src/scanner.ts`, `src/types/index.ts`, `tests/CrazyGamesCollector.test.ts`.
+> - **Чего НЕ трогаем**: другие коллекторы.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/CrazyGamesCollector.test.ts`.
+> - Убедись, что запуск сканера включает игры CrazyGames в результирующий снимок.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 18.2: Коллектор инди-трендов Steam Spy (Top 100 за 2 недели)**
+
+> [!note]+ Текст промпта 18.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md и src/collectors/roblox.ts.
+> 
+> ### 1. Цель
+> Подключить открытый API Steam Spy для анализа трендов ПК-игр за последние 2 недели и обогащения арбитражной матрицы.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - Создан коллектор `src/collectors/steam_spy.ts`, опрашивающий эндпоинт `https://steamspy.com/api.php?request=top100in2weeks`.
+> - Извлекаются: `appid`, `name`, `ccu` (пиковый онлайн), `positive`/`negative` отзывы, рассчитывается `likeRatio`.
+> - Фильтрация инди-сегмента и сопоставление с архетипами классификатора.
+> - Написаны unit-тесты парсинга и устойчивости к сбоям сети в `tests/SteamSpyCollector.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `src/collectors/steam_spy.ts`, `src/scanner.ts`, `tests/SteamSpyCollector.test.ts`.
+> - **Чего НЕ трогаем**: UI компоненты.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/SteamSpyCollector.test.ts`.
+> - Проверь интеграцию с общим снимком рынка.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+---
+
+## Спринт 19: Углубление аналитики сторов и оптимизация хранилища
+
+> [!abstract] Переход на SQLite и повышение достоверности метрик сторов
+> Оптимизация инфраструктуры и алгоритмов аналитики:
+> - Углубленный трекинг Яндекс Игр (ранг в категории и количество отзывов вместо фиксированного рейтинга).
+> - Индексация снимков через нативный `node:sqlite` и ускорение автотестов.
+
+- [ ] **Промпт 19.1: Углубленные метрики популярности Яндекс Игр**
+
+> [!note]+ Текст промпта 19.1
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md и src/collectors/yandex_games.ts.
+> 
+> ### 1. Цель
+> Заменить константный рейтинг 70-75% в парсере Яндекс Игр на объективные метрики позиции в категории и количества отзывов игроков.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `src/collectors/yandex_games.ts` реализован сбор точного ранга игры в категории (позиция в выдаче).
+> - Парсинг количества оценок/отзывов из микроразметки `reviewCount` / `ratingCount`.
+> - Расчет динамического скора вовлеченности на базе ранга и отзывов.
+> - Написаны тесты в `tests/YandexGamesCollector.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `src/collectors/yandex_games.ts`, `tests/YandexGamesCollector.test.ts`.
+> - **Чего НЕ трогаем**: арбитражный словарь.
+> 
+> ### 4. Проверка
+> - Запусти тесты: `npm test tests/YandexGamesCollector.test.ts`.
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
+
+- [ ] **Промпт 19.2: Индексация снимков через `node:sqlite` и изоляция тестов моками**
+
+> [!note]+ Текст промпта 19.2
+> ```text
+> [/goal](slashCommand;goal) [/using-superpowers](slashCommand;using-superpowers) [/vibe-coding](slashCommand;vibe-coding) [/ponytail](slashCommand;ponytail)
+> 
+> Память и контекст:
+> Сверься с .agents/MEMORY.md, src/storage/snapshot_store.ts и tests/Server.test.ts.
+> 
+> ### 1. Цель
+> Внедрить легкий индекс метаданных снимков через нативный модуль `node:sqlite` и изолировать тяжелые сетевые тесты сервера моками.
+> 
+> ### 2. Критерии приемки (Definition of Done)
+> - В `src/storage/` создан индекс `snapshots.db` на нативном `node:sqlite` (Node.js 22+).
+> - Метод `listSnapshots()` и поиск исторических данных берут метаданные из SQLite за 1-2 мс вместо сканирования директории с десятками JSON-файлов.
+> - В `tests/Server.test.ts` реальный сетевой скан изолирован моком, время прогона всего тестового набора сокращено с 25 сек до < 2 сек.
+> - Написаны тесты в `tests/SqliteStorage.test.ts`.
+> 
+> ### 3. Границы (Scope Boundaries)
+> - **Что трогаем**: `src/storage/`, `tests/Server.test.ts`, `tests/SqliteStorage.test.ts`.
+> - **Чего НЕ трогаем**: фронтенд код.
+> 
+> ### 4. Проверка
+> - Запусти полный тестовый набор: `npm test` (все тесты проходят, время выполнения существенно сократилось).
+> - Зафиксируй изменения в `implementation-notes.md`.
+> - Категорический запрет автокоммитов без прямого подтверждения.
+> ```
