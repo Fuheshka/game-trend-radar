@@ -22,7 +22,8 @@
     "test": "vitest run",
     "build": "tsc",
     "deploy": "bash scripts/deploy.sh",
-    "nightly-scan": "bash scripts/nightly_scan.sh"
+    "nightly-scan": "bash scripts/nightly_scan.sh",
+    "e2e": "vite build && playwright test"
   },
   "keywords": [
     "gamedev",
@@ -36,6 +37,7 @@
   "author": "fuheshka",
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.5.0",

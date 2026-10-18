@@ -95,8 +95,8 @@ class App {
   private liveTicker!: LiveTickerComponent;
   private detailDrawer!: DetailDrawerComponent;
   private gameTableView?: GameTableViewComponent;
-  private arbitrageMatrix!: ArbitrageMatrixComponent;
-  private moversView!: MoversViewComponent;
+  private arbitrageMatrix?: ArbitrageMatrixComponent;
+  private moversView?: MoversViewComponent;
   private promptModal!: PromptGeneratorModalComponent;
   private workspaceTabs!: WorkspaceTabsComponent;
   private headerStatusBar!: HeaderStatusBarComponent;
@@ -338,12 +338,11 @@ class App {
       onSwitch: (workspace: WorkspaceId) => {
         this.currentView = workspace;
         soundService.playClick();
+        this.mountWorkspace(workspace);
         if (workspace === 'catalog') {
           this.updateCatalogCountUI();
         } else if (workspace === 'arbitrage') {
           this.updateArbitrageCountUI();
-        } else if (workspace === 'movers') {
-          this.updateMoversCountUI();
         }
       },
       onEscape: () => {
@@ -381,7 +380,7 @@ class App {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         if (this.currentView === 'catalog') {
-          const tableSearchInput = document.querySelector('.steamdb-search-input') as HTMLInputElement;
+          const tableSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
           if (tableSearchInput) {
             tableSearchInput.focus();
             tableSearchInput.select();
@@ -660,9 +659,25 @@ class App {
       }
     }
 
+    // Бейджи вкладок считаются по снимку, даже пока сами вкладки не смонтированы
+    this.updateCatalogCountUI();
+    this.updateArbitrageCountUI();
+
+    // Prompt Generator Modal Component setup
+    this.promptModal = new PromptGeneratorModalComponent({
+      showToast: msg => this.showToast(msg),
+      onClose: () => soundService.playClick(),
+    });
+  }
+
+  /**
+   * Тяжёлые вкладки (каталог ~4k узлов, лидеры, арбитраж) монтируются при первом открытии:
+   * до этого они скрыты и только раздували DOM и время старта.
+   */
+  private mountWorkspace(view: WorkspaceId): void {
     // Game Table View Component setup (SteamDB Charts high density view)
     const catalogContainer = document.getElementById('catalog-container');
-    if (catalogContainer) {
+    if (view === 'catalog' && !this.gameTableView && catalogContainer) {
       this.gameTableView = new GameTableViewComponent({
         container: catalogContainer,
         games: this.snapshot.games || [],
@@ -676,13 +691,22 @@ class App {
           soundService.playClick();
           const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
           if (catalogSearchInput) {
+            // Через событие input: тот же путь, что ручной ввод (фильтр, счётчик, кнопка ×)
             catalogSearchInput.value = tag;
+            catalogSearchInput.dispatchEvent(new Event('input'));
           }
-          this.gameTableView?.setSearchQuery(tag);
-          this.updateCatalogCountUI();
         },
         onFilterChange: () => {
           this.updateCatalogCountUI();
+        },
+        // Клик по заголовку таблицы: селект показывает совпадающий пресет или пустое значение
+        onSortChange: (column, direction) => {
+          const select = document.getElementById('catalog-sort-select') as HTMLSelectElement | null;
+          if (!select) return;
+          const preset = Object.keys(CATALOG_SORTS).find(
+            k => CATALOG_SORTS[k][0] === column && CATALOG_SORTS[k][1] === direction
+          );
+          select.value = preset ?? '';
         },
       });
       this.updateCatalogCountUI();
@@ -690,7 +714,7 @@ class App {
 
     // Arbitrage Matrix Component setup
     const arbitrageContainer = document.getElementById('arbitrage-matrix-container');
-    if (arbitrageContainer) {
+    if (view === 'arbitrage' && !this.arbitrageMatrix && arbitrageContainer) {
       this.arbitrageMatrix = new ArbitrageMatrixComponent({
         container: arbitrageContainer,
         opportunities: this.snapshot.arbitrageOpportunities || [],
@@ -708,7 +732,7 @@ class App {
 
     // Movers View Component setup (DefiLlama Movers & Shakers)
     const moversContainer = document.getElementById('view-movers');
-    if (moversContainer) {
+    if (view === 'movers' && !this.moversView && moversContainer) {
       this.moversView = new MoversViewComponent({
         container: moversContainer,
         currentSnapshot: this.snapshot,
@@ -725,14 +749,7 @@ class App {
           }
         },
       });
-      this.updateMoversCountUI();
     }
-
-    // Prompt Generator Modal Component setup
-    this.promptModal = new PromptGeneratorModalComponent({
-      showToast: msg => this.showToast(msg),
-      onClose: () => soundService.playClick(),
-    });
   }
 
   /** Программный переход к вкладке — делегируем WorkspaceTabsComponent. */
@@ -750,13 +767,6 @@ class App {
     }
   }
 
-  private updateMoversCountUI(): void {
-    const tabBadge = document.getElementById('tab-movers-count');
-    if (tabBadge && this.moversView) {
-      const count = this.moversView.getGainers().length;
-      tabBadge.textContent = count.toString();
-    }
-  }
 
   private updateCcuSliderBadge(val: number): void {
     const badge = document.getElementById('catalog-ccu-val-text');
@@ -1037,7 +1047,6 @@ class App {
     this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
     this.updateArbitrageCountUI();
     this.moversView?.updateData(this.snapshot, this.previousSnapshot);
-    this.updateMoversCountUI();
     this.applyFiltersAndSort();
   }
 

@@ -39,6 +39,9 @@ export {
  * MoversViewComponent — экран лидеров роста и опережающих индикаторов
  * (DefiLlama Movers & Shakers стиль)
  */
+// 190+ карточек новинок давали ~4k DOM-узлов; первые 24 видны сразу
+const BREAKOUT_PAGE = 24;
+
 export class MoversViewComponent {
   private container: HTMLElement;
   private currentSnapshot: MarketSnapshot | null = null;
@@ -52,6 +55,7 @@ export class MoversViewComponent {
   private gainers: GainerItem[] = [];
   private viralSignals: ViralSignalItem[] = [];
   private breakouts: BreakoutItem[] = [];
+  private breakoutLimit = BREAKOUT_PAGE;
 
   private boundClickHandler: (e: MouseEvent) => void;
 
@@ -97,6 +101,7 @@ export class MoversViewComponent {
   public updateData(currentSnapshot: MarketSnapshot, previousSnapshot?: MarketSnapshot | null): void {
     this.currentSnapshot = currentSnapshot;
     this.previousSnapshot = previousSnapshot ?? null;
+    this.breakoutLimit = BREAKOUT_PAGE;
     this.recalculate();
     this.render();
   }
@@ -122,6 +127,12 @@ export class MoversViewComponent {
   private handleClick(e: MouseEvent): void {
     const target = e.target as HTMLElement;
     if (!target) return;
+
+    if (target.closest('[data-action="show-all-breakouts"]')) {
+      this.breakoutLimit = this.breakouts.length;
+      this.render();
+      return;
+    }
 
     // 1. Переключение сортировки 24h Gainers
     const sortBtn =
@@ -200,6 +211,7 @@ export class MoversViewComponent {
       breakouts: this.breakouts,
       gainersSort: this.gainersSort,
       hasHistory: this.hasHistory(),
+      breakoutLimit: this.breakoutLimit,
     });
   }
 }

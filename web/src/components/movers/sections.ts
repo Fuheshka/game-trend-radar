@@ -9,13 +9,16 @@ export interface MoversMarkupState {
   breakouts: BreakoutItem[];
   gainersSort: GainersSortMode;
   hasHistory: boolean;
+  /** Сколько карточек новинок рендерить; остальные — по кнопке */
+  breakoutLimit: number;
 }
 
 /**
  * Собирает HTML всего экрана лидеров роста (шапка, KPI и три секции)
  */
 export function renderMoversMarkup(state: MoversMarkupState): string {
-  const { gainers, viralSignals, breakouts, gainersSort, hasHistory } = state;
+  const { gainers, viralSignals, breakouts, gainersSort, hasHistory, breakoutLimit } = state;
+  const hiddenBreakouts = breakouts.length - breakoutLimit;
   const topGainer = gainers[0];
   const topGainerLabel = topGainer
     ? `${cleanDisplayTitle(topGainer.game.title)} (+${formatCCU(topGainer.absDiff)})`
@@ -123,8 +126,17 @@ export function renderMoversMarkup(state: MoversMarkupState): string {
       </div>
 
       <div class="movers-grid">
-        ${renderBreakoutCards(breakouts)}
+        ${renderBreakoutCards(breakouts.slice(0, breakoutLimit))}
       </div>
+      ${
+        hiddenBreakouts > 0
+          ? `<div class="steamdb-pagination-row">
+        <button type="button" class="btn-steamdb-all" data-action="show-all-breakouts">
+          Показать все (${breakouts.length})
+        </button>
+      </div>`
+          : ''
+      }
     </section>
   </div>
   `;
