@@ -21,6 +21,7 @@ export interface NormalizedGame {
   metricValue: number; // Roblox CCU, Yandex Rating (0-100), Poki Rank
   metricType: 'ccu' | 'rating' | 'rank' | 'viral_score';
   likeRatio?: number; // 0.0 to 1.0
+  votes?: number; // Yandex: число оценок (ratingCount) — растёт с аудиторией
   url?: string;
   tags: string[];
   sortSource?: string;
@@ -96,6 +97,33 @@ export interface ArbitrageOpportunity {
   organicPotential: 'HIGH' | 'VERY_HIGH' | 'CRITICAL_FIRST_MOVER';
 }
 
+/** Игра, впервые появившаяся в выдаче платформы за последние дни. */
+export interface NewEntry {
+  id: string;
+  platform: PlatformType;
+  title: string;
+  url?: string;
+  firstSeen: string;
+  ageDays: number;
+  metricType: string;
+  metricValue: number;
+  votes?: number;
+}
+
+/** Игра с самым быстрым ростом за окно (CCU, число оценок или позиция). */
+export interface Riser {
+  id: string;
+  platform: PlatformType;
+  title: string;
+  url?: string;
+  metricType: string;
+  signal: 'ccu' | 'votes' | 'rank';
+  from: number;
+  to: number;
+  growthPct: number;
+  days: number;
+}
+
 export interface MarketSnapshot {
   id: string;
   timestamp: string;
@@ -105,6 +133,10 @@ export interface MarketSnapshot {
   games: NormalizedGame[];
   verdicts: MarketVerdict[];
   arbitrageOpportunities?: ArbitrageOpportunity[];
+  /** Новинки выдачи за 7 дней (из истории по играм; нет у старых снимков). */
+  newEntries?: NewEntry[];
+  /** Самые быстрорастущие игры за 7 дней. */
+  risers?: Riser[];
   /** Статус каждого коллектора в этом скане (отсутствует у старых снимков). */
   sourceStatus?: Record<string, { ok: boolean; count: number; error?: string }>;
 }

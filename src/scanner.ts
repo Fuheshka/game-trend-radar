@@ -286,6 +286,14 @@ export class MarketScanner extends EventEmitter {
       sourceStatus,
     };
 
+    try {
+      Object.assign(snapshot, store.updateGameHistory(snapshot));
+      log(`🆕 Новинок: ${snapshot.newEntries?.length ?? 0}, 📈 растущих: ${snapshot.risers?.length ?? 0}`);
+    } catch (err) {
+      // История вспомогательная: без неё снимок всё равно сохраняем
+      log(`⚠️ История по играм не обновлена: ${err instanceof Error ? err.message : String(err)}`);
+    }
+
     const savedJsonPath = store.saveSnapshot(snapshot);
     const savedReportPath = store.generateMarkdownReport(snapshot);
 

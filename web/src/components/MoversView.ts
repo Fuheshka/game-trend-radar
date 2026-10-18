@@ -445,6 +445,49 @@ export function filterBreakoutNewReleases(
   return items;
 }
 
+/** Лидеры роста из истории по играм (окно 7 дней, только CCU). null — в снимке истории нет. */
+export function gainersFromRisers(snapshot?: MarketSnapshot | null, sortMode: GainersSortMode = 'abs'): GainerItem[] | null {
+  if (!snapshot?.risers) return null;
+  const byId = new Map(snapshot.games.map(g => [g.id, g]));
+  const items: GainerItem[] = [];
+  for (const r of snapshot.risers) {
+    const game = byId.get(r.id);
+    if (r.signal !== 'ccu' || !game) continue;
+    items.push({
+      game,
+      rank: 0,
+      currentCcu: r.to,
+      prevCcu: r.from,
+      absDiff: r.to - r.from,
+      pctDiff: r.growthPct,
+      sparkline: generateMoversSparkline(game),
+    });
+  }
+  items.sort((a, b) => (sortMode === 'pct' ? b.pctDiff - a.pctDiff : b.absDiff - a.absDiff));
+  items.forEach((item, idx) => (item.rank = idx + 1));
+  return items;
+}
+
+/** Новинки выдачи всех платформ из истории по играм. null — в снимке истории нет. */
+export function breakoutsFromNewEntries(snapshot?: MarketSnapshot | null): BreakoutItem[] | null {
+  if (!snapshot?.newEntries) return null;
+  const byId = new Map(snapshot.games.map(g => [g.id, g]));
+  const items: BreakoutItem[] = [];
+  for (const e of snapshot.newEntries) {
+    const game = byId.get(e.id);
+    if (!game) continue;
+    items.push({
+      game,
+      rank: items.length + 1,
+      ccu: e.metricValue,
+      ageDays: e.ageDays,
+      growthBadge: e.ageDays === 0 ? 'новинка сегодня' : `${e.ageDays} дн. в выдаче`,
+      sparkline: generateMoversSparkline(game),
+    });
+  }
+  return items;
+}
+
 /**
  * MoversViewComponent — экран лидеров роста и опережающих индикаторов
  * (DefiLlama Movers & Shakers стиль)
@@ -517,9 +560,16 @@ export class MoversViewComponent {
   }
 
   private recalculate(): void {
-    this.gainers = calculate24hGainers(this.currentSnapshot, this.previousSnapshot, this.gainersSort);
+    this.gainers =
+      gainersFromRisers(this.currentSnapshot, this.gainersSort) ??
+      calculate24hGainers(this.currentSnapshot, this.previousSnapshot, this.gainersSort);
     this.viralSignals = filterViralSignals(this.currentSnapshot, 1.5);
-    this.breakouts = filterBreakoutNewReleases(this.currentSnapshot, 14);
+    this.breakouts = breakoutsFromNewEntries(this.currentSnapshot) ?? filterBreakoutNewReleases(this.currentSnapshot, 14);
+  }
+
+  /** Есть ли в снимке настоящая история по играм (новые снимки) — тогда окно 7 дней, а не сравнение с прошлым срезом. */
+  private hasHistory(): boolean {
+    return !!this.currentSnapshot?.risers;
   }
 
   private handleClick(e: MouseEvent): void {
@@ -640,8 +690,8 @@ export class MoversViewComponent {
             <div class="section-title-wrap">
               <div class="section-icon">${ICONS.TRENDING_UP}</div>
               <div>
-                <h3 class="section-title">Топ лидеров роста CCU (24h Gainers)</h3>
-                <span class="section-subtitle">Проекты с максимальным абсолютным и процентным приростом за последние 24 часа</span>
+                <h3 class="section-title">Топ лидеров роста CCU (${this.hasHistory() ? '7 дней' : '24h Gainers'})</h3>
+                <span class="section-subtitle">Проекты с максимальным абсолютным и процентным приростом за ${this.hasHistory() ? 'последние 7 дней' : 'последние 24 часа'}</span>
               </div>
             </div>
             <div class="gainers-sort-controls">
@@ -696,8 +746,8 @@ export class MoversViewComponent {
             <div class="section-title-wrap">
               <div class="section-icon">${ICONS.ROCKET}</div>
               <div>
-                <h3 class="section-title">Взрывные новинки (&lt; 14 дней на платформе)</h3>
-                <span class="section-subtitle">Молодые проекты витрин, быстро аккумулирующие органическую аудиторию</span>
+                <h3 class="section-title">${this.hasHistory() ? 'Новинки выдачи (&lt; 7 дней)' : 'Взрывные новинки (&lt; 14 дней на платформе)'}</h3>
+                <span class="section-subtitle">${this.hasHistory() ? 'Игры, которых не было в топах Roblox, Яндекса и Poki ещё неделю назад' : 'Молодые проекты витрин, быстро аккумулирующие органическую аудиторию'}</span>
               </div>
             </div>
             <span class="section-badge breakout-badge">${this.breakouts.length} молодых хитов</span>
@@ -864,8 +914,8 @@ export class MoversViewComponent {
             <h4 class="card-title movers-card-title" title="${g.title}">${cleanTitle}</h4>
             <div class="card-metrics-row">
               <div class="metric-block">
-                <span class="metric-caption">Стартовый CCU</span>
-                <span class="metric-num">${formatCCU(item.ccu)}</span>
+                <span class="metric-caption">${g.metricType === 'rank' ? 'Позиция' : g.metricType === 'rating' ? 'Рейтинг' : 'Стартовый CCU'}</span>
+                <span class="metric-num">${g.metricType === 'rank' ? `#${item.ccu}` : g.metricType === 'rating' ? item.ccu : formatCCU(item.ccu)}</span>
               </div>
               <div class="sparkline-wrapper">
                 ${sparkSvg}

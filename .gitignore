@@ -11,3 +11,5 @@ logs/*.log
 .env.local
 data/history/
 .trace-mcp/
+# История по играм копится на каждой машине своя (сервер сканирует сам); в Pages уходит через latest_snapshot.json
+data/game_history.json*

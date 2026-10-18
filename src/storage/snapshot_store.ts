@@ -1,5 +1,6 @@
-import { MarketSnapshot, MarketVerdict, SnapshotSummary } from '../types/index.js';
+import { MarketSnapshot, MarketVerdict, NewEntry, Riser, SnapshotSummary } from '../types/index.js';
 import { ArbitrageAnalyzer } from '../analyzer/arbitrage.js';
+import { GameHistory, findNewEntries, findRisers, recordSnapshot } from '../analyzer/game_history.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -13,18 +14,47 @@ export interface HistoryPoint {
 
 const HISTORY_RETENTION_DAYS = 14;
 
+const PLATFORM_LABEL: Record<string, string> = {
+  roblox: 'Roblox',
+  yandex_games: 'Яндекс',
+  poki: 'Poki',
+  youtube_trends: 'YouTube',
+};
+
+function formatNewEntry(e: NewEntry): string {
+  const metric =
+    e.metricType === 'ccu'
+      ? `${e.metricValue.toLocaleString()} CCU`
+      : e.metricType === 'rank'
+        ? `#${e.metricValue}`
+        : `рейтинг ${e.metricValue}${e.votes ? `, ${e.votes.toLocaleString()} оценок` : ''}`;
+  const age = e.ageDays === 0 ? 'сегодня' : `${e.ageDays} дн.`;
+  const title = e.url ? `[${e.title}](${e.url})` : e.title;
+  return `| ${PLATFORM_LABEL[e.platform] ?? e.platform} | ${title} | ${metric} | ${age} |`;
+}
+
+function formatRiser(r: Riser): string {
+  const unit = r.signal === 'ccu' ? 'CCU' : r.signal === 'votes' ? 'оценок' : '';
+  const change =
+    r.signal === 'rank' ? `#${r.from} → #${r.to}` : `${r.from.toLocaleString()} → ${r.to.toLocaleString()} ${unit}`;
+  const title = r.url ? `[${r.title}](${r.url})` : r.title;
+  return `| ${PLATFORM_LABEL[r.platform] ?? r.platform} | ${title} | **+${r.growthPct}%** | ${change} | ${r.days} дн. |`;
+}
+
 export class SnapshotStore {
   private historyDir: string;
   private summaryCache = new Map<string, { mtimeMs: number; size: number; summary: SnapshotSummary }>();
   private baseDir: string;
   private snapshotsDir: string;
   private reportsDir: string;
+  private gameHistoryPath: string;
 
   constructor(baseDir?: string) {
     this.baseDir = baseDir || process.cwd();
     this.snapshotsDir = path.join(this.baseDir, 'data', 'snapshots');
     this.reportsDir = path.join(this.baseDir, 'data', 'reports');
     this.historyDir = path.join(this.baseDir, 'data', 'history');
+    this.gameHistoryPath = path.join(this.baseDir, 'data', 'game_history.json');
 
     fs.mkdirSync(this.snapshotsDir, { recursive: true });
     fs.mkdirSync(this.reportsDir, { recursive: true });
@@ -43,6 +73,29 @@ export class SnapshotStore {
       // История — вспомогательная; её сбой не должен ронять сохранение снимка
     }
     return filePath;
+  }
+
+  loadGameHistory(): GameHistory | null {
+    if (!fs.existsSync(this.gameHistoryPath)) return null;
+    try {
+      const h = JSON.parse(fs.readFileSync(this.gameHistoryPath, 'utf-8')) as GameHistory;
+      if (typeof h?.since !== 'string' || !h.games || typeof h.games !== 'object') throw new Error('bad shape');
+      return h;
+    } catch {
+      // Битый файл не роняем: переименовываем, чтобы не потерять, и начинаем историю заново
+      fs.renameSync(this.gameHistoryPath, `${this.gameHistoryPath}.corrupt-${Date.now()}`);
+      return null;
+    }
+  }
+
+  /** История по каждой игре: добавляет снимок и возвращает новинки и растущие за 7 дней. */
+  updateGameHistory(snapshot: MarketSnapshot): { newEntries: NewEntry[]; risers: Riser[] } {
+    const history = recordSnapshot(this.loadGameHistory(), snapshot);
+    const tmpPath = `${this.gameHistoryPath}.${process.pid}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(history), 'utf-8');
+    fs.renameSync(tmpPath, this.gameHistoryPath);
+    const today = snapshot.timestamp.slice(0, 10);
+    return { newEntries: findNewEntries(history, today), risers: findRisers(history, today) };
   }
 
   /** Лёгкая внутридневная точка (≈1 КБ) для графиков динамики; снимки по дням остаются как были. */
@@ -202,6 +255,23 @@ export class SnapshotStore {
     md += `> - **Roblox активный онлайн (CCU в выборке):** ${snapshot.robloxTotalCCU.toLocaleString()} игроков\n`;
     md += `> - **Платформы:** Roblox (${snapshot.platformCounts.roblox || 0}), Яндекс Игры (${snapshot.platformCounts.yandex_games || 0}), Poki (${snapshot.platformCounts.poki || 0}), YouTube Shorts (${snapshot.platformCounts.youtube_trends || 0})\n\n`;
     md += `---\n\n`;
+
+    // Сначала то, что изменилось: новинки и растущие. Абсолютный топ меняется редко и идёт ниже.
+    if (snapshot.newEntries?.length) {
+      md += `## 🆕 Новинки выдачи за 7 дней (${snapshot.newEntries.length})\n\n`;
+      md += `| Платформа | Игра | Метрика | В выдаче |\n|---|---|---|---|\n`;
+      // По 10 на платформу: иначе CCU Roblox по величине вытесняет рейтинги Яндекса и позиции Poki
+      const perPlatform = new Map<string, NewEntry[]>();
+      for (const e of snapshot.newEntries) perPlatform.set(e.platform, [...(perPlatform.get(e.platform) ?? []), e]);
+      md += [...perPlatform.values()].flatMap(list => list.slice(0, 10)).map(formatNewEntry).join('\n') + '\n\n';
+    }
+    if (snapshot.risers?.length) {
+      md += `## 📈 Растущие за 7 дней\n\n`;
+      md += `> Рост, а не размер: Roblox — CCU, Яндекс — число оценок, Poki — позиция в топе.\n\n`;
+      md += `| Платформа | Игра | Рост | Было → стало | Окно |\n|---|---|---|---|---|\n`;
+      md += snapshot.risers.slice(0, 25).map(formatRiser).join('\n') + '\n\n';
+    }
+    if (snapshot.newEntries?.length || snapshot.risers?.length) md += `---\n\n`;
 
     // Секция арбитражных ниш (Roblox -> Яндекс Игры)
     if (snapshot.arbitrageOpportunities && snapshot.arbitrageOpportunities.length > 0) {
