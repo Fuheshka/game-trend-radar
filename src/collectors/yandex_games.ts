@@ -2,6 +2,52 @@ import { fetchWithTimeout } from '../utils/http.js';
 import { NormalizedGame } from '../types/index.js';
 import { classifyArchetype } from '../analyzer/classifier.js';
 
+/** Игры из встроенного состояния страницы (`__appState__`): настоящие рейтинг, число оценок и gqRating с карточки. */
+export function parseYandexAppState(html: string, now: string): NormalizedGame[] {
+  const m = html.match(/id="__appState__"[^>]*>([\s\S]*?)<\/script>/);
+  if (!m) return [];
+  let state: unknown;
+  try {
+    state = JSON.parse(m[1]);
+  } catch {
+    return [];
+  }
+  const games: NormalizedGame[] = [];
+  const seen = new Set<number>();
+  const walk = (o: unknown): void => {
+    if (Array.isArray(o)) {
+      o.forEach(walk);
+      return;
+    }
+    if (!o || typeof o !== 'object') return;
+    const r = o as Record<string, unknown>;
+    if (typeof r.appID === 'number' && r.appID > 0 && typeof r.title === 'string' && !seen.has(r.appID)) {
+      seen.add(r.appID);
+      const stars = typeof r.rating === 'number' ? r.rating : 0;
+      const gq = typeof r.gqRating === 'number' ? r.gqRating : undefined;
+      const slug = typeof r.appSlug === 'string' ? r.appSlug : String(r.appID);
+      const title = r.title.trim();
+      games.push({
+        id: `yandex_${r.appID}`,
+        platform: 'yandex_games',
+        title,
+        genre: 'Web Casual',
+        archetype: classifyArchetype(title, 'YandexWebGame', []),
+        // gqRating — число на карточке каталога; без него переводим звёзды 0-5 в 0-100
+        metricValue: gq ?? (stars > 0 ? Math.round(stars * 20) : 70),
+        metricType: 'rating',
+        votes: typeof r.ratingCount === 'number' ? r.ratingCount : undefined,
+        url: `https://yandex.ru/games/app/${slug}`,
+        tags: ['yandex_catalog', 'webgl'],
+        timestamp: now,
+      });
+    }
+    Object.values(r).forEach(walk);
+  };
+  walk(state);
+  return games;
+}
+
 export class YandexGamesCollector {
   private userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
@@ -32,6 +78,14 @@ export class YandexGamesCollector {
         if (!response.ok) continue;
 
         const html = await response.text();
+
+        // 0. Встроенное состояние страницы — точные данные; регэкспы ниже только добирают остальное
+        for (const g of parseYandexAppState(html, now)) {
+          const appId = g.id.slice('yandex_'.length);
+          if (seenIds.has(appId)) continue;
+          seenIds.add(appId);
+          games.push(g);
+        }
 
         // 1. JSON-LD items (VideoGame objects)
         const jsonLdRegex = /"name"\s*:\s*"([^"]+)"\s*,\s*"url"\s*:\s*"(https:\/\/yandex\.ru\/games\/app\/[^"]+)"/g;
