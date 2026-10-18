@@ -1,0 +1,533 @@
+{
+ "arbitrageOpportunities": [
+  {
+   "robloxGame": {
+    "id": "roblox_10563114921",
+    "platform": "roblox",
+    "title": "Steal An Egg",
+    "genre": "Simulation",
+    "archetype": "SIMULATION_INCREMENTAL",
+    "metricValue": 1441747,
+    "metricType": "ccu",
+    "likeRatio": 0.9185187838651566,
+    "url": "https://www.roblox.com/games/107778070777162",
+    "tags": [
+     "top-playing-now",
+     "Simulation",
+     "Maturity: Minimal"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 1441747,
+   "archetype": "SIMULATION_INCREMENTAL",
+   "similarityWithNearestAnalog": 0.75,
+   "nearestAnalog": {
+    "id": "yandex_580426",
+    "title": "Укради Яйцо!",
+    "similarity": 0.75,
+    "archetype": "OTHER_CASUAL"
+   },
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "steal_item",
+    "egg"
+   ],
+   "nicheDescription": "Хит Roblox «Steal An Egg» с онлайном 1,441,747 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 75%).",
+   "adaptationStrategy": "Сделать веб-раннер с видом от третьего лица: воровство яиц у босса, стелс-прятки в кустах, прокачка скорости и Rewarded-удвоение добычи.",
+   "suggestedRuTitle": "Укради Яйцо: Побег от Монстра",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "CRITICAL_FIRST_MOVER"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_1686885941",
+    "platform": "roblox",
+    "title": "Brookhaven 🏡RP",
+    "genre": "Roleplay & Avatar Sim",
+    "archetype": "OTHER_CASUAL",
+    "metricValue": 633576,
+    "metricType": "ccu",
+    "likeRatio": 0.8588463294397654,
+    "url": "https://www.roblox.com/games/4924922222",
+    "tags": [
+     "top-playing-now",
+     "Roleplay & Avatar Sim",
+     "Maturity: Minimal"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 633576,
+   "archetype": "OTHER_CASUAL",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "roleplay_city"
+   ],
+   "nicheDescription": "Хит Roblox «Brookhaven 🏡RP» с онлайном 633,576 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Сетевой или синглплеерный лайф-сим: кастомизация дома, покупка машин, социальные взаимодействия и работа. Монетизация: элитные дома и скины за Rewarded Video.",
+   "suggestedRuTitle": "Город Мечты: Ролеплей и Жизнь",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "CRITICAL_FIRST_MOVER"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_7326934954",
+    "platform": "roblox",
+    "title": "99 Nights in the Forest 🔦",
+    "genre": "Survival",
+    "archetype": "SURVIVAL_HORROR",
+    "metricValue": 384199,
+    "metricType": "ccu",
+    "likeRatio": 0.9048935696504706,
+    "url": "https://www.roblox.com/games/79546208627805",
+    "tags": [
+     "top-playing-now",
+     "Survival",
+     "Maturity: Minimal"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 384199,
+   "archetype": "SURVIVAL_HORROR",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "night",
+    "forest"
+   ],
+   "nicheDescription": "Хит Roblox «99 Nights in the Forest 🔦» с онлайном 384,199 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Атмосферный синглплеерный хоррор без сложного сетевого кода: 100 комнат или выживание 99 ночей. Высокий виральный CTR превью в каталоге.",
+   "suggestedRuTitle": "99 Ночей в Темном Лесу: Выживание",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "VERY_HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_6035872082",
+    "platform": "roblox",
+    "title": "[🎃] RIVALS",
+    "genre": "Shooter",
+    "archetype": "ACTION_SHOOTER",
+    "metricValue": 351837,
+    "metricType": "ccu",
+    "likeRatio": 0.9366183209876972,
+    "url": "https://www.roblox.com/games/17625359962",
+    "tags": [
+     "top-playing-now",
+     "Shooter",
+     "Maturity: Mild",
+     "top-revisited"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 351837,
+   "archetype": "ACTION_SHOOTER",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "pvp_shooter"
+   ],
+   "nicheDescription": "Хит Roblox «[🎃] RIVALS» с онлайном 351,837 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Браузерный арена-шутер на Unity WebGL: динамичные дуэли 1 на 1, низкий пинг, мобильный автошут. Монетизация: камуфляжи и боевой пропуск.",
+   "suggestedRuTitle": "Дуэль Стрелков: Арена 1 на 1",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "VERY_HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_66654135",
+    "platform": "roblox",
+    "title": "Murder Mystery 2",
+    "genre": "Survival",
+    "archetype": "SURVIVAL_HORROR",
+    "metricValue": 350181,
+    "metricType": "ccu",
+    "likeRatio": 0.9082336388750746,
+    "url": "https://www.roblox.com/games/142823291",
+    "tags": [
+     "top-playing-now",
+     "Survival",
+     "Maturity: Moderate"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 350181,
+   "archetype": "SURVIVAL_HORROR",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "murder_mystery"
+   ],
+   "nicheDescription": "Хит Roblox «Murder Mystery 2» с онлайном 350,181 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Социальный детектив на 8-12 игроков или с ботами: случайные роли (Шериф, Убийца, Мирный). Монетизация: ножи, скины револьверов и победные анимации.",
+   "suggestedRuTitle": "Тайна Убийцы: Кто Предатель?",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "VERY_HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_383310974",
+    "platform": "roblox",
+    "title": "[🎃] Adopt Me!",
+    "genre": "Roleplay & Avatar Sim",
+    "archetype": "OTHER_CASUAL",
+    "metricValue": 338063,
+    "metricType": "ccu",
+    "likeRatio": 0.8634186476214113,
+    "url": "https://www.roblox.com/games/920587237",
+    "tags": [
+     "top-playing-now",
+     "Roleplay & Avatar Sim",
+     "Maturity: Minimal",
+     "top-revisited"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 338063,
+   "archetype": "OTHER_CASUAL",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "roleplay_city",
+    "adopt_family"
+   ],
+   "nicheDescription": "Хит Roblox «[🎃] Adopt Me!» с онлайном 338,063 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Сетевой или синглплеерный лайф-сим: кастомизация дома, покупка машин, социальные взаимодействия и работа. Монетизация: элитные дома и скины за Rewarded Video.",
+   "suggestedRuTitle": "Город Мечты: Ролеплей и Жизнь",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "VERY_HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_994732206",
+    "platform": "roblox",
+    "title": "Blox Fruits",
+    "genre": "RPG",
+    "archetype": "OTHER_CASUAL",
+    "metricValue": 243275,
+    "metricType": "ccu",
+    "likeRatio": 0.9228620957820624,
+    "url": "https://www.roblox.com/games/2753915549",
+    "tags": [
+     "top-playing-now",
+     "RPG",
+     "Maturity: Mild",
+     "top-revisited"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 243275,
+   "archetype": "OTHER_CASUAL",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "anime_rpg"
+   ],
+   "nicheDescription": "Хит Roblox «Blox Fruits» с онлайном 243,275 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Экшен-RPG с аниме-способностями: прокачка дьявольских фруктов, гринд боссов и дуэли на мечах. Монетизация: реролл способностей и удвоение опыта за рекламу.",
+   "suggestedRuTitle": "Битва Фруктов: Морские Пираты",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "VERY_HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_5203828273",
+    "platform": "roblox",
+    "title": "[🎃] Dress To Impress",
+    "genre": "Roleplay & Avatar Sim",
+    "archetype": "OTHER_CASUAL",
+    "metricValue": 216124,
+    "metricType": "ccu",
+    "likeRatio": 0.9057141614400489,
+    "url": "https://www.roblox.com/games/15101393044",
+    "tags": [
+     "top-playing-now",
+     "Roleplay & Avatar Sim",
+     "Maturity: Minimal"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 216124,
+   "archetype": "OTHER_CASUAL",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "roleplay_city"
+   ],
+   "nicheDescription": "Хит Roblox «[🎃] Dress To Impress» с онлайном 216,124 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Сетевой или синглплеерный лайф-сим: кастомизация дома, покупка машин, социальные взаимодействия и работа. Монетизация: элитные дома и скины за Rewarded Video.",
+   "suggestedRuTitle": "Город Мечты: Ролеплей и Жизнь",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "VERY_HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_3508322461",
+    "platform": "roblox",
+    "title": "[SKY ASSASSIN] Jujutsu Shenanigans",
+    "genre": "Action",
+    "archetype": "OTHER_CASUAL",
+    "metricValue": 181178,
+    "metricType": "ccu",
+    "likeRatio": 0.8615518128741452,
+    "url": "https://www.roblox.com/games/9391468976",
+    "tags": [
+     "top-playing-now",
+     "Action",
+     "Maturity: Mild",
+     "top-revisited"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 181178,
+   "archetype": "OTHER_CASUAL",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [],
+   "nicheDescription": "Хит Roblox «[SKY ASSASSIN] Jujutsu Shenanigans» с онлайном 181,178 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+   "suggestedRuTitle": "Jujutsu Shenanigans (Веб-версия)",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_5569032992",
+    "platform": "roblox",
+    "title": "🎃 Dandy's World [ALPHA]",
+    "genre": "Survival",
+    "archetype": "SURVIVAL_HORROR",
+    "metricValue": 166900,
+    "metricType": "ccu",
+    "likeRatio": 0.8783326948572254,
+    "url": "https://www.roblox.com/games/16116270224",
+    "tags": [
+     "top-playing-now",
+     "Survival",
+     "Maturity: Mild",
+     "top-revisited"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 166900,
+   "archetype": "SURVIVAL_HORROR",
+   "similarityWithNearestAnalog": 0.421,
+   "nearestAnalog": {
+    "id": "yandex_421407",
+    "title": "Piano World",
+    "similarity": 0.421,
+    "archetype": "OTHER_CASUAL"
+   },
+   "hasDirectAnalog": false,
+   "nicheKeywords": [],
+   "nicheDescription": "Хит Roblox «🎃 Dandy's World [ALPHA]» с онлайном 166,900 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 42%).",
+   "adaptationStrategy": "Атмосферный синглплеерный хоррор без сложного сетевого кода: 100 комнат или выживание 99 ночей. Высокий виральный CTR превью в каталоге.",
+   "suggestedRuTitle": "Dandy World (Веб-версия)",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_5750914919",
+    "platform": "roblox",
+    "title": "Fisch 🎃 [FISCHFRIGHT]",
+    "genre": "Simulation",
+    "archetype": "OTHER_CASUAL",
+    "metricValue": 136602,
+    "metricType": "ccu",
+    "likeRatio": 0.9080634772957801,
+    "url": "https://www.roblox.com/games/16732694052",
+    "tags": [
+     "top-playing-now",
+     "Simulation",
+     "Maturity: Minimal",
+     "top-revisited"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 136602,
+   "archetype": "OTHER_CASUAL",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [],
+   "nicheDescription": "Хит Roblox «Fisch 🎃 [FISCHFRIGHT]» с онлайном 136,602 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Создать веб-адаптацию на легком движке (Vite/Canvas или Unity WebGL < 15 МБ), оптимизированную под мобильный трафик Яндекс Игр и Rewarded Video.",
+   "suggestedRuTitle": "Fisch (Веб-версия)",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_9584852943",
+    "platform": "roblox",
+    "title": "[🎃] +1 Speed Keyboard Escape | Candy & Chocolate",
+    "genre": "Simulation",
+    "archetype": "SIMULATION_INCREMENTAL",
+    "metricValue": 129723,
+    "metricType": "ccu",
+    "likeRatio": 0.968126502948421,
+    "url": "https://www.roblox.com/games/95082159892680",
+    "tags": [
+     "top-playing-now",
+     "Simulation",
+     "Maturity: Minimal"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 129723,
+   "archetype": "SIMULATION_INCREMENTAL",
+   "similarityWithNearestAnalog": 0.737,
+   "nearestAnalog": {
+    "id": "yandex_538799",
+    "title": "Клавишный побег: +1 к скорости",
+    "similarity": 0.737,
+    "archetype": "SIMULATION_INCREMENTAL"
+   },
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "speed_incremental",
+    "escape",
+    "speed_keyboard"
+   ],
+   "nicheDescription": "Хит Roblox «[🎃] +1 Speed Keyboard Escape | Candy & Chocolate» с онлайном 129,723 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 74%).",
+   "adaptationStrategy": "Реализовать +1 симулятор с постоянным приростом скорости: каждые 10 секунд игрок преодолевает весовой рубеж и перерождается (Rebirth). Монетизация: автоклик и VIP-скорость за Rewarded Video.",
+   "suggestedRuTitle": "+1 к Скорости: Мега Побег",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_10765288803",
+    "platform": "roblox",
+    "title": "Break and Steal an Egg",
+    "genre": "Simulation",
+    "archetype": "SIMULATION_INCREMENTAL",
+    "metricValue": 125811,
+    "metricType": "ccu",
+    "likeRatio": 0.9757715396592536,
+    "url": "https://www.roblox.com/games/114326934417838",
+    "tags": [
+     "top-playing-now",
+     "Simulation",
+     "Maturity: Minimal",
+     "top-trending"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 125811,
+   "archetype": "SIMULATION_INCREMENTAL",
+   "similarityWithNearestAnalog": 0.637,
+   "nearestAnalog": {
+    "id": "yandex_580426",
+    "title": "Укради Яйцо!",
+    "similarity": 0.637,
+    "archetype": "OTHER_CASUAL"
+   },
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "steal_item",
+    "egg",
+    "break_bones"
+   ],
+   "nicheDescription": "Хит Roblox «Break and Steal an Egg» с онлайном 125,811 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 64%).",
+   "adaptationStrategy": "Сделать веб-раннер с видом от третьего лица: воровство яиц у босса, стелс-прятки в кустах, прокачка скорости и Rewarded-удвоение добычи.",
+   "suggestedRuTitle": "Укради Яйцо: Побег от Монстра",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_7709344486",
+    "platform": "roblox",
+    "title": "[💀] Steal a Brainrot",
+    "genre": "Simulation",
+    "archetype": "SIMULATION_INCREMENTAL",
+    "metricValue": 124221,
+    "metricType": "ccu",
+    "likeRatio": 0.851385521877274,
+    "url": "https://www.roblox.com/games/109983668079237",
+    "tags": [
+     "top-playing-now",
+     "Simulation",
+     "Maturity: Minimal"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 124221,
+   "archetype": "SIMULATION_INCREMENTAL",
+   "similarityWithNearestAnalog": 0.25,
+   "nearestAnalog": {
+    "id": "yandex_580426",
+    "title": "Укради Яйцо!",
+    "similarity": 0.25,
+    "archetype": "OTHER_CASUAL"
+   },
+   "hasDirectAnalog": false,
+   "nicheKeywords": [
+    "steal_item",
+    "brainrot"
+   ],
+   "nicheDescription": "Хит Roblox «[💀] Steal a Brainrot» с онлайном 124,221 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 25%).",
+   "adaptationStrategy": "Инкрементальный кликер-симулятор с питомцами и множителями перерождений. Внедрить Yandex Cloud Save для сохранения прогресса.",
+   "suggestedRuTitle": "Укради Брейнрота: Побег с Базы",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "HIGH"
+  },
+  {
+   "robloxGame": {
+    "id": "roblox_6331902150",
+    "platform": "roblox",
+    "title": "[UPD 🤖] Forsaken",
+    "genre": "Survival",
+    "archetype": "SURVIVAL_HORROR",
+    "metricValue": 104228,
+    "metricType": "ccu",
+    "likeRatio": 0.8444089757423563,
+    "url": "https://www.roblox.com/games/18687417158",
+    "tags": [
+     "top-playing-now",
+     "Survival",
+     "Maturity: Mild",
+     "top-trending",
+     "top-revisited"
+    ],
+    "sortSource": "top-playing-now",
+    "timestamp": "2026-10-18T16:45:47.980Z"
+   },
+   "robloxCCU": 104228,
+   "archetype": "SURVIVAL_HORROR",
+   "similarityWithNearestAnalog": 0,
+   "nearestAnalog": null,
+   "hasDirectAnalog": false,
+   "nicheKeywords": [],
+   "nicheDescription": "Хит Roblox «[UPD 🤖] Forsaken» с онлайном 104,228 CCU отсутствует в топ-100 Яндекс Игр (максимальная схожесть каталога: 0%).",
+   "adaptationStrategy": "Атмосферный синглплеерный хоррор без сложного сетевого кода: 100 комнат или выживание 99 ночей. Высокий виральный CTR превью в каталоге.",
+   "suggestedRuTitle": "Forsaken (Веб-версия)",
+   "badge": "ARBITRAGE OPPORTUNITY",
+   "organicPotential": "HIGH"
+  }
+ ]
+}

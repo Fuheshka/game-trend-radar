@@ -14,3 +14,6 @@ data/history/
 # История по играм копится на каждой машине своя (сервер сканирует сам); в Pages уходит через latest_snapshot.json
 data/game_history.json*
 data/.deploy-backup/
+# Данные сканов живут на сервере; Pages забирает снимок через API при сборке (deploy-pages.yml)
+data/reports/*.md
+web/public/data/latest_snapshot.json

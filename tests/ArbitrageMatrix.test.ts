@@ -213,10 +213,10 @@ describe('ArbitrageMatrixComponent (Аналитический экран «Ма
     expect(mockContainer.innerHTML).toContain('Steal An Egg');
   });
 
-  it('8. Должен корректно отрисовывать все арбитражные связки из реального снимка рынка (latest_snapshot.json)', async () => {
+  it('8. Должен корректно отрисовывать все арбитражные связки из реального снимка рынка (fixtures/arbitrage_snapshot.json)', async () => {
     const fs = await import('fs');
     const path = await import('path');
-    const snapshotPath = path.resolve(__dirname, '../web/public/data/latest_snapshot.json');
+    const snapshotPath = path.resolve(__dirname, 'fixtures/arbitrage_snapshot.json');
     const snapshotRaw = fs.readFileSync(snapshotPath, 'utf-8');
     const snapshot = JSON.parse(snapshotRaw);
 

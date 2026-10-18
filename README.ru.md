@@ -43,7 +43,7 @@ npm run recommend
 
 ### Веб-дашборд и GitHub Pages
 - **Локальный запуск:** `npm run ui` (стартует HTTP-сервер на `:4200` и открывает страницу).
-- **GitHub Pages:** автоматический деплой настроен через `.github/workflows/deploy-pages.yml`. Статический билд: `npm run pages:build`.
+- **GitHub Pages:** автоматический деплой через `.github/workflows/deploy-pages.yml` (на push в `main` и каждые 6 часов). Данные сканов в git не коммитятся: workflow скачивает свежий снимок с production API (`vars.SNAPSHOT_URL`, по умолчанию `https://radar.fuheshka.qd.je/api/snapshots/latest`) и падает, а не публикует демо-данные. Статический билд: `npm run pages:build`.
 
 ---
 

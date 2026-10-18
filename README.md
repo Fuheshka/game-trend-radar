@@ -43,7 +43,7 @@ npm run recommend
 
 ### Web Dashboard & GitHub Pages
 - **Local Dashboard:** `npm run ui` starts the HTTP server on port `:4200` and opens the browser.
-- **GitHub Pages:** Automated deployment configured via `.github/workflows/deploy-pages.yml`. Static build: `npm run pages:build`.
+- **GitHub Pages:** Automated deployment configured via `.github/workflows/deploy-pages.yml` (on push to `main` and every 6 hours). Scan data is not committed: the workflow downloads the latest snapshot from the production API (`vars.SNAPSHOT_URL`, default `https://radar.fuheshka.qd.je/api/snapshots/latest`) and fails rather than publishing demo data. Static build: `npm run pages:build`.
 
 ---
 

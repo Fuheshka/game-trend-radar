@@ -53,6 +53,13 @@ main() {
   done < <(git diff --name-only HEAD "origin/${BRANCH}" -- data/)
   [ -d "$BACKUP_DIR" ] && echo "🗄️ Серверные копии data/ отложены в ${BACKUP_DIR}"
   git merge --ff-only "origin/${BRANCH}"
+  # Файлы, которые git перестал отслеживать (отчёты сервера), merge удалил бы — возвращаем их из бэкапа
+  if [ -d "$BACKUP_DIR" ]; then
+    while IFS= read -r f; do
+      rel="${f#"$BACKUP_DIR"/}"
+      git ls-files --error-unmatch "$rel" >/dev/null 2>&1 || { mkdir -p "$(dirname "$rel")"; cp -p "$f" "$rel"; }
+    done < <(find "$BACKUP_DIR" -type f)
+  fi
   NEW_COMMIT="$(git rev-parse HEAD)"
 
   build_and_restart
