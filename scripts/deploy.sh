@@ -43,6 +43,15 @@ main() {
   git checkout -- web/public/data/latest_snapshot.json 2>/dev/null || true
   git fetch origin "$BRANCH"
   git checkout "$BRANCH"
+  # Сервер сам пишет отчёты и data/dynamic_memes.json; их локальные копии блокируют ff-merge — откладываем в бэкап и сбрасываем
+  BACKUP_DIR="data/.deploy-backup/$(date +%Y%m%d-%H%M%S)"
+  while IFS= read -r f; do
+    [ -e "$f" ] || continue
+    mkdir -p "$BACKUP_DIR/$(dirname "$f")"
+    cp "$f" "$BACKUP_DIR/$f"
+    git checkout -- "$f" 2>/dev/null || rm -f "$f"
+  done < <(git diff --name-only HEAD "origin/${BRANCH}" -- data/)
+  [ -d "$BACKUP_DIR" ] && echo "🗄️ Серверные копии data/ отложены в ${BACKUP_DIR}"
   git merge --ff-only "origin/${BRANCH}"
   NEW_COMMIT="$(git rev-parse HEAD)"
 
