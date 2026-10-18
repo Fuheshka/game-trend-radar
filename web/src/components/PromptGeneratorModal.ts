@@ -1,3 +1,4 @@
+import { escapeHtml } from '../utils/dom.js';
 import {
   GameArchetype,
   MarketVerdict,
@@ -767,7 +768,7 @@ export class PromptGeneratorModalComponent {
             </svg>
             <span>Генератор ТЗ для ИИ</span>
           </div>
-          <h3 class="prompt-modal-title">ТЗ для ИИ: ${this.escapeHtml(title)}</h3>
+          <h3 class="prompt-modal-title">ТЗ для ИИ: ${escapeHtml(title)}</h3>
           <span class="prompt-modal-subtitle">${this.currentContext.archetype} • Подготовка для Cursor, Claude и ChatGPT</span>
         </div>
         <button type="button" class="prompt-modal-close" id="prompt-modal-close-btn" aria-label="Закрыть">
@@ -853,7 +854,7 @@ export class PromptGeneratorModalComponent {
         </div>
 
         <div class="prompt-preview-container">
-          <pre><code class="prompt-code-output" id="prompt-code-output">${this.escapeHtml(promptText)}</code></pre>
+          <pre><code class="prompt-code-output" id="prompt-code-output">${escapeHtml(promptText)}</code></pre>
         </div>
       </div>
     `;
@@ -973,12 +974,4 @@ export class PromptGeneratorModalComponent {
     }
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

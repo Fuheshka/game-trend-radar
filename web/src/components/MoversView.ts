@@ -1,3 +1,4 @@
+import { escapeHtml } from '../utils/dom.js';
 import {
   MarketSnapshot,
   NormalizedGame,
@@ -780,7 +781,7 @@ export class MoversViewComponent {
       const sparkSvg = this.renderSparklineSvg(item.sparkline, '#27a644');
 
       return `
-        <div class="movers-card card-gainer" data-card="mover" data-id="${g.id}">
+        <div class="movers-card card-gainer" data-card="mover" data-id="${escapeHtml(g.id)}">
           <div class="card-top-row">
             <span class="card-rank">#${item.rank}</span>
             <span class="card-platform-badge ${g.platform}">${platLabel}</span>
@@ -791,7 +792,7 @@ export class MoversViewComponent {
           </div>
 
           <div class="card-main-info">
-            <h4 class="card-title movers-card-title" title="${g.title}">${cleanTitle}</h4>
+            <h4 class="card-title movers-card-title" title="${escapeHtml(g.title)}">${escapeHtml(cleanTitle)}</h4>
             <div class="card-metrics-row">
               <div class="metric-block">
                 <span class="metric-caption">Онлайн CCU</span>
@@ -804,14 +805,14 @@ export class MoversViewComponent {
           </div>
 
           <div class="card-bottom-row">
-            <span class="archetype-tag badge-archetype" data-archetype="${g.archetype}" title="Архетип: ${archLabel}">
-              ${archLabel}
+            <span class="archetype-tag badge-archetype" data-archetype="${escapeHtml(g.archetype)}" title="Архетип: ${escapeHtml(archLabel)}">
+              ${escapeHtml(archLabel)}
             </span>
             <button
               type="button"
               class="btn-inspect card-inspect-btn"
               data-action="inspect"
-              data-game-id="${g.id}"
+              data-game-id="${escapeHtml(g.id)}"
               title="Открыть аналитический инспектор игры"
             >
               <span>Инспектор</span>
@@ -839,7 +840,7 @@ export class MoversViewComponent {
       const gameId = item.associatedGame?.id || '';
 
       return `
-        <div class="movers-card card-viral" data-card="mover" data-id="${item.id}" data-archetype="${item.archetype}">
+        <div class="movers-card card-viral" data-card="mover" data-id="${escapeHtml(item.id)}" data-archetype="${escapeHtml(item.archetype)}">
           <div class="card-top-row">
             <span class="card-viral-multiplier">
               ${ICONS.FIRE}
@@ -849,7 +850,7 @@ export class MoversViewComponent {
           </div>
 
           <div class="card-main-info">
-            <h4 class="card-title movers-card-title">${item.trendTitle}</h4>
+            <h4 class="card-title movers-card-title">${escapeHtml(item.trendTitle)}</h4>
             <div class="card-metrics-row">
               <div class="metric-block">
                 <span class="metric-caption">Вирусный охват</span>
@@ -862,15 +863,15 @@ export class MoversViewComponent {
           </div>
 
           <div class="card-bottom-row">
-            <span class="archetype-tag badge-archetype" data-archetype="${item.archetype}" title="Архетип: ${archLabel}">
-              ${archLabel}
+            <span class="archetype-tag badge-archetype" data-archetype="${escapeHtml(item.archetype)}" title="Архетип: ${escapeHtml(archLabel)}">
+              ${escapeHtml(archLabel)}
             </span>
             <button
               type="button"
               class="btn-inspect card-inspect-btn"
               data-action="inspect"
-              data-game-id="${gameId}"
-              data-archetype="${item.archetype}"
+              data-game-id="${escapeHtml(gameId)}"
+              data-archetype="${escapeHtml(item.archetype)}"
               title="Открыть инспектор тренда"
             >
               <span>Инспектор</span>
@@ -900,18 +901,18 @@ export class MoversViewComponent {
       const sparkSvg = this.renderSparklineSvg(item.sparkline, '#02b8cc');
 
       return `
-        <div class="movers-card card-breakout" data-card="mover" data-id="${g.id}">
+        <div class="movers-card card-breakout" data-card="mover" data-id="${escapeHtml(g.id)}">
           <div class="card-top-row">
             <span class="card-rank">#${item.rank}</span>
             <span class="card-platform-badge ${g.platform}">${platLabel}</span>
             <span class="card-age-badge">
               ${ICONS.SPARK}
-              <span>${item.growthBadge}</span>
+              <span>${escapeHtml(item.growthBadge)}</span>
             </span>
           </div>
 
           <div class="card-main-info">
-            <h4 class="card-title movers-card-title" title="${g.title}">${cleanTitle}</h4>
+            <h4 class="card-title movers-card-title" title="${escapeHtml(g.title)}">${escapeHtml(cleanTitle)}</h4>
             <div class="card-metrics-row">
               <div class="metric-block">
                 <span class="metric-caption">${g.metricType === 'rank' ? 'Позиция' : g.metricType === 'rating' ? 'Рейтинг' : 'Стартовый CCU'}</span>
@@ -924,14 +925,14 @@ export class MoversViewComponent {
           </div>
 
           <div class="card-bottom-row">
-            <span class="archetype-tag badge-archetype" data-archetype="${g.archetype}" title="Архетип: ${archLabel}">
-              ${archLabel}
+            <span class="archetype-tag badge-archetype" data-archetype="${escapeHtml(g.archetype)}" title="Архетип: ${escapeHtml(archLabel)}">
+              ${escapeHtml(archLabel)}
             </span>
             <button
               type="button"
               class="btn-inspect card-inspect-btn"
               data-action="inspect"
-              data-game-id="${g.id}"
+              data-game-id="${escapeHtml(g.id)}"
               title="Открыть аналитический инспектор новинки"
             >
               <span>Инспектор</span>

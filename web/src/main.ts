@@ -1,5 +1,6 @@
 import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType, NormalizedGame, SnapshotSummary } from './types.js';
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
+import { escapeHtml } from './utils/dom.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { RadarOverviewViewComponent } from './components/RadarOverviewView.js';
@@ -1421,7 +1422,7 @@ class App {
       item.innerHTML = `
         <div class="legend-left">
           <span class="legend-marker" style="background: ${color}; box-shadow: 0 0 8px ${color};"></span>
-          <span class="legend-name">${v.titleRu}</span>
+          <span class="legend-name">${escapeHtml(v.titleRu)}</span>
         </div>
         <span class="legend-score" style="color: ${color};">${v.opportunityScore.overallScore} pts</span>
       `;
@@ -1602,7 +1603,7 @@ class App {
       const countBadge = matchCount > 0 ? `<span class="search-tag-count">${matchCount}</span>` : '';
 
       chip.innerHTML = `
-        <span class="search-tag-text">${tag.label}</span>
+        <span class="search-tag-text">${escapeHtml(tag.label)}</span>
         ${countBadge}
       `;
 

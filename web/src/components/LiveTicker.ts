@@ -1,4 +1,5 @@
 import { MarketSnapshot, PlatformType, GameArchetype, NormalizedGame, ArbitrageOpportunity, MarketVerdict } from '../types.js';
+import { escapeHtml } from '../utils/dom.js';
 
 export type SignalIconType = 'flame' | 'zap' | 'trending-up' | 'globe' | 'gamepad' | 'check-circle';
 
@@ -345,7 +346,7 @@ export class LiveTickerComponent {
 
       itemBtn.innerHTML = `
         <span class="ticker-item-icon">${this.getSignalSvg(sig.icon)}</span>
-        <span class="ticker-item-text">${this.escapeHtml(sig.statusText)}</span>
+        <span class="ticker-item-text">${escapeHtml(sig.statusText)}</span>
       `;
 
       itemBtn.addEventListener('click', e => {
@@ -383,12 +384,4 @@ export class LiveTickerComponent {
     }
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

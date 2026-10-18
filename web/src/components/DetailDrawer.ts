@@ -1,5 +1,6 @@
 import { NormalizedGame, MarketVerdict, GameArchetype, PlatformType } from '../types.js';
 import { TickerSignal } from './LiveTicker.js';
+import { escapeHtml, safeHref } from '../utils/dom.js';
 
 export interface DetailDrawerOptions {
   backdrop: HTMLElement;
@@ -132,7 +133,7 @@ export class DetailDrawerComponent {
 
       const tagsHtml = (game.tags || [])
         .slice(0, 10)
-        .map(t => `<span class="drawer-chip clickable-chip" data-tag="${this.escapeHtml(t)}">${this.escapeHtml(t)}</span>`)
+        .map(t => `<span class="drawer-chip clickable-chip" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`)
         .join('');
 
       const gameUrl = game.url || this.generatePlatformSearchUrl(game.platform, game.title);
@@ -146,7 +147,7 @@ export class DetailDrawerComponent {
               <line x1="19" y1="12" x2="5" y2="12"></line>
               <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
-            <span>Назад к архетипу: ${this.escapeHtml(this.previousVerdict.titleRu)}</span>
+            <span>Назад к архетипу: ${escapeHtml(this.previousVerdict.titleRu)}</span>
           </button>
         `
             : ''
@@ -197,7 +198,7 @@ export class DetailDrawerComponent {
               ? `
           <div class="drawer-info-row">
             <span class="drawer-info-label">Жанр</span>
-            <span class="drawer-info-value">${this.escapeHtml(game.genre)}</span>
+            <span class="drawer-info-value">${escapeHtml(game.genre)}</span>
           </div>
           `
               : ''
@@ -245,7 +246,7 @@ export class DetailDrawerComponent {
 
         <!-- Direct Actions -->
         <div class="drawer-footer-actions">
-          <a href="${gameUrl}" target="_blank" rel="noopener noreferrer" class="drawer-btn primary">
+          <a href="${safeHref(gameUrl)}" target="_blank" rel="noopener noreferrer" class="drawer-btn primary">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
               <polyline points="15 3 21 3 21 9"></polyline>
@@ -440,7 +441,7 @@ export class DetailDrawerComponent {
                 (step, idx) => `
               <div class="drawer-loop-node">
                 <span class="loop-node-index">${idx + 1}</span>
-                <span class="loop-node-text">${this.escapeHtml(step)}</span>
+                <span class="loop-node-text">${escapeHtml(step)}</span>
               </div>
               ${
                 idx < loopSteps.length - 1
@@ -486,7 +487,7 @@ export class DetailDrawerComponent {
                     <div class="game-row-left">
                       <span class="drawer-platform-dot ${pMeta.badgeClass}"></span>
                       <div class="game-row-meta">
-                        <span class="game-row-title">${this.escapeHtml(g.title)}</span>
+                        <span class="game-row-title">${escapeHtml(g.title)}</span>
                         <span class="game-row-stats">
                           ${pMeta.label} • ${g.metricValue.toLocaleString()} ${g.metricType === 'ccu' ? 'CCU' : 'очков'}
                           ${lRatio ? ` • 👍 ${lRatio}%` : ''}
@@ -519,7 +520,7 @@ export class DetailDrawerComponent {
             </svg>
             Стратегия монетизации
           </h4>
-          <p class="drawer-section-text">${this.escapeHtml(verdict.monetizationStrategy)}</p>
+          <p class="drawer-section-text">${escapeHtml(verdict.monetizationStrategy)}</p>
         </div>
 
         <!-- Risks and Pitfalls -->
@@ -532,7 +533,7 @@ export class DetailDrawerComponent {
             </svg>
             Чего избегать (Риски и грабли)
           </h4>
-          <p class="drawer-section-text">${this.escapeHtml(verdict.avoidPitfalls)}</p>
+          <p class="drawer-section-text">${escapeHtml(verdict.avoidPitfalls)}</p>
         </div>
 
         <!-- Recommendation -->
@@ -543,7 +544,7 @@ export class DetailDrawerComponent {
             </svg>
             Рекомендация по действию
           </h4>
-          <p class="drawer-section-text">${this.escapeHtml(verdict.actionRecommendation)}</p>
+          <p class="drawer-section-text">${escapeHtml(verdict.actionRecommendation)}</p>
         </div>
 
         <!-- Footer Actions -->
@@ -637,13 +638,13 @@ export class DetailDrawerComponent {
     if (bodyEl) {
       const tagsHtml = (signal.details.tags || [])
         .slice(0, 8)
-        .map(t => `<span class="drawer-chip clickable-chip" data-tag="${this.escapeHtml(t)}">${this.escapeHtml(t)}</span>`)
+        .map(t => `<span class="drawer-chip clickable-chip" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`)
         .join('');
 
       bodyEl.innerHTML = `
         <div class="drawer-stat-card ${signal.badgeClass}">
-          <div class="stat-card-label">${this.escapeHtml(signal.details.metricLabel)}</div>
-          <div class="stat-card-value">${this.escapeHtml(signal.details.metricValue)}</div>
+          <div class="stat-card-label">${escapeHtml(signal.details.metricLabel)}</div>
+          <div class="stat-card-value">${escapeHtml(signal.details.metricValue)}</div>
         </div>
 
         <div class="drawer-section">
@@ -655,7 +656,7 @@ export class DetailDrawerComponent {
             </svg>
             Инсайт и Сигнал Рынка
           </h4>
-          <p class="drawer-section-text">${this.escapeHtml(signal.details.description)}</p>
+          <p class="drawer-section-text">${escapeHtml(signal.details.description)}</p>
         </div>
 
         ${
@@ -668,7 +669,7 @@ export class DetailDrawerComponent {
               </svg>
               Рекомендация по адаптации
             </h4>
-            <p class="drawer-section-text">${this.escapeHtml(signal.details.actionRu)}</p>
+            <p class="drawer-section-text">${escapeHtml(signal.details.actionRu)}</p>
           </div>
         `
             : ''
@@ -705,7 +706,7 @@ export class DetailDrawerComponent {
           ${
             signal.details.externalUrl
               ? `
-            <a href="${signal.details.externalUrl}" target="_blank" rel="noopener noreferrer" class="drawer-btn link">
+            <a href="${safeHref(signal.details.externalUrl)}" target="_blank" rel="noopener noreferrer" class="drawer-btn link">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
@@ -831,12 +832,4 @@ export class DetailDrawerComponent {
     }
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

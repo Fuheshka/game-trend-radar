@@ -1,4 +1,5 @@
 import { MarketVerdict, GameArchetype } from '../types.js';
+import { escapeHtml } from '../utils/dom.js';
 
 export type ChartMode = 'spider' | 'polar';
 
@@ -822,7 +823,7 @@ export class RadarChartComponent {
     }
 
     this.tooltipEl.innerHTML = `
-      <div class="tooltip-title">${v.titleRu}</div>
+      <div class="tooltip-title">${escapeHtml(v.titleRu)}</div>
       ${extraRow}
       <div class="tooltip-row">
         <span>Статус:</span>

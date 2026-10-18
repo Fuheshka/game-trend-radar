@@ -1,4 +1,5 @@
 import { MarketVerdict, GameArchetype } from '../types.js';
+import { escapeHtml } from '../utils/dom.js';
 
 export interface VerdictCardsOptions {
   container: HTMLElement;
@@ -93,7 +94,7 @@ export class VerdictCardsComponent {
     const sampleChips = (v.sampleTitles || [])
       .slice(0, 6)
       .map(
-        t => `<span class="game-sample-chip" title="${t}">${this.escapeHtml(t)}</span>`
+        t => `<span class="game-sample-chip" title="${escapeHtml(t)}">${escapeHtml(t)}</span>`
       )
       .join('');
 
@@ -122,7 +123,7 @@ export class VerdictCardsComponent {
     card.innerHTML = `
       <div class="card-top-bar">
         <div class="card-title-block">
-          <h3>${this.escapeHtml(v.titleRu)}</h3>
+          <h3>${escapeHtml(v.titleRu)}</h3>
           <div class="card-archetype-tag">${v.archetype}</div>
         </div>
         <div class="badges-stack">
@@ -206,7 +207,7 @@ export class VerdictCardsComponent {
           ${loopSteps
             .map(
               (step, idx) => `
-                <span class="loop-step">${this.escapeHtml(step)}</span>
+                <span class="loop-step">${escapeHtml(step)}</span>
                 ${idx < loopSteps.length - 1 ? `<svg class="loop-arrow" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>` : ''}
               `
             )
@@ -217,7 +218,7 @@ export class VerdictCardsComponent {
       <!-- Action Recommendation -->
       <div class="meta-row" style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: var(--radius-md); padding: 0.75rem 1rem;">
         <span class="meta-row-label" style="color: var(--accent-cyan); font-weight: 600;">Рекомендация:</span>
-        <span class="meta-row-content" style="color: #f1f5f9; font-size: 0.84rem;">${this.escapeHtml(v.actionRecommendation)}</span>
+        <span class="meta-row-content" style="color: #f1f5f9; font-size: 0.84rem;">${escapeHtml(v.actionRecommendation)}</span>
       </div>
 
       <!-- Pitfalls / What to Avoid -->
@@ -229,7 +230,7 @@ export class VerdictCardsComponent {
         </svg>
         <div class="risk-text-block">
           <span class="risk-title">Чего избегать (Риски и грабли)</span>
-          <span class="risk-body">${this.escapeHtml(v.avoidPitfalls)}</span>
+          <span class="risk-body">${escapeHtml(v.avoidPitfalls)}</span>
         </div>
       </div>
 
@@ -237,7 +238,7 @@ export class VerdictCardsComponent {
       <div class="card-meta-details">
         <div class="meta-row">
           <span class="meta-row-label">Стратегия монетизации</span>
-          <span class="meta-row-content">${this.escapeHtml(v.monetizationStrategy)}</span>
+          <span class="meta-row-content">${escapeHtml(v.monetizationStrategy)}</span>
         </div>
         ${
           sampleChips
@@ -253,7 +254,7 @@ export class VerdictCardsComponent {
 
       <!-- Action Footer: AI GDD Spec Generator Button -->
       <div class="verdict-card-footer">
-        <button type="button" class="btn-generate-ai-spec" data-archetype="${v.archetype}" title="Сгенерировать ТЗ для ИИ по архетипу ${this.escapeHtml(v.titleRu)}">
+        <button type="button" class="btn-generate-ai-spec" data-archetype="${v.archetype}" title="Сгенерировать ТЗ для ИИ по архетипу ${escapeHtml(v.titleRu)}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
@@ -287,12 +288,4 @@ export class VerdictCardsComponent {
     cards.forEach(card => card.classList.remove('is-focused'));
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

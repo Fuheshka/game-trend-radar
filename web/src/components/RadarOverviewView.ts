@@ -1,6 +1,7 @@
 import { MarketVerdict, GameArchetype } from '../types.js';
 import { RadarChartComponent, ChartMode } from './RadarChart.js';
 import { VerdictCardsComponent } from './VerdictCards.js';
+import { escapeHtml } from '../utils/dom.js';
 
 export interface RadarOverviewViewOptions {
   container: HTMLElement;
@@ -347,7 +348,7 @@ export class RadarOverviewViewComponent {
 
       chip.innerHTML = `
         <span class="legend-color-dot" style="background-color: ${statusColor};"></span>
-        <span class="legend-chip-title">${this.escapeHtml(v.titleRu)}</span>
+        <span class="legend-chip-title">${escapeHtml(v.titleRu)}</span>
         <span class="legend-chip-score">${v.opportunityScore.overallScore}</span>
       `;
 
@@ -435,12 +436,4 @@ export class RadarOverviewViewComponent {
     }
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

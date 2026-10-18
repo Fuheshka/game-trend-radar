@@ -1,4 +1,5 @@
 import { ArbitrageOpportunity, NormalizedGame, ArbitrageAnalogMatch, GameArchetype } from '../types.js';
+import { escapeHtml, safeHref, safeUrl } from '../utils/dom.js';
 
 export interface ArbitrageMatrixOptions {
   container: HTMLElement;
@@ -214,7 +215,8 @@ export class ArbitrageMatrixComponent {
       const linkBtn = target.closest('.btn-open-donor') as HTMLElement;
       if (linkBtn) {
         e.stopPropagation();
-        const url = linkBtn.getAttribute('data-url');
+        const url = safeUrl(linkBtn.getAttribute('data-url'));
+        if (url === '#') return;
         if (url && this.onOpenRoblox) {
           this.onOpenRoblox(url);
         } else if (url) {
@@ -438,7 +440,7 @@ export class ArbitrageMatrixComponent {
       const displayDonorTitle = cleanDisplayTitle(opp.robloxGame.title);
 
       html += `
-        <article class="arbitrage-card ${windowInfo.badgeClass}" data-game-id="${opp.robloxGame.id}">
+        <article class="arbitrage-card ${windowInfo.badgeClass}" data-game-id="${escapeHtml(opp.robloxGame.id)}">
           <!-- Card Header & Opportunity Badge -->
           <div class="arbitrage-card-header">
             <div class="arbitrage-badge-group">
@@ -455,7 +457,7 @@ export class ArbitrageMatrixComponent {
               </span>
             </div>
 
-            <span class="badge-archetype">${archetypeLabel}</span>
+            <span class="badge-archetype">${escapeHtml(archetypeLabel)}</span>
           </div>
 
           <!-- Market Split Comparison (Donor vs Target Showcase) -->
@@ -467,7 +469,7 @@ export class ArbitrageMatrixComponent {
                 <span class="role-text">Игра-донор</span>
               </div>
 
-              <h4 class="donor-game-title" title="${opp.robloxGame.title}">${displayDonorTitle}</h4>
+              <h4 class="donor-game-title" title="${escapeHtml(opp.robloxGame.title)}">${escapeHtml(displayDonorTitle)}</h4>
 
               <div class="donor-metrics-row">
                 <div class="donor-metric">
@@ -482,7 +484,7 @@ export class ArbitrageMatrixComponent {
 
               ${
                 opp.robloxGame.url
-                  ? `<a href="${opp.robloxGame.url}" target="_blank" rel="noopener noreferrer" class="btn-open-donor" data-url="${opp.robloxGame.url}">
+                  ? `<a href="${safeHref(opp.robloxGame.url)}" target="_blank" rel="noopener noreferrer" class="btn-open-donor" data-url="${safeHref(opp.robloxGame.url)}">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                         <polyline points="15 3 21 3 21 9"></polyline>
@@ -515,7 +517,7 @@ export class ArbitrageMatrixComponent {
               <div class="analog-info-box">
                 <div class="analog-title-row">
                   <span class="analog-label">Ближайший аналог:</span>
-                  <strong class="analog-name ${hasAnalog ? 'text-primary' : 'text-empty'}" title="${analogTitle}">${displayAnalogTitle}</strong>
+                  <strong class="analog-name ${hasAnalog ? 'text-primary' : 'text-empty'}" title="${escapeHtml(analogTitle)}">${escapeHtml(displayAnalogTitle)}</strong>
                 </div>
 
                 <div class="similarity-bar-wrap">
@@ -550,12 +552,12 @@ export class ArbitrageMatrixComponent {
               <span>Конкретная стратегия веб-адаптации</span>
             </div>
 
-            <p class="strategy-description-text">${opp.adaptationStrategy}</p>
+            <p class="strategy-description-text">${escapeHtml(opp.adaptationStrategy)}</p>
 
             <div class="strategy-specs-grid">
               <div class="spec-pill">
                 <span class="spec-label">Движок:</span>
-                <span class="spec-value">${recommendedEngine}</span>
+                <span class="spec-value">${escapeHtml(recommendedEngine)}</span>
               </div>
               <div class="spec-pill">
                 <span class="spec-label">Вес билда:</span>
@@ -576,12 +578,12 @@ export class ArbitrageMatrixComponent {
               </svg>
               <span>Название для РФ</span>
             </div>
-            <div class="suggested-title-text">${opp.suggestedRuTitle}</div>
+            <div class="suggested-title-text">${escapeHtml(opp.suggestedRuTitle)}</div>
           </div>
 
           <!-- Card Actions: Copy Pitch -->
           <div class="arbitrage-card-footer">
-            <button type="button" class="btn-copy-pitch" data-game-id="${opp.robloxGame.id}" title="Скопировать структурированный Markdown-питч для инвестора или издателя">
+            <button type="button" class="btn-copy-pitch" data-game-id="${escapeHtml(opp.robloxGame.id)}" title="Скопировать структурированный Markdown-питч для инвестора или издателя">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>

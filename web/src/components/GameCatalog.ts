@@ -1,4 +1,5 @@
 import { NormalizedGame, PlatformType, GameArchetype } from '../types.js';
+import { escapeHtml, safeHref } from '../utils/dom.js';
 
 export interface GameCatalogOptions {
   container: HTMLElement;
@@ -296,28 +297,28 @@ export class GameCatalogComponent {
     const tagsHtml = tags
       .map(
         t =>
-          `<span class="catalog-tag-chip" data-tag="${this.escapeHtml(t)}">${this.escapeHtml(t)}</span>`
+          `<span class="catalog-tag-chip" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`
       )
       .join('');
 
     return `
-      <div class="catalog-game-card" data-game-id="${this.escapeHtml(game.id)}" tabindex="0" role="button" aria-label="Открыть подробнее: ${this.escapeHtml(game.title)}">
+      <div class="catalog-game-card" data-game-id="${escapeHtml(game.id)}" tabindex="0" role="button" aria-label="Открыть подробнее: ${escapeHtml(game.title)}">
         <div class="card-top-bar">
           <span class="catalog-platform-badge ${pMeta.badgeClass}">
             ${pMeta.iconSvg}
             <span>${pMeta.label}</span>
           </span>
-          <span class="catalog-arch-badge" title="Архетип: ${this.escapeHtml(archName)}">
-            ${this.escapeHtml(archName)}
+          <span class="catalog-arch-badge" title="Архетип: ${escapeHtml(archName)}">
+            ${escapeHtml(archName)}
           </span>
         </div>
 
-        <h3 class="catalog-card-title" title="${this.escapeHtml(game.title)}">
-          ${this.escapeHtml(game.title)}
+        <h3 class="catalog-card-title" title="${escapeHtml(game.title)}">
+          ${escapeHtml(game.title)}
         </h3>
 
         <div class="catalog-card-genre">
-          ${this.escapeHtml(game.genre || 'Без категории')}
+          ${escapeHtml(game.genre || 'Без категории')}
         </div>
 
         <div class="catalog-metrics-row">
@@ -361,7 +362,7 @@ export class GameCatalogComponent {
             </svg>
           </span>
 
-          <a href="${this.escapeHtml(gameUrl)}" target="_blank" rel="noopener noreferrer" class="catalog-ext-link" title="Перейти на страницу игры">
+          <a href="${safeHref(gameUrl)}" target="_blank" rel="noopener noreferrer" class="catalog-ext-link" title="Перейти на страницу игры">
             <span>Витрина</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -382,7 +383,7 @@ export class GameCatalogComponent {
     const gameUrl = game.url || this.generatePlatformSearchUrl(game.platform, game.title);
 
     return `
-      <tr class="catalog-table-row" data-game-id="${this.escapeHtml(game.id)}" tabindex="0" role="button">
+      <tr class="catalog-table-row" data-game-id="${escapeHtml(game.id)}" tabindex="0" role="button">
         <td>
           <span class="catalog-platform-badge compact ${pMeta.badgeClass}">
             ${pMeta.iconSvg}
@@ -391,13 +392,13 @@ export class GameCatalogComponent {
         </td>
         <td>
           <div class="table-title-cell">
-            <span class="table-game-title">${this.escapeHtml(game.title)}</span>
+            <span class="table-game-title">${escapeHtml(game.title)}</span>
           </div>
         </td>
         <td>
           <div class="table-genre-cell">
-            <span class="table-arch-badge">${this.escapeHtml(archName)}</span>
-            <span class="table-genre-text">${this.escapeHtml(game.genre || '')}</span>
+            <span class="table-arch-badge">${escapeHtml(archName)}</span>
+            <span class="table-genre-text">${escapeHtml(game.genre || '')}</span>
           </div>
         </td>
         <td style="text-align: right;">
@@ -408,7 +409,7 @@ export class GameCatalogComponent {
         </td>
         <td style="text-align: right;">
           <div class="table-actions-cell">
-            <a href="${this.escapeHtml(gameUrl)}" target="_blank" rel="noopener noreferrer" class="catalog-ext-link compact" title="Открыть в витрине">
+            <a href="${safeHref(gameUrl)}" target="_blank" rel="noopener noreferrer" class="catalog-ext-link compact" title="Открыть в витрине">
               <span>Витрина</span>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -507,12 +508,4 @@ export class GameCatalogComponent {
     }
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

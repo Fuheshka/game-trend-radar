@@ -1,4 +1,5 @@
 import { NormalizedGame, PlatformType, GameArchetype, MarketVerdict } from '../types.js';
+import { escapeHtml, safeHref } from '../utils/dom.js';
 
 export type TableSortColumn =
   | 'rank'
@@ -535,7 +536,7 @@ export class GameTableView {
               type="search"
               class="steamdb-search-input"
               placeholder="Поиск по ${totalCount}+ играм (название, жанр, теги)..."
-              value="${this.escapeHtml(this.searchQuery)}"
+              value="${escapeHtml(this.searchQuery)}"
               autocomplete="off"
               spellcheck="false"
             />
@@ -677,7 +678,7 @@ export class GameTableView {
     const deltaSign = spark.isPositive ? '+' : '';
 
     return `
-      <tr class="steamdb-table-row" data-game-id="${this.escapeHtml(game.id)}" tabindex="0" role="button">
+      <tr class="steamdb-table-row" data-game-id="${escapeHtml(game.id)}" tabindex="0" role="button">
         <!-- 1. Rank -->
         <td class="td-rank">
           <span class="table-rank-num tabular-nums">#${index + 1}</span>
@@ -694,8 +695,8 @@ export class GameTableView {
         <!-- 3. Title with Storefront icon -->
         <td class="td-title">
           <div class="table-title-cell">
-            <span class="table-game-title" title="${this.escapeHtml(game.title)}">${this.escapeHtml(game.title)}</span>
-            <a href="${this.escapeHtml(storeUrl)}" target="_blank" rel="noopener noreferrer" class="table-store-link" title="Открыть витрину в новой вкладке">
+            <span class="table-game-title" title="${escapeHtml(game.title)}">${escapeHtml(game.title)}</span>
+            <a href="${safeHref(storeUrl)}" target="_blank" rel="noopener noreferrer" class="table-store-link" title="Открыть витрину в новой вкладке">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
@@ -708,8 +709,8 @@ export class GameTableView {
         <!-- 4. Genre / Archetype -->
         <td class="td-genre">
           <div class="table-genre-cell">
-            <span class="table-arch-badge" title="Архетип: ${this.escapeHtml(archName)}">${this.escapeHtml(archName)}</span>
-            <span class="table-genre-text">${this.escapeHtml(game.genre || '')}</span>
+            <span class="table-arch-badge" title="Архетип: ${escapeHtml(archName)}">${escapeHtml(archName)}</span>
+            <span class="table-genre-text">${escapeHtml(game.genre || '')}</span>
           </div>
         </td>
 
@@ -746,7 +747,7 @@ export class GameTableView {
 
         <!-- 9. Actions (Drawer opener) -->
         <td class="td-actions text-right">
-          <button type="button" class="table-action-btn" data-game-id="${this.escapeHtml(game.id)}" title="Открыть карточку игры">
+          <button type="button" class="table-action-btn" data-game-id="${escapeHtml(game.id)}" title="Открыть карточку игры">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -799,23 +800,23 @@ export class GameTableView {
     const deltaSign = spark.isPositive ? '+' : '';
 
     return `
-      <div class="catalog-game-card" data-game-id="${this.escapeHtml(game.id)}" tabindex="0" role="button" aria-label="Открыть ${this.escapeHtml(game.title)}">
+      <div class="catalog-game-card" data-game-id="${escapeHtml(game.id)}" tabindex="0" role="button" aria-label="Открыть ${escapeHtml(game.title)}">
         <div class="card-top-bar">
           <span class="catalog-platform-badge ${pMeta.badgeClass}">
             ${pMeta.iconSvg}
             <span>${pMeta.label}</span>
           </span>
-          <span class="catalog-arch-badge" title="Архетип: ${this.escapeHtml(archName)}">
-            ${this.escapeHtml(archName)}
+          <span class="catalog-arch-badge" title="Архетип: ${escapeHtml(archName)}">
+            ${escapeHtml(archName)}
           </span>
         </div>
 
-        <h3 class="catalog-card-title" title="${this.escapeHtml(game.title)}">
-          ${this.escapeHtml(game.title)}
+        <h3 class="catalog-card-title" title="${escapeHtml(game.title)}">
+          ${escapeHtml(game.title)}
         </h3>
 
         <div class="catalog-card-genre">
-          ${this.escapeHtml(game.genre || 'Без категории')}
+          ${escapeHtml(game.genre || 'Без категории')}
         </div>
 
         <div class="catalog-metrics-row">
@@ -857,7 +858,7 @@ export class GameTableView {
             </svg>
           </span>
 
-          <a href="${this.escapeHtml(gameUrl)}" target="_blank" rel="noopener noreferrer" class="catalog-ext-link" title="Перейти на витрину">
+          <a href="${safeHref(gameUrl)}" target="_blank" rel="noopener noreferrer" class="catalog-ext-link" title="Перейти на витрину">
             <span>Витрина</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -878,7 +879,7 @@ export class GameTableView {
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
         <h3>Игры не найдены</h3>
-        <p>По запросу «${this.escapeHtml(this.searchQuery)}» ничего не обнаружено. Попробуйте сбросить фильтры.</p>
+        <p>По запросу «${escapeHtml(this.searchQuery)}» ничего не обнаружено. Попробуйте сбросить фильтры.</p>
       </div>
     `;
   }
@@ -971,14 +972,6 @@ export class GameTableView {
     }
   }
 
-  private escapeHtml(str: string): string {
-    return (str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }
 
 export { GameTableView as GameTableViewComponent };
