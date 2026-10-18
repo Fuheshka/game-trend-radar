@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { POPULAR_SEARCH_TAGS, countGamesForTag, isTagActive, verdictMatchesQuery } from '../web/src/app/search.js';
 import { computeMarketMetrics } from '../web/src/app/metrics.js';
-import { cleanDisplayTitle, formatCompactNumber, formatSnapshotDateRu } from '../web/src/utils/format.js';
+import { cleanDisplayTitle, formatCompactNumber, formatSnapshotDateRu, formatSnapshotOptionLabel } from '../web/src/utils/format.js';
 import { ARCHETYPE_RU_MAP, generatePlatformSearchUrl, getPlatformMeta } from '../web/src/utils/labels.js';
 import { FALLBACK_SNAPSHOT } from '../web/src/fallbackData.js';
 import { MarketSnapshot } from '../web/src/types.js';
@@ -14,6 +14,11 @@ describe('модули App: поиск, метрики, форматирован
     expect(formatCompactNumber(12_345)).toBe('12.3k');
     expect(formatCompactNumber(1_000_000)).toBe('1M');
     expect(formatCompactNumber(999.6)).toBe('1000');
+  });
+
+  it('formatSnapshotOptionLabel: дата среза и число игр — одна подпись для API и статического снимка', () => {
+    expect(formatSnapshotOptionLabel('2026-10-18', 537)).toBe('18 окт (537 игр)');
+    expect(formatSnapshotOptionLabel('2026-10-18T03:00:00Z', 320)).toBe('18 окт (320 игр)');
   });
 
   it('cleanDisplayTitle не превращает название из одних эмодзи в пустую строку', () => {
