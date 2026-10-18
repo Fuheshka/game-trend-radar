@@ -154,8 +154,9 @@ curl -N -H "Accept: text/event-stream" https://fuheshka.qd.je/api/events
 | Переменная | Смысл |
 |---|---|
 | `SCAN_INTERVAL_MIN` | Встроенный автоскан каждые N минут (`0` = выкл., в PM2 по умолчанию 30). При сбое — повтор с экспоненциальной паузой; каждая точка пишется в `data/history/*.jsonl` (14 дней). |
-| `SCAN_TOKEN` | Bearer-токен для `POST /api/scan`. Пусто = без защиты (только для dev). |
+| `SCAN_TOKEN` | Bearer-токен для `POST /api/scan`. Пусто: в dev скан открыт, при `NODE_ENV=production` ручной скан отключён (403). |
 | `SCAN_COOLDOWN_MS` | Минимальная пауза между ручными сканами (иначе 429 + `Retry-After`). |
+| `SSE_MAX_CLIENTS` | Лимит одновременных подключений к `/api/events` (по умолчанию 100; сверх — 503 + `Retry-After`). |
 | `CORS_ORIGIN` | Ограничить CORS своим доменом (по умолчанию `*`). |
 
 - `POST /api/scan` сразу отвечает `202`, прогресс идёт по SSE. `?wait=1` — дождаться снимка в ответе.

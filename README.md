@@ -92,8 +92,9 @@ Set env vars in `.env` on the server (see [`.env.example`](.env.example); `ecosy
 | Variable | Meaning |
 |---|---|
 | `SCAN_INTERVAL_MIN` | Built-in auto-scan every N minutes (`0` = off, default in PM2: 30). Failed scans retry with exponential backoff; each point is also appended to `data/history/*.jsonl` (14 days). |
-| `SCAN_TOKEN` | Bearer token required for `POST /api/scan`. Empty = unprotected (dev only). |
+| `SCAN_TOKEN` | Bearer token required for `POST /api/scan`. Empty = open in dev; with `NODE_ENV=production` manual scans are disabled (403). |
 | `SCAN_COOLDOWN_MS` | Min pause between manual scans (429 + `Retry-After` otherwise). |
+| `SSE_MAX_CLIENTS` | Max concurrent `/api/events` connections (default 100; 503 + `Retry-After` beyond). |
 | `CORS_ORIGIN` | Restrict CORS to your domain (default `*`). |
 
 - `POST /api/scan` returns `202` immediately; progress arrives over SSE. Use `?wait=1` to block until the snapshot is returned.

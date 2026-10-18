@@ -4,7 +4,7 @@ import * as path from 'node:path';
 import * as zlib from 'node:zlib';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { SnapshotStore } from './storage/snapshot_store.js';
 import { runMarketScan, ScanValidationError } from './scanner.js';
 import { MarketSnapshot } from './types/index.js';
@@ -30,6 +30,10 @@ export interface RadarServerOptions {
   scanCooldownMs?: number;
   /** Интервал автоскана в минутах; 0 = выключен (env SCAN_INTERVAL_MIN). */
   scanIntervalMinutes?: number;
+  /** Лимит одновременных SSE-подключений к /api/events (env SSE_MAX_CLIENTS, по умолчанию 100). */
+  maxSseClients?: number;
+  /** Production-режим: без scanToken ручной POST /api/scan запрещён (по умолчанию NODE_ENV === 'production'). */
+  production?: boolean;
 }
 
 export function openBrowser(url: string): void {
@@ -37,16 +41,15 @@ export function openBrowser(url: string): void {
     return;
   }
   const platform = process.platform;
-  let cmd = '';
-  if (platform === 'darwin') {
-    cmd = `open "${url}"`;
-  } else if (platform === 'win32') {
-    cmd = `start "" "${url}"`;
-  } else {
-    cmd = `xdg-open "${url}"`;
-  }
+  // execFile без shell: URL передаётся аргументом и не интерпретируется оболочкой.
+  const [cmd, args]: [string, string[]] =
+    platform === 'darwin'
+      ? ['open', [url]]
+      : platform === 'win32'
+        ? ['cmd', ['/c', 'start', '""', url]]
+        : ['xdg-open', [url]];
   try {
-    exec(cmd, () => {});
+    execFile(cmd, args, () => {});
   } catch {
     // Silently ignore browser launch errors
   }
@@ -137,6 +140,13 @@ export function createRadarServer(options: RadarServerOptions = {}) {
   const scanToken = options.scanToken ?? process.env.SCAN_TOKEN ?? '';
   const scanCooldownMs = options.scanCooldownMs ?? parseInt(process.env.SCAN_COOLDOWN_MS || '30000', 10);
   const scanIntervalMin = options.scanIntervalMinutes ?? parseInt(process.env.SCAN_INTERVAL_MIN || '0', 10);
+  const maxSseClients = options.maxSseClients ?? parseInt(process.env.SSE_MAX_CLIENTS || '100', 10);
+  const isProduction = options.production ?? process.env.NODE_ENV === 'production';
+  // Публичный VPS без токена = любой может гонять скан и подставлять нас под баны витрин.
+  const manualScanDisabled = isProduction && !scanToken;
+  if (manualScanDisabled) {
+    console.warn('⚠️  SCAN_TOKEN не задан: в production ручной POST /api/scan отключён (автоскан работает).');
+  }
 
   const startedAt = Date.now();
   let activeScanPromise: Promise<MarketSnapshot> | null = null;
@@ -304,6 +314,10 @@ export function createRadarServer(options: RadarServerOptions = {}) {
         }
 
         if (pathname === '/api/events' && req.method === 'GET') {
+          if (eventBus.getClientCount() >= maxSseClients) {
+            await sendJson(req, res, 503, { error: 'Too many live connections' }, { 'Retry-After': '30' });
+            return;
+          }
           res.writeHead(200, {
             ...corsHeaders(),
             'Content-Type': 'text/event-stream',
@@ -327,6 +341,10 @@ export function createRadarServer(options: RadarServerOptions = {}) {
         }
 
         if (pathname === '/api/scan' && req.method === 'POST') {
+          if (manualScanDisabled) {
+            await sendJson(req, res, 403, { error: 'Manual scan disabled: set SCAN_TOKEN on the server' });
+            return;
+          }
           if (scanToken) {
             const auth = String(req.headers['authorization'] || '');
             const provided = auth.startsWith('Bearer ') ? auth.slice(7) : '';
