@@ -42,3 +42,30 @@
 - [x] Аудит безопасности и CI (2026-10-18): общий `web/src/utils/dom.ts` (`escapeHtml`/`safeUrl`/`safeHref`) вместо 8 копий, экранирование данных витрин в `ArbitrageMatrix`/`MoversView`, блок `javascript:`-ссылок; в production без `SCAN_TOKEN` ручной `POST /api/scan` → 403; лимит SSE (`SSE_MAX_CLIENTS`, 503); `execFile` вместо `exec`; typecheck `web/` (`tsconfig.web.json`), `ci.yml` на PR, `DEPLOY_KNOWN_HOSTS`; типизированное чтение JSON внешних API (`src/utils/json.ts`). 301/301 тестов PASS.
 - [x] Данные сканов вне git (2026-10-18): `latest_snapshot.json` и `data/reports/*.md` не коммитятся; Pages при сборке и каждые 6 ч скачивает снимок с `radar.fuheshka.qd.je/api/snapshots/latest` (`vars.SNAPSHOT_URL`), `deploy.sh` сохраняет серверные отчёты при переходе.
 - [x] Структура фронтенда после разбиения: `web/src/app/` (search, metrics), `web/src/services/snapshotApi.ts`, общие `web/src/utils/{dom,format,labels}.ts`; крупные компоненты разрезаны на `components/{gameTable,promptGenerator,movers,radarChart,detailDrawer}/`. Мёртвый `GameCatalog` удалён (каталог = `GameTableView`). `tests/MarkupContract.test.ts` сверяет значения `index.html` с обработчиками.
+
+---
+
+## 4. Бэклог следующей сессии (составлен 2026-10-18 после PR #3)
+
+> Порядок — по приоритету. Перед стартом: `git pull`, `npm ci`, `npm run typecheck && npm test && npm run web:build` должны быть зелёными. Изменения и найденные баги записывать в `implementation-notes.md` (раздел `## N.` в формате Проблема → Причина → Решение), статус — сюда.
+
+### A. Дизайн / UX (замечено на скриншотах прода 390px и 1440px)
+- [ ] **Двойная панель управления каталогом.** На вкладке «Каталог» две панели: старая из `web/index.html` (`.catalog-toolbar`: Min CCU, поиск, платформы, сортировка, Сетка/Таблица) и собственная `GameTableView` (`gameTable/toolbar.ts`: ещё один поиск и переключатель вида). Наследие удалённого `GameCatalog` — оставить одну.
+- [ ] **Мобильная шапка.** На 390px логотип без названия, KPI-строка обрезана справа, вкладки скроллятся без индикатора.
+- [ ] **Пустое состояние без сервера (GitHub Pages).** Кнопка «Запустить скан» на статике бесполезна — скрывать/объяснять.
+
+### B. Работоспособность / производительность
+- [ ] **11 231 DOM-узел и ~4.2 с до готовности.** Каталог и «Лидеры роста» (191 карточка) рендерят всё сразу — пагинация/виртуализация, ленивый рендер неактивных вкладок.
+- [ ] **Хрупкие коллекторы.** Яндекс Игры и Poki парсятся регулярками по HTML — нужен контрактный тест на сохранённой странице и алерт, когда `sourceStatus[x].count` резко падает (сейчас отдаёт `ok` даже при частичном сборе).
+- [ ] **Нет e2e в CI.** Ручная проверка Chromium (вкладки, сортировка, drawer, KPI) из сессии 2026-10-18 стоит оформить как Playwright smoke в `ci.yml` (Chromium есть в `/opt/pw-browsers` в облачной среде; в Actions — `npx playwright install chromium`).
+- [ ] `main.ts` всё ещё ~1540 строк: `initElements` (~200) и `setupComponents` (~300) — разнести по контроллерам вкладок.
+
+### C. Фичи (идеи, требуют решения владельца)
+- [ ] Алерты о новых арбитражных нишах / резких ростах (Telegram-бот или e-mail) по событию `snapshot:updated`.
+- [ ] Страница игры с историей CCU по дням (`data/game_history.json` уже копится на сервере).
+- [ ] Сравнение двух произвольных снимков (сейчас только «текущий vs предыдущий»).
+- [ ] Новые витрины: CrazyGames, VK Play.
+
+### Состояние прода на 2026-10-18 21:09 UTC
+- `https://radar.fuheshka.qd.je/healthz` — ok, автоскан каждые 30 мин, все 4 источника `ok` (Roblox 279, Яндекс 153, Poki 100, YouTube 5).
+- Владельцу: проверить `SCAN_TOKEN` в `/home/radar/game-trend-radar/.env`; опционально секрет `DEPLOY_KNOWN_HOSTS`.
