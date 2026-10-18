@@ -183,6 +183,9 @@ describe('GameTableView (SteamDB-style high density table & interactive catalog)
     expect(mockContainer.innerHTML).toContain('th-opportunity');
     expect(mockContainer.innerHTML).toContain('th-likes');
     expect(mockContainer.innerHTML).toContain('th-actions');
+
+    // Панель управления одна — .catalog-toolbar в index.html; компонент рисует только таблицу/сетку
+    expect(mockContainer.innerHTML).not.toContain('<input');
   });
 
   it('2. Должен генерировать инлайн SVG спарклайн зеленого и красного цвета для 7d тренда', () => {

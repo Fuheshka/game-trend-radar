@@ -1,9 +1,7 @@
-import { NormalizedGame, PlatformType, GameArchetype, MarketVerdict, PLATFORM_TYPES } from '../types.js';
-import { pickOption } from '../utils/dom.js';
+import { NormalizedGame, PlatformType, GameArchetype, MarketVerdict } from '../types.js';
 import { filterAndSortGames } from './gameTable/filterSort.js';
 import { renderEmptyState, renderGridView } from './gameTable/gridView.js';
 import { renderTableView } from './gameTable/tableView.js';
-import { renderHeaderToolbar } from './gameTable/toolbar.js';
 import type {
   GameTableViewOptions,
   TableSortColumn,
@@ -41,8 +39,6 @@ export class GameTableView {
   private onPlatformChange?: (platform: 'all' | PlatformType) => void;
   private onFilterChange?: (filteredCount: number, totalCount: number) => void;
 
-  private boundKeydownHandler?: (e: KeyboardEvent) => void;
-
   constructor(options: GameTableViewOptions) {
     this.container = options.container;
     this.allGames = options.games || [];
@@ -67,7 +63,6 @@ export class GameTableView {
     this.onFilterChange = options.onFilterChange;
 
     this.initEvents();
-    this.initGlobalShortcuts();
     this.render();
   }
 
@@ -205,25 +200,7 @@ export class GameTableView {
         return;
       }
 
-      // 3. Platform chips click
-      const chipBtn = target.closest('.table-platform-chip') as HTMLElement;
-      if (chipBtn) {
-        e.stopPropagation();
-        const p = pickOption(chipBtn.getAttribute('data-platform'), PLATFORM_TYPES);
-        if (p) this.setPlatform(p);
-        return;
-      }
-
-      // 4. View mode toggle click
-      const viewModeBtn = target.closest('.table-view-toggle-btn') as HTMLElement;
-      if (viewModeBtn) {
-        e.stopPropagation();
-        const mode = viewModeBtn.getAttribute('data-mode') as TableViewMode;
-        if (mode) this.setViewMode(mode);
-        return;
-      }
-
-      // 5. Column header sort click
+      // 3. Column header sort click
       const thEl = target.closest('th.sortable') as HTMLElement;
       if (thEl) {
         e.stopPropagation();
@@ -232,7 +209,7 @@ export class GameTableView {
         return;
       }
 
-      // 6. Action button click
+      // 4. Action button click
       const actionBtn = target.closest('.table-action-btn') as HTMLElement;
       if (actionBtn) {
         e.stopPropagation();
@@ -242,7 +219,7 @@ export class GameTableView {
         return;
       }
 
-      // 7. Load more / Load all
+      // 5. Load more / Load all
       const loadMoreBtn = target.closest('#btn-table-load-more') as HTMLElement;
       if (loadMoreBtn) {
         e.stopPropagation();
@@ -259,7 +236,7 @@ export class GameTableView {
         return;
       }
 
-      // 8. Row click or Card click
+      // 6. Row click or Card click
       const rowOrCard = target.closest('.steamdb-table-row, .catalog-game-card') as HTMLElement;
       if (rowOrCard) {
         const gameId = rowOrCard.getAttribute('data-game-id');
@@ -269,81 +246,17 @@ export class GameTableView {
         }
       }
     });
-
-    // Search input handler
-    this.container.addEventListener('input', e => {
-      const target = e.target as HTMLElement;
-      if (target.matches('.steamdb-search-input')) {
-        const val = (target as HTMLInputElement).value;
-        this.searchQuery = val.trim().toLowerCase();
-        this.displayLimit = 100;
-        this.renderTableContentOnly();
-        this.notifyFilterChange();
-      }
-    });
-  }
-
-  private initGlobalShortcuts(): void {
-    if (typeof window === 'undefined') return;
-
-    this.boundKeydownHandler = (e: KeyboardEvent) => {
-      // Hotkey: Ctrl+K / ⌘K focuses table quick search input
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        const searchInput = this.container.querySelector('.steamdb-search-input') as HTMLInputElement;
-        if (searchInput) {
-          e.preventDefault();
-          searchInput.focus();
-          searchInput.select();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', this.boundKeydownHandler);
-  }
-
-  public destroy(): void {
-    if (typeof window !== 'undefined' && this.boundKeydownHandler) {
-      window.removeEventListener('keydown', this.boundKeydownHandler);
-    }
   }
 
   private render(): void {
-    const filteredGames = this.getFilteredGames();
-    const totalCount = this.allGames.length;
-    const filteredCount = filteredGames.length;
-
+    // Фильтры, поиск и переключатель вида живут в .catalog-toolbar из index.html
     this.container.innerHTML = `
       <div class="steamdb-table-container" data-view-mode="${this.viewMode}">
-        <!-- SteamDB Controls & Search Header Bar -->
-        ${renderHeaderToolbar(filteredCount, totalCount, {
-          platformFilter: this.platformFilter,
-          viewMode: this.viewMode,
-          searchQuery: this.searchQuery,
-        })}
-
-        <!-- Active View Content -->
-        <div class="steamdb-view-body" id="steamdb-view-body">
-          ${this.renderActiveView(filteredGames)}
+        <div class="steamdb-view-body">
+          ${this.renderActiveView(this.getFilteredGames())}
         </div>
       </div>
     `;
-  }
-
-  /**
-   * Lightweight re-render of only table/grid body during search input to avoid losing input focus
-   */
-  private renderTableContentOnly(): void {
-    const bodyEl = this.container.querySelector('#steamdb-view-body');
-    const badgeEl = this.container.querySelector('#steamdb-count-badge');
-    const filteredGames = this.getFilteredGames();
-
-    if (badgeEl) {
-      badgeEl.textContent = `${filteredGames.length} из ${this.allGames.length}`;
-    }
-
-    if (bodyEl) {
-      bodyEl.innerHTML = this.renderActiveView(filteredGames);
-    }
   }
 
   private renderActiveView(filteredGames: NormalizedGame[]): string {

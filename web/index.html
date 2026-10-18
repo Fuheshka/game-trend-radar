@@ -443,16 +443,7 @@
           <div class="catalog-actions-right">
             <div class="catalog-count-badge" id="catalog-count-text">Отображается 0 из 0</div>
             <div class="view-mode-toggles">
-              <button type="button" class="view-mode-btn active" id="btn-view-grid" title="Вид: Сетка карточек">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-                <span>Сетка</span>
-              </button>
-              <button type="button" class="view-mode-btn" id="btn-view-table" title="Вид: Компактная таблица">
+              <button type="button" class="view-mode-btn active" id="btn-view-table" title="Вид: Компактная таблица">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="8" y1="6" x2="21" y2="6"></line>
                   <line x1="8" y1="12" x2="21" y2="12"></line>
@@ -463,6 +454,15 @@
                 </svg>
                 <span>Таблица</span>
               </button>
+              <button type="button" class="view-mode-btn" id="btn-view-grid" title="Вид: Сетка карточек">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Сетка</span>
+              </button>
             </div>
           </div>
         </div>
@@ -471,7 +471,7 @@
       <!-- Catalog Container -->
       <section class="catalog-content-section">
         <div id="catalog-container" class="catalog-container">
-          <!-- Rendered dynamically by GameCatalogComponent -->
+          <!-- Rendered dynamically by GameTableView -->
         </div>
       </section>
     </section> <!-- END #view-catalog -->

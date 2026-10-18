@@ -12,6 +12,7 @@ import {
   filterBreakoutNewReleases,
   generateMoversSparkline,
 } from '../web/src/components/MoversView.js';
+import { renderMoversMarkup } from '../web/src/components/movers/sections.js';
 import {
   MarketSnapshot,
   NormalizedGame,
@@ -963,6 +964,40 @@ describe('MoversView (Лидеры роста, вирусные сигналы �
       expect(() => {
         view.destroy();
       }).not.toThrow();
+    });
+  });
+
+  describe('8. Ограничение числа карточек новинок', () => {
+    const breakout = (i: number): BreakoutItem => ({
+      game: { ...sampleCurrentSnapshot.games[0], id: `new_${i}`, title: `New ${i}` },
+      rank: i + 1,
+      ccu: 1000,
+      ageDays: 3,
+      growthBadge: '3 дн.',
+      sparkline: { points: [1, 2], isPositive: true, deltaPercent: 1, svgPath: '', endX: 0, endY: 0 },
+    });
+    const markup = (count: number, limit: number) =>
+      renderMoversMarkup({
+        gainers: [],
+        viralSignals: [],
+        breakouts: Array.from({ length: count }, (_, i) => breakout(i)),
+        gainersSort: 'abs',
+        hasHistory: true,
+        breakoutLimit: limit,
+      });
+
+    it('8.1 рендерит не больше лимита и кнопку «Показать все» с полным числом', () => {
+      const html = markup(30, 24);
+      expect(html.match(/card-breakout/g)).toHaveLength(24);
+      expect(html).toContain('data-action="show-all-breakouts"');
+      expect(html).toContain('Показать все (30)');
+      expect(html).toContain('30 молодых хитов');
+    });
+
+    it('8.2 без кнопки, когда все карточки помещаются', () => {
+      const html = markup(10, 24);
+      expect(html.match(/card-breakout/g)).toHaveLength(10);
+      expect(html).not.toContain('show-all-breakouts');
     });
   });
 });
