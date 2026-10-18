@@ -8,6 +8,7 @@ import type {
   TableSortDirection,
   TableViewMode,
 } from './gameTable/types.js';
+import { CATALOG_PAGE_SIZE } from './gameTable/types.js';
 
 export type {
   TableSortColumn,
@@ -32,7 +33,7 @@ export class GameTableView {
   private sortColumn: TableSortColumn = 'ccu';
   private sortDirection: TableSortDirection = 'desc';
   private viewMode: TableViewMode = 'table';
-  private displayLimit: number = 100;
+  private displayLimit: number = CATALOG_PAGE_SIZE;
 
   private onViewModeChange?: (mode: TableViewMode) => void;
   private onSortChange?: (column: TableSortColumn, direction: TableSortDirection) => void;
@@ -84,7 +85,7 @@ export class GameTableView {
 
   public setPlatform(platform: 'all' | PlatformType): void {
     this.platformFilter = platform;
-    this.displayLimit = 100;
+    this.displayLimit = CATALOG_PAGE_SIZE;
     this.render();
     this.onPlatformChange?.(platform);
     this.notifyFilterChange();
@@ -92,14 +93,14 @@ export class GameTableView {
 
   public setSearchQuery(query: string): void {
     this.searchQuery = query.trim().toLowerCase();
-    this.displayLimit = 100;
+    this.displayLimit = CATALOG_PAGE_SIZE;
     this.render();
     this.notifyFilterChange();
   }
 
   public setMinCcu(val: number): void {
     this.minCcu = Math.max(0, val);
-    this.displayLimit = 100;
+    this.displayLimit = CATALOG_PAGE_SIZE;
     this.render();
     this.notifyFilterChange();
   }
@@ -223,7 +224,7 @@ export class GameTableView {
       const loadMoreBtn = target.closest('#btn-table-load-more') as HTMLElement;
       if (loadMoreBtn) {
         e.stopPropagation();
-        this.displayLimit += 100;
+        this.displayLimit += CATALOG_PAGE_SIZE;
         this.render();
         return;
       }
