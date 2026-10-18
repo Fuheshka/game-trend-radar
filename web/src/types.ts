@@ -118,7 +118,7 @@ export interface MarketSnapshot {
   /** Самые быстрорастущие игры за 7 дней. */
   risers?: Riser[];
   /** Статус каждого коллектора в этом скане (отсутствует у старых снимков). */
-  sourceStatus?: Record<string, { ok: boolean; count: number; error?: string }>;
+  sourceStatus?: Record<string, { ok: boolean; count: number; error?: string; warning?: string; baseline?: number }>;
 }
 
 export interface SnapshotSummary {

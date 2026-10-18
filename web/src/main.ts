@@ -1292,6 +1292,7 @@ class App {
       topDayGameTitle: m.topGameTitle,
       updatedText: formatMinutesAgo(this.snapshot.timestamp),
     });
+    this.headerStatusBar?.setSourceStatus(this.snapshot.sourceStatus);
     this.refreshFreshness();
   }
 

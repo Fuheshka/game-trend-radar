@@ -124,6 +124,17 @@ export interface Riser {
   days: number;
 }
 
+export interface SourceStatus {
+  /** Коллектор вернул хотя бы одну игру. */
+  ok: boolean;
+  count: number;
+  error?: string;
+  /** Сбор подозрительно мал (вёрстка витрины поменялась?) — данные есть, но неполные. */
+  warning?: string;
+  /** Count последнего здорового скана; хранится, пока источник не восстановится. */
+  baseline?: number;
+}
+
 export interface MarketSnapshot {
   id: string;
   timestamp: string;
@@ -138,7 +149,7 @@ export interface MarketSnapshot {
   /** Самые быстрорастущие игры за 7 дней. */
   risers?: Riser[];
   /** Статус каждого коллектора в этом скане (отсутствует у старых снимков). */
-  sourceStatus?: Record<string, { ok: boolean; count: number; error?: string }>;
+  sourceStatus?: Record<string, SourceStatus>;
 }
 
 export interface SnapshotSummary {

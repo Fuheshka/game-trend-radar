@@ -6225,6 +6225,16 @@ kbd.tab-hotkey {
 /* ==========================================================================
    FRESHNESS BADGE + MOBILE HEADER / TABS (≤ 720px)
    ========================================================================== */
+/* Неполный сбор витрины (sourceStatus.warning) или сбой коллектора */
+.header-kpi-strip [hidden] {
+  display: none;
+}
+
+.kpi-source-warning .kpi-strip-value {
+  color: #fbbf24;
+  cursor: help;
+}
+
 .kpi-strip-value.is-stale {
   color: #fbbf24;
   padding: 0 0.4rem;
