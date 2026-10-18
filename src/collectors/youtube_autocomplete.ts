@@ -4,6 +4,8 @@
  * и суточных игровых трендов Invidious Gaming без ручного ввода ключевых слов.
  */
 
+import { asArray, asRecord, itemsOf, num, str } from '../utils/json.js';
+
 export const DEFAULT_SEARCH_PREFIXES: string[] = [
   'roblox ',
   'shorts roblox ',
@@ -224,25 +226,26 @@ export class YouTubeAutocompleteHarvester {
           continue;
         }
 
-        const data = (await response.json()) as any;
-        const rawList = Array.isArray(data) ? data : data?.items || [];
+        const rawList = itemsOf(await response.json());
 
         if (rawList.length === 0) {
           continue;
         }
 
-        return rawList.slice(0, limit).map((v: any): TrendingGamingVideo => {
-          const videoId = String(v.videoId || v.id || '');
+        return rawList.slice(0, limit).map((raw): TrendingGamingVideo => {
+          const v = asRecord(raw);
+          const videoId = str(v.videoId) || str(v.id);
+          const thumbnailUrl = str(asRecord(asArray(v.videoThumbnails)[0]).url);
           return {
             id: videoId,
-            title: String(v.title || ''),
-            description: String(v.description || v.shortDescription || ''),
-            viewCount: Number(v.viewCount || v.views || 0),
-            author: String(v.author || v.authorTitle || ''),
-            url: videoId ? `https://www.youtube.com/watch?v=${videoId}` : String(v.url || ''),
+            title: str(v.title),
+            description: str(v.description) || str(v.shortDescription),
+            viewCount: num(v.viewCount) || num(v.views),
+            author: str(v.author) || str(v.authorTitle),
+            url: videoId ? `https://www.youtube.com/watch?v=${videoId}` : str(v.url),
             published: typeof v.published === 'number' ? v.published : undefined,
-            publishedAt: v.publishedText ? String(v.publishedText) : undefined,
-            thumbnailUrl: v.videoThumbnails?.[0]?.url ? String(v.videoThumbnails[0].url) : undefined,
+            publishedAt: str(v.publishedText) || undefined,
+            thumbnailUrl: thumbnailUrl || undefined,
           };
         });
       } catch {

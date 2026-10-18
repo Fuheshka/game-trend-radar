@@ -326,9 +326,7 @@ export function createRadarServer(options: RadarServerOptions = {}) {
             'X-Accel-Buffering': 'no',
           });
           res.write('retry: 3000\n\n');
-          if (typeof (res as any).flushHeaders === 'function') {
-            (res as any).flushHeaders();
-          }
+          res.flushHeaders();
 
           const lastIdHeader = req.headers['last-event-id'];
           const lastEventId = lastIdHeader ? parseInt(String(lastIdHeader), 10) : undefined;
