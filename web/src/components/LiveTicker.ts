@@ -47,7 +47,7 @@ export function formatCompactNumber(n: number): string {
 export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
   const signals: TickerSignal[] = [];
   const games = snapshot.games || [];
-  const opps = snapshot.opportunities || (snapshot as any).arbitrageOpportunities || [];
+  const opps = (snapshot as any).opportunities || snapshot.arbitrageOpportunities || [];
   const verdicts = snapshot.verdicts || [];
 
   // 1. Roblox Top Online Games

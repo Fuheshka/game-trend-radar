@@ -101,7 +101,7 @@ export class HeaderStatusBarComponent {
   private scanProgressInner: HTMLElement | null = null;
   private scanPhaseText: HTMLElement | null = null;
 
-  private boundDocClick: (e: MouseEvent) => void;
+  private boundDocClick!: (e: MouseEvent) => void;
 
   constructor(options: HeaderStatusBarOptions) {
     this.options = options;

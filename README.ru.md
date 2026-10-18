@@ -167,7 +167,7 @@ curl -N -H "Accept: text/event-stream" https://fuheshka.qd.je/api/events
 - Статика и JSON API сжимаются gzip, есть ETag; хешированные ассеты — `immutable`.
 
 ### Автодеплой
-`.github/workflows/deploy-server.yml`: на push в `main` — typecheck + тесты, затем SSH на сервер и `scripts/deploy.sh` (ff-only pull, `npm ci`, сборка, `pm2 reload`, healthcheck, **автоматический откат** при сбое). Secrets репозитория: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (опционально `DEPLOY_PORT`).
+`.github/workflows/deploy-server.yml`: на push в `main` — typecheck + тесты + сборка фронтенда, затем SSH на сервер и `scripts/deploy.sh` (ff-only pull, `npm ci`, сборка, `pm2 reload`, healthcheck, **автоматический откат** при сбое). Secrets репозитория: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (опционально `DEPLOY_PORT`; рекомендуется `DEPLOY_KNOWN_HOSTS` — проверенный вывод `ssh-keyscan -p <port> <host>`, иначе ключ хоста принимается вслепую). PR проверяются `.github/workflows/ci.yml`.
 
 ---
 

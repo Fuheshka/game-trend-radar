@@ -616,8 +616,8 @@ export interface PromptGeneratorModalOptions {
 }
 
 export class PromptGeneratorModalComponent {
-  private modalEl: HTMLElement;
-  private backdropEl: HTMLElement;
+  private modalEl!: HTMLElement;
+  private backdropEl!: HTMLElement;
   private currentContext: PromptContext;
   private options: PromptGeneratorModalOptions;
   private boundOnKeyDown: (e: KeyboardEvent) => void;

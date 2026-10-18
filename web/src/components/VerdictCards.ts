@@ -268,7 +268,7 @@ export class VerdictCardsComponent {
 
   public scrollToCard(archetype: GameArchetype): void {
     const cards = this.container.querySelectorAll<HTMLElement>('.verdict-card');
-    let targetCard: HTMLElement | null = null;
+    let targetCard = null as HTMLElement | null;
     cards.forEach(card => {
       if (card.getAttribute('data-archetype') === archetype) {
         card.classList.add('is-focused');

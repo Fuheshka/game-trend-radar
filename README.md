@@ -105,7 +105,7 @@ Set env vars in `.env` on the server (see [`.env.example`](.env.example); `ecosy
 - Static files and API JSON are gzip-compressed with ETag; hashed assets are `immutable`.
 
 ### Auto-deploy
-`.github/workflows/deploy-server.yml` runs typecheck + tests on push to `main`, then SSHes into the server and runs `scripts/deploy.sh` (ff-only pull, `npm ci`, build, `pm2 reload`, healthcheck, **automatic rollback** on failure). Required repo secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (optional `DEPLOY_PORT`).
+`.github/workflows/deploy-server.yml` runs typecheck + tests + web build on push to `main`, then SSHes into the server and runs `scripts/deploy.sh` (ff-only pull, `npm ci`, build, `pm2 reload`, healthcheck, **automatic rollback** on failure). Required repo secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (optional `DEPLOY_PORT`; recommended `DEPLOY_KNOWN_HOSTS` — the verified `ssh-keyscan -p <port> <host>` output, otherwise the host key is accepted blindly). Pull requests are checked by `.github/workflows/ci.yml`.
 
 ---
 
