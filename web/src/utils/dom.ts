@@ -29,6 +29,14 @@ export function safeUrl(url: string | null | undefined): string {
   }
 }
 
+/**
+ * Сужает строку из data-атрибута или <select> до допустимого значения union-типа.
+ * Неизвестное значение (опечатка в разметке) даёт null вместо молчаливого `as any`.
+ */
+export function pickOption<T extends string>(value: string | null | undefined, allowed: readonly T[]): T | null {
+  return value != null && (allowed as readonly string[]).includes(value) ? (value as T) : null;
+}
+
 /** escapeHtml(safeUrl(url)) — готовое значение для href. */
 export function safeHref(url: string | null | undefined): string {
   return escapeHtml(safeUrl(url));

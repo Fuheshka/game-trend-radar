@@ -1,4 +1,5 @@
-import { NormalizedGame, PlatformType, GameArchetype, MarketVerdict } from '../types.js';
+import { NormalizedGame, PlatformType, GameArchetype, MarketVerdict, PLATFORM_TYPES } from '../types.js';
+import { pickOption } from '../utils/dom.js';
 import { filterAndSortGames } from './gameTable/filterSort.js';
 import { renderEmptyState, renderGridView } from './gameTable/gridView.js';
 import { renderTableView } from './gameTable/tableView.js';
@@ -208,7 +209,7 @@ export class GameTableView {
       const chipBtn = target.closest('.table-platform-chip') as HTMLElement;
       if (chipBtn) {
         e.stopPropagation();
-        const p = chipBtn.getAttribute('data-platform') as any;
+        const p = pickOption(chipBtn.getAttribute('data-platform'), PLATFORM_TYPES);
         if (p) this.setPlatform(p);
         return;
       }

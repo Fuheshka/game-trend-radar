@@ -38,7 +38,9 @@ export { formatCompactNumber };
 export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
   const signals: TickerSignal[] = [];
   const games = snapshot.games || [];
-  const opps = (snapshot as any).opportunities || snapshot.arbitrageOpportunities || [];
+  // `opportunities` — имя поля в старых снимках, до переименования в arbitrageOpportunities
+  const legacy = snapshot as MarketSnapshot & { opportunities?: ArbitrageOpportunity[] };
+  const opps = legacy.opportunities || snapshot.arbitrageOpportunities || [];
   const verdicts = snapshot.verdicts || [];
 
   // 1. Roblox Top Online Games

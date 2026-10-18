@@ -1,13 +1,20 @@
-import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType, NormalizedGame, SnapshotSummary } from './types.js';
+import {
+  MarketSnapshot,
+  MarketVerdict,
+  GameArchetype,
+  PlatformType,
+  NormalizedGame,
+  SnapshotSummary,
+  PLATFORM_TYPES,
+} from './types.js';
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
-import { escapeHtml } from './utils/dom.js';
+import { escapeHtml, pickOption } from './utils/dom.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { RadarOverviewViewComponent } from './components/RadarOverviewView.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { DetailDrawerComponent } from './components/DetailDrawer.js';
-import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
-import { GameTableViewComponent } from './components/GameTableView.js';
+import { GameTableViewComponent, TableSortColumn, TableSortDirection } from './components/GameTableView.js';
 import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { MoversViewComponent } from './components/MoversView.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
@@ -44,6 +51,20 @@ export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu };
 export type { PopularSearchTag };
 
 
+export const VERDICT_SORTS = ['score_desc', 'score_asc', 'ccu_desc', 'velocity_desc', 'title_asc'] as const;
+type VerdictSort = (typeof VERDICT_SORTS)[number];
+export const STATUS_FILTERS = ['all', 'GREEN_LIGHT', 'YELLOW_LIGHT', 'RED_LIGHT', 'arbitrage'] as const;
+type StatusFilter = (typeof STATUS_FILTERS)[number];
+export const PLATFORM_FILTERS = ['all', ...PLATFORM_TYPES] as const;
+
+/** Значения селекта сортировки каталога → колонка и направление таблицы. */
+export const CATALOG_SORTS: Record<string, [TableSortColumn, TableSortDirection]> = {
+  ccu_desc: ['ccu', 'desc'],
+  ccu_asc: ['ccu', 'asc'],
+  likes_desc: ['likes', 'desc'],
+  title_asc: ['title', 'asc'],
+};
+
 class App {
   private snapshot: MarketSnapshot = FALLBACK_SNAPSHOT;
   private snapshotsList: SnapshotSummary[] = [];
@@ -51,10 +72,10 @@ class App {
   private currentSnapshotId: string = '';
   private previousSnapshot: MarketSnapshot | null = null;
   private activePlatform: 'all' | PlatformType = 'all';
-  private activeStatus: 'all' | 'GREEN_LIGHT' | 'YELLOW_LIGHT' | 'RED_LIGHT' | 'arbitrage' = 'all';
+  private activeStatus: StatusFilter = 'all';
   private activeArchetype: GameArchetype | null = null;
   private searchQuery: string = '';
-  private sortBy: 'score_desc' | 'score_asc' | 'ccu_desc' | 'velocity_desc' | 'title_asc' = 'score_desc';
+  private sortBy: VerdictSort = 'score_desc';
   private isScanning: boolean = false;
   private currentView: WorkspaceId = 'radar';
   private metricsInitialized = false;
@@ -65,14 +86,15 @@ class App {
     topScore: 0,
     arbitrageCount: 0,
   };
+  /** Снимок, чьи метрики сейчас на экране — демо-данные не годятся базой для % изменения CCU. */
+  private metricsSnapshotId: string | null = null;
 
   private radarOverviewView?: RadarOverviewViewComponent;
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
   private liveTicker!: LiveTickerComponent;
   private detailDrawer!: DetailDrawerComponent;
-  private gameCatalog!: GameCatalogComponent;
-  private gameTableView!: GameTableViewComponent;
+  private gameTableView?: GameTableViewComponent;
   private arbitrageMatrix!: ArbitrageMatrixComponent;
   private moversView!: MoversViewComponent;
   private promptModal!: PromptGeneratorModalComponent;
@@ -168,7 +190,7 @@ class App {
     // Sort select
     const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
     sortSelect?.addEventListener('change', e => {
-      this.sortBy = (e.target as HTMLSelectElement).value as any;
+      this.sortBy = pickOption((e.target as HTMLSelectElement).value, VERDICT_SORTS) ?? 'score_desc';
       soundService.playClick();
       this.applyFiltersAndSort();
     });
@@ -179,7 +201,7 @@ class App {
       pill.addEventListener('click', () => {
         platformPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        this.activePlatform = pill.getAttribute('data-platform') as any;
+        this.activePlatform = pickOption(pill.getAttribute('data-platform'), PLATFORM_FILTERS) ?? 'all';
         soundService.playClick();
         this.applyFiltersAndSort();
       });
@@ -191,7 +213,7 @@ class App {
       pill.addEventListener('click', () => {
         statusPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        this.activeStatus = pill.getAttribute('data-status') as any;
+        this.activeStatus = pickOption(pill.getAttribute('data-status'), STATUS_FILTERS) ?? 'all';
         soundService.playClick();
         this.applyFiltersAndSort();
       });
@@ -214,8 +236,8 @@ class App {
         const presetVal = parseInt(btn.getAttribute('data-ccu') || '0', 10);
         btn.classList.toggle('active', presetVal === val);
       });
-      if (this.gameCatalog) {
-        this.gameCatalog.setMinCcu(val);
+      if (this.gameTableView) {
+        this.gameTableView.setMinCcu(val);
         this.updateCatalogCountUI();
       }
     };
@@ -247,8 +269,8 @@ class App {
     catalogSearchInput?.addEventListener('input', e => {
       const query = (e.target as HTMLInputElement).value;
       updateCatalogClearVisibility();
-      if (this.gameCatalog) {
-        this.gameCatalog.setSearchQuery(query);
+      if (this.gameTableView) {
+        this.gameTableView.setSearchQuery(query);
         this.updateCatalogCountUI();
       }
     });
@@ -260,8 +282,8 @@ class App {
       }
       updateCatalogClearVisibility();
       soundService.playClick();
-      if (this.gameCatalog) {
-        this.gameCatalog.setSearchQuery('');
+      if (this.gameTableView) {
+        this.gameTableView.setSearchQuery('');
         this.updateCatalogCountUI();
       }
     });
@@ -272,10 +294,10 @@ class App {
       pill.addEventListener('click', () => {
         catalogPlatformPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        const platform = pill.getAttribute('data-catalog-platform') as any;
+        const platform = pickOption(pill.getAttribute('data-catalog-platform'), PLATFORM_FILTERS) ?? 'all';
         soundService.playClick();
-        if (this.gameCatalog) {
-          this.gameCatalog.setPlatform(platform);
+        if (this.gameTableView) {
+          this.gameTableView.setPlatform(platform);
           this.updateCatalogCountUI();
         }
       });
@@ -284,10 +306,10 @@ class App {
     // Catalog Sort Select
     const catalogSortSelect = document.getElementById('catalog-sort-select') as HTMLSelectElement;
     catalogSortSelect?.addEventListener('change', e => {
-      const sort = (e.target as HTMLSelectElement).value as any;
+      const sort = CATALOG_SORTS[(e.target as HTMLSelectElement).value];
       soundService.playClick();
-      if (this.gameCatalog) {
-        this.gameCatalog.setSort(sort);
+      if (this.gameTableView && sort) {
+        this.gameTableView.setSort(sort[0], sort[1]);
       }
     });
 
@@ -299,14 +321,14 @@ class App {
       btnViewGrid.classList.add('active');
       btnViewTable?.classList.remove('active');
       soundService.playClick();
-      this.gameCatalog?.setViewMode('grid');
+      this.gameTableView?.setViewMode('grid');
     });
 
     btnViewTable?.addEventListener('click', () => {
       btnViewTable.classList.add('active');
       btnViewGrid?.classList.remove('active');
       soundService.playClick();
-      this.gameCatalog?.setViewMode('table');
+      this.gameTableView?.setViewMode('table');
     });
   }
 
@@ -345,8 +367,8 @@ class App {
         this.radarChart?.updateData(this.getFilteredVerdicts(), null);
         this.applyFiltersAndSort();
         this.renderLegend();
-        if (this.gameCatalog) {
-          this.gameCatalog.setSearchQuery('');
+        if (this.gameTableView) {
+          this.gameTableView.setSearchQuery('');
           this.updateCatalogCountUI();
         }
       },
@@ -656,15 +678,13 @@ class App {
           if (catalogSearchInput) {
             catalogSearchInput.value = tag;
           }
-          this.gameTableView.setSearchQuery(tag);
+          this.gameTableView?.setSearchQuery(tag);
           this.updateCatalogCountUI();
         },
         onFilterChange: () => {
           this.updateCatalogCountUI();
         },
       });
-      // Backward compatibility pointer
-      this.gameCatalog = this.gameTableView as any;
       this.updateCatalogCountUI();
     }
 
@@ -757,7 +777,7 @@ class App {
     const countText = document.getElementById('catalog-count-text');
     const tabBadge = document.getElementById('tab-games-count');
     const total = this.snapshot.games?.length || this.snapshot.totalGamesScanned || 0;
-    const filtered = this.gameCatalog ? this.gameCatalog.getFilteredCount() : total;
+    const filtered = this.gameTableView ? this.gameTableView.getFilteredCount() : total;
 
     if (tabBadge) {
       tabBadge.textContent = total.toString();
@@ -1012,7 +1032,6 @@ class App {
     this.renderSearchTags();
     this.liveTicker?.updateData(this.snapshot);
     this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
-    this.gameCatalog?.updateData(this.snapshot.games || []);
     this.gameTableView?.updateData(this.snapshot.games || [], this.snapshot.verdicts || []);
     this.updateCatalogCountUI();
     this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
@@ -1215,8 +1234,10 @@ class App {
     const arbitrageCountEl = document.getElementById('metric-arbitrage-count');
     const platformsHintEl = document.getElementById('metric-platforms-hint');
 
-    // База для % изменения CCU — значение, показанное ДО этого обновления
-    const m = computeMarketMetrics(this.snapshot, this.previousSnapshot, this.prevMetrics.totalCcu);
+    // База для % изменения CCU — реальный снимок, показанный ДО этого обновления
+    const baselineIsReal = this.metricsSnapshotId !== null && this.metricsSnapshotId !== FALLBACK_SNAPSHOT.id;
+    const m = computeMarketMetrics(this.snapshot, this.previousSnapshot, baselineIsReal ? this.prevMetrics.totalCcu : 0);
+    this.metricsSnapshotId = this.snapshot.id;
     if (topGenreEl && m.topGenreTitle !== null) {
       topGenreEl.textContent = m.topGenreTitle;
     }
