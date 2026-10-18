@@ -1,6 +1,6 @@
 import { NormalizedGame, MarketVerdict } from '../../types.js';
 import { escapeHtml } from '../../utils/dom.js';
-import { getPlatformMeta } from './platform.js';
+import { getPlatformMeta } from '../../utils/labels.js';
 
 /**
  * Builds the drawer body HTML for Archetype View mode

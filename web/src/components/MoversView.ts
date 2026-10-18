@@ -23,7 +23,8 @@ export type {
   BreakoutItem,
   MoversViewOptions,
 } from './movers/types.js';
-export { ARCHETYPE_RU_MAP, PLATFORM_NAMES, ICONS } from './movers/constants.js';
+export { PLATFORM_NAMES, ICONS } from './movers/constants.js';
+export { ARCHETYPE_RU_MAP } from '../utils/labels.js';
 export { cleanDisplayTitle, formatCCU } from './movers/format.js';
 export { generateMoversSparkline } from './movers/sparkline.js';
 export {

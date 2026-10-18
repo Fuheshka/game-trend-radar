@@ -1,5 +1,7 @@
 import { ArbitrageOpportunity, NormalizedGame, ArbitrageAnalogMatch, GameArchetype } from '../types.js';
 import { escapeHtml, safeHref, safeUrl } from '../utils/dom.js';
+import { cleanDisplayTitle } from '../utils/format.js';
+import { ARCHETYPE_RU_MAP } from '../utils/labels.js';
 
 export interface ArbitrageMatrixOptions {
   container: HTMLElement;
@@ -10,27 +12,8 @@ export interface ArbitrageMatrixOptions {
   showToast?: (message: string) => void;
 }
 
-export const ARCHETYPE_RU: Record<GameArchetype, string> = {
-  SIMULATION_INCREMENTAL: 'Симуляторы и +1',
-  PHYSICS_SANDBOX: 'Сендбокс и физика',
-  MERGE_IDLE: 'Мёрдж и крафт',
-  SURVIVAL_HORROR: 'Сурвайвал хоррор',
-  WORD_PUZZLE: 'Словесные игры',
-  ACTION_SHOOTER: 'Экшен и шутеры',
-  OBBY_PARKOUR: 'Обби и паркур',
-  OTHER_CASUAL: 'Казуальные игры',
-};
+export { cleanDisplayTitle };
 
-export function cleanDisplayTitle(title: string): string {
-  if (!title) return '';
-  return title
-    .replace(/\[\s*\]/g, '') // empty square brackets [ ]
-    .replace(/\(\s*\)/g, '') // empty round brackets ( )
-    .replace(/\[\p{Extended_Pictographic}[^\]]*\]/gu, '') // emoji tags in brackets like [🌋]
-    .replace(/\p{Extended_Pictographic}|\uFE0F|\uFE0E/gu, '') // loose emojis
-    .replace(/\s+/g, ' ')
-    .trim();
-}
 
 export function formatCCU(val: number): string {
   const formatted = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -85,7 +68,7 @@ export function resolveWindowLeadTime(potential: string): { label: string; time:
 export function formatArbitragePitch(opp: ArbitrageOpportunity): string {
   const displayDonorTitle = cleanDisplayTitle(opp.robloxGame.title);
   const donorPlatform = opp.robloxGame.platform === 'roblox' ? 'Roblox' : 'YouTube Shorts';
-  const archetypeLabel = ARCHETYPE_RU[opp.archetype] || opp.archetype;
+  const archetypeLabel = ARCHETYPE_RU_MAP[opp.archetype] || opp.archetype;
   const donorCcu = formatCCU(opp.robloxCCU || opp.robloxGame.metricValue || 0);
   const donorRating = formatRating(opp.robloxGame.likeRatio);
 
@@ -319,16 +302,6 @@ export class ArbitrageMatrixComponent {
     }, 4000);
   }
 
-  private formatCCU(val: number): string {
-    const formatted = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    return `${formatted} CCU`;
-  }
-
-  private formatRating(likeRatio?: number): string {
-    if (likeRatio === undefined || likeRatio === null) return '—';
-    return `${Math.round(likeRatio * 100)}% 👍`;
-  }
-
   private resolveEngineRecommendation(archetype: GameArchetype): string {
     switch (archetype) {
       case 'PHYSICS_SANDBOX':
@@ -428,9 +401,9 @@ export class ArbitrageMatrixComponent {
       const recommendedEngine = this.resolveEngineRecommendation(opp.archetype);
       const similarityPercent = Math.round((opp.similarityWithNearestAnalog || 0) * 100);
       const donorPlatform = opp.robloxGame.platform === 'roblox' ? 'Roblox' : 'YouTube Shorts';
-      const archetypeLabel = ARCHETYPE_RU[opp.archetype] || opp.archetype;
-      const donorRating = this.formatRating(opp.robloxGame.likeRatio);
-      const donorCcu = this.formatCCU(opp.robloxCCU || opp.robloxGame.metricValue);
+      const archetypeLabel = ARCHETYPE_RU_MAP[opp.archetype] || opp.archetype;
+      const donorRating = formatRating(opp.robloxGame.likeRatio);
+      const donorCcu = formatCCU(opp.robloxCCU || opp.robloxGame.metricValue);
 
       // Analog information
       const hasAnalog = opp.nearestAnalog !== null && opp.nearestAnalog !== undefined && similarityPercent >= 20;

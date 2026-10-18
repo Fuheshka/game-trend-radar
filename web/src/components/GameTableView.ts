@@ -17,7 +17,7 @@ export type {
   GameTableViewOptions,
   SparklineData,
 } from './gameTable/types.js';
-export { ARCHETYPE_RU_MAP } from './gameTable/constants.js';
+export { ARCHETYPE_RU_MAP } from '../utils/labels.js';
 export { generateGameSparkline } from './gameTable/sparkline.js';
 
 export class GameTableView {

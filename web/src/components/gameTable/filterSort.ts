@@ -1,5 +1,5 @@
 import { NormalizedGame, PlatformType } from '../../types.js';
-import { ARCHETYPE_RU_MAP } from './constants.js';
+import { ARCHETYPE_RU_MAP } from '../../utils/labels.js';
 import { generateGameSparkline } from './sparkline.js';
 import type { OpportunityScoreGetter, TableSortColumn, TableSortDirection } from './types.js';
 

@@ -1,4 +1,19 @@
-import { PlatformType } from '../../types.js';
+/**
+ * Подписи и ссылки витрин, общие для всех экранов дашборда.
+ */
+import { GameArchetype, PlatformType } from '../types.js';
+
+/** Русские названия архетипов для бейджей и фильтров. */
+export const ARCHETYPE_RU_MAP: Record<GameArchetype, string> = {
+  SIMULATION_INCREMENTAL: 'Симуляторы и +1',
+  PHYSICS_SANDBOX: 'Сендбокс и физика',
+  MERGE_IDLE: 'Мёрдж и крафт',
+  SURVIVAL_HORROR: 'Сурвайвал хоррор',
+  WORD_PUZZLE: 'Словесные игры',
+  ACTION_SHOOTER: 'Экшен и шутеры',
+  OBBY_PARKOUR: 'Обби и паркур',
+  OTHER_CASUAL: 'Казуальные игры',
+};
 
 export interface PlatformMeta {
   label: string;
@@ -6,6 +21,7 @@ export interface PlatformMeta {
   iconSvg: string;
 }
 
+/** Подпись, класс бейджа и иконка витрины. */
 export function getPlatformMeta(platform: PlatformType): PlatformMeta {
   switch (platform) {
     case 'roblox':
@@ -16,7 +32,7 @@ export function getPlatformMeta(platform: PlatformType): PlatformMeta {
       };
     case 'yandex_games':
       return {
-        label: 'Yandex Games',
+        label: 'Яндекс Игры',
         badgeClass: 'badge-yandex',
         iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 12c0-5.25 4.25-9.5 9.5-9.5s9.5 4.25 9.5 9.5-4.25 9.5-9.5 9.5-9.5-4.25-9.5-9.5zm9.5-5.5c-3.04 0-5.5 2.46-5.5 5.5s2.46 5.5 5.5 5.5 5.5-2.46 5.5-5.5-2.46-5.5-5.5-5.5z"/></svg>`,
       };
@@ -41,6 +57,7 @@ export function getPlatformMeta(platform: PlatformType): PlatformMeta {
   }
 }
 
+/** Поиск игры на витрине — когда в данных нет прямой ссылки. */
 export function generatePlatformSearchUrl(platform: PlatformType, title: string): string {
   const encoded = encodeURIComponent(title);
   switch (platform) {

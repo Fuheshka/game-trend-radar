@@ -1,6 +1,6 @@
 import { NormalizedGame, MarketVerdict } from '../../types.js';
 import { escapeHtml, safeHref } from '../../utils/dom.js';
-import { PlatformMeta, generatePlatformSearchUrl } from './platform.js';
+import { PlatformMeta, generatePlatformSearchUrl } from '../../utils/labels.js';
 
 /**
  * Builds the drawer body HTML for Game View mode

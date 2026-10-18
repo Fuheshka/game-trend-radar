@@ -1,5 +1,7 @@
 import { NormalizedGame, PlatformType, GameArchetype } from '../types.js';
 import { escapeHtml, safeHref } from '../utils/dom.js';
+import { formatCompactNumber } from '../utils/format.js';
+import { ARCHETYPE_RU_MAP, generatePlatformSearchUrl, getPlatformMeta } from '../utils/labels.js';
 
 export interface GameCatalogOptions {
   container: HTMLElement;
@@ -10,17 +12,6 @@ export interface GameCatalogOptions {
 
 export type CatalogViewMode = 'grid' | 'table';
 export type CatalogSortBy = 'ccu_desc' | 'ccu_asc' | 'title_asc' | 'likes_desc';
-
-const ARCHETYPE_RU: Record<GameArchetype, string> = {
-  SIMULATION_INCREMENTAL: 'Симуляторы и +1',
-  PHYSICS_SANDBOX: 'Сендбокс и физика',
-  MERGE_IDLE: 'Мёрдж и крафт',
-  SURVIVAL_HORROR: 'Сурвайвал хоррор',
-  WORD_PUZZLE: 'Словесные игры',
-  ACTION_SHOOTER: 'Экшен и шутеры',
-  OBBY_PARKOUR: 'Обби и паркур',
-  OTHER_CASUAL: 'Казуальные игры',
-};
 
 export class GameCatalogComponent {
   private container: HTMLElement;
@@ -174,7 +165,7 @@ export class GameCatalogComponent {
         const inTitle = game.title.toLowerCase().includes(q);
         const inGenre = game.genre?.toLowerCase().includes(q) ?? false;
         const inArch = game.archetype.toLowerCase().includes(q);
-        const inArchRu = (ARCHETYPE_RU[game.archetype] || '').toLowerCase().includes(q);
+        const inArchRu = (ARCHETYPE_RU_MAP[game.archetype] || '').toLowerCase().includes(q);
         const inTags = (game.tags || []).some(t => t.toLowerCase().includes(q));
 
         if (!inTitle && !inGenre && !inArch && !inArchRu && !inTags) {
@@ -287,11 +278,11 @@ export class GameCatalogComponent {
   }
 
   private renderGameCard(game: NormalizedGame): string {
-    const pMeta = this.getPlatformMeta(game.platform);
-    const archName = ARCHETYPE_RU[game.archetype] || game.archetype;
+    const pMeta = getPlatformMeta(game.platform);
+    const archName = ARCHETYPE_RU_MAP[game.archetype] || game.archetype;
     const metricStr = this.formatGameMetric(game);
     const likeStr = this.formatGameLikes(game);
-    const gameUrl = game.url || this.generatePlatformSearchUrl(game.platform, game.title);
+    const gameUrl = game.url || generatePlatformSearchUrl(game.platform, game.title);
 
     const tags = (game.tags || []).slice(0, 3);
     const tagsHtml = tags
@@ -376,11 +367,11 @@ export class GameCatalogComponent {
   }
 
   private renderTableRow(game: NormalizedGame): string {
-    const pMeta = this.getPlatformMeta(game.platform);
-    const archName = ARCHETYPE_RU[game.archetype] || game.archetype;
+    const pMeta = getPlatformMeta(game.platform);
+    const archName = ARCHETYPE_RU_MAP[game.archetype] || game.archetype;
     const metricStr = this.formatGameMetric(game);
     const likeStr = this.formatGameLikes(game);
-    const gameUrl = game.url || this.generatePlatformSearchUrl(game.platform, game.title);
+    const gameUrl = game.url || generatePlatformSearchUrl(game.platform, game.title);
 
     return `
       <tr class="catalog-table-row" data-game-id="${escapeHtml(game.id)}" tabindex="0" role="button">
@@ -425,7 +416,7 @@ export class GameCatalogComponent {
 
   private formatGameMetric(game: NormalizedGame): string {
     if (game.metricType === 'ccu') {
-      return `${this.formatNumber(game.metricValue)} CCU`;
+      return `${formatCompactNumber(game.metricValue)} CCU`;
     }
     if (game.metricType === 'rating') {
       return `${game.metricValue}/100`;
@@ -436,7 +427,7 @@ export class GameCatalogComponent {
     if (game.metricType === 'viral_score') {
       return `${game.metricValue} score`;
     }
-    return this.formatNumber(game.metricValue);
+    return formatCompactNumber(game.metricValue);
   }
 
   private formatGameLikes(game: NormalizedGame): string {
@@ -446,66 +437,4 @@ export class GameCatalogComponent {
     }
     return '';
   }
-
-  private formatNumber(n: number): string {
-    if (n >= 1_000_000) return (n / 1_000_000).toFixed(2).replace(/\.00$/, '') + 'M';
-    if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
-    return Math.round(n).toLocaleString();
-  }
-
-  private getPlatformMeta(platform: PlatformType): {
-    label: string;
-    badgeClass: string;
-    iconSvg: string;
-  } {
-    switch (platform) {
-      case 'roblox':
-        return {
-          label: 'Roblox',
-          badgeClass: 'badge-roblox',
-          iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M5.33 2.5L2.5 18.67l16.17 2.83 2.83-16.17L5.33 2.5zm8.5 10.33l-3.66-.64.64-3.67 3.67.64-.65 3.67z"/></svg>`,
-        };
-      case 'yandex_games':
-        return {
-          label: 'Yandex Games',
-          badgeClass: 'badge-yandex',
-          iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 12c0-5.25 4.25-9.5 9.5-9.5s9.5 4.25 9.5 9.5-4.25 9.5-9.5 9.5-9.5-4.25-9.5-9.5zm9.5-5.5c-3.04 0-5.5 2.46-5.5 5.5s2.46 5.5 5.5 5.5 5.5-2.46 5.5-5.5-2.46-5.5-5.5-5.5z"/></svg>`,
-        };
-      case 'poki':
-        return {
-          label: 'Poki',
-          badgeClass: 'badge-poki',
-          iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>`,
-        };
-      case 'youtube_trends':
-        return {
-          label: 'Shorts',
-          badgeClass: 'badge-shorts',
-          iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="10 8 16 12 10 16 10 8"/></svg>`,
-        };
-      default:
-        return {
-          label: platform,
-          badgeClass: 'badge-neutral',
-          iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/></svg>`,
-        };
-    }
-  }
-
-  private generatePlatformSearchUrl(platform: PlatformType, title: string): string {
-    const encoded = encodeURIComponent(title);
-    switch (platform) {
-      case 'roblox':
-        return `https://www.roblox.com/discover/?Keyword=${encoded}`;
-      case 'yandex_games':
-        return `https://yandex.ru/games/search?query=${encoded}`;
-      case 'poki':
-        return `https://poki.com/en/g/${encodeURIComponent(title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}`;
-      case 'youtube_trends':
-        return `https://www.youtube.com/results?search_query=${encoded}+game`;
-      default:
-        return `https://www.google.com/search?q=${encoded}+game`;
-    }
-  }
-
 }

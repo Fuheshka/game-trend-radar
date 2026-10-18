@@ -18,9 +18,26 @@ export function formatSnapshotDateRu(dateStr: string): string {
   return dateStr;
 }
 
-/** 1 234 567 → '1.2M', 12 345 → '12.3k'. */
+/** 1 234 567 → '1.2M', 1 000 000 → '1M', 12 345 → '12.3k'. */
 export function formatCompactNumber(n: number): string {
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
-  return Math.round(n).toLocaleString();
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
+  return Math.round(n).toString();
+}
+
+/**
+ * Чистит название игры от пустых скобок и эмодзи ('[🌋] Ride A Pet' → 'Ride A Pet').
+ * Если от названия ничего не осталось (оно целиком из эмодзи) — возвращает исходное.
+ */
+export function cleanDisplayTitle(title: string): string {
+  if (!title) return '';
+  return (
+    title
+      .replace(/\[\s*\]/g, '') // empty square brackets [ ]
+      .replace(/\(\s*\)/g, '') // empty round brackets ( )
+      .replace(/\[\p{Extended_Pictographic}[^\]]*\]/gu, '') // emoji tags in brackets like [🌋]
+      .replace(/\p{Extended_Pictographic}|\uFE0F|\uFE0E/gu, '') // loose emojis
+      .replace(/\s+/g, ' ')
+      .trim() || title
+  );
 }

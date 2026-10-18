@@ -1,5 +1,5 @@
 import { getStatusColor } from './constants.js';
-import { formatNumber } from './format.js';
+import { formatCompactNumber } from '../../utils/format.js';
 import { createDefs, createSweepBeam } from './sweep.js';
 import { RadarRenderContext } from './types.js';
 
@@ -222,7 +222,7 @@ export function renderPolarDonut(ctx: RadarRenderContext): void {
   totalText.setAttribute('font-family', 'JetBrains Mono');
   totalText.setAttribute('font-size', '16');
   totalText.setAttribute('font-weight', '700');
-  totalText.textContent = formatNumber(totalCCU);
+  totalText.textContent = formatCompactNumber(totalCCU);
 
   const subText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   subText.setAttribute('x', String(cx));

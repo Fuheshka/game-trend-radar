@@ -1,5 +1,6 @@
 import { MarketSnapshot, PlatformType, GameArchetype, NormalizedGame, ArbitrageOpportunity, MarketVerdict } from '../types.js';
 import { escapeHtml } from '../utils/dom.js';
+import { formatCompactNumber } from '../utils/format.js';
 
 export type SignalIconType = 'flame' | 'zap' | 'trending-up' | 'globe' | 'gamepad' | 'check-circle';
 
@@ -32,17 +33,7 @@ export interface LiveTickerOptions {
   onSelectSignal: (signal: TickerSignal) => void;
 }
 
-export function formatCompactNumber(n: number): string {
-  if (n >= 1_000_000) {
-    const val = (n / 1_000_000).toFixed(1).replace(/\.0$/, '');
-    return `${val}M`;
-  }
-  if (n >= 1_000) {
-    const val = (n / 1_000).toFixed(1).replace(/\.0$/, '');
-    return `${val}k`;
-  }
-  return Math.round(n).toString();
-}
+export { formatCompactNumber };
 
 export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
   const signals: TickerSignal[] = [];

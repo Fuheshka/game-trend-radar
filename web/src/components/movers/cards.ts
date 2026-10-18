@@ -1,6 +1,7 @@
 import { escapeHtml } from '../../utils/dom.js';
 import { BreakoutItem, GainerItem, SparklineData, ViralSignalItem } from './types.js';
-import { ARCHETYPE_RU_MAP, ICONS, PLATFORM_NAMES } from './constants.js';
+import { ICONS, PLATFORM_NAMES } from './constants.js';
+import { ARCHETYPE_RU_MAP } from '../../utils/labels.js';
 import { cleanDisplayTitle, formatCCU } from './format.js';
 
 export function renderSparklineSvg(spark: SparklineData, color: string): string {

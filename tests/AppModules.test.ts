@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { POPULAR_SEARCH_TAGS, countGamesForTag, isTagActive, verdictMatchesQuery } from '../web/src/app/search.js';
 import { computeMarketMetrics } from '../web/src/app/metrics.js';
-import { formatCompactNumber, formatSnapshotDateRu } from '../web/src/utils/format.js';
+import { cleanDisplayTitle, formatCompactNumber, formatSnapshotDateRu } from '../web/src/utils/format.js';
+import { ARCHETYPE_RU_MAP, generatePlatformSearchUrl, getPlatformMeta } from '../web/src/utils/labels.js';
 import { FALLBACK_SNAPSHOT } from '../web/src/fallbackData.js';
 import { MarketSnapshot } from '../web/src/types.js';
 
@@ -11,6 +12,21 @@ describe('модули App: поиск, метрики, форматирован
     expect(formatSnapshotDateRu('not-a-date')).toBe('not-a-date');
     expect(formatCompactNumber(1_234_567)).toBe('1.2M');
     expect(formatCompactNumber(12_345)).toBe('12.3k');
+    expect(formatCompactNumber(1_000_000)).toBe('1M');
+    expect(formatCompactNumber(999.6)).toBe('1000');
+  });
+
+  it('cleanDisplayTitle не превращает название из одних эмодзи в пустую строку', () => {
+    expect(cleanDisplayTitle('[🌋] Ride A Pet')).toBe('Ride A Pet');
+    expect(cleanDisplayTitle('🔥🔥')).toBe('🔥🔥');
+  });
+
+  it('общие подписи витрин и архетипов', () => {
+    expect(ARCHETYPE_RU_MAP.OBBY_PARKOUR).toBe('Обби и паркур');
+    expect(getPlatformMeta('yandex_games').label).toBe('Яндекс Игры');
+    expect(generatePlatformSearchUrl('roblox', 'Steal An Egg')).toBe(
+      'https://www.roblox.com/discover/?Keyword=Steal%20An%20Egg'
+    );
   });
 
   it('isTagActive учитывает запрос, метку и частичное совпадение', () => {

@@ -1,6 +1,6 @@
 import { NormalizedGame, MarketVerdict, GameArchetype } from '../types.js';
 import { TickerSignal } from './LiveTicker.js';
-import { getPlatformMeta } from './detailDrawer/platform.js';
+import { getPlatformMeta } from '../utils/labels.js';
 import { buildGameBodyHtml } from './detailDrawer/gameView.js';
 import { buildArchetypeBodyHtml } from './detailDrawer/archetypeView.js';
 import { buildSignalBodyHtml } from './detailDrawer/signalView.js';

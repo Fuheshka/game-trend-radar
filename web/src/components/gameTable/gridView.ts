@@ -1,7 +1,8 @@
 import { NormalizedGame } from '../../types.js';
 import { escapeHtml, safeHref } from '../../utils/dom.js';
-import { ARCHETYPE_RU_MAP } from './constants.js';
-import { formatLikes, formatMetricVal, generatePlatformSearchUrl, getPlatformMeta } from './formatters.js';
+import { ARCHETYPE_RU_MAP } from '../../utils/labels.js';
+import { formatLikes, formatMetricVal } from './formatters.js';
+import { generatePlatformSearchUrl, getPlatformMeta } from '../../utils/labels.js';
 import { generateGameSparkline } from './sparkline.js';
 import type { OpportunityScoreGetter } from './types.js';
 
