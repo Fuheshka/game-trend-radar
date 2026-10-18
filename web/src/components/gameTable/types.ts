@@ -13,6 +13,9 @@ export type TableSortColumn =
 export type TableSortDirection = 'asc' | 'desc';
 export type TableViewMode = 'table' | 'grid';
 
+/** Строк на странице каталога: 100 строк таблицы давали ~4k DOM-узлов при открытии вкладки. */
+export const CATALOG_PAGE_SIZE = 50;
+
 export interface GameTableViewOptions {
   container: HTMLElement;
   games: NormalizedGame[];

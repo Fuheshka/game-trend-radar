@@ -5,6 +5,7 @@ import { formatLikes, formatMetricVal } from './formatters.js';
 import { generatePlatformSearchUrl, getPlatformMeta } from '../../utils/labels.js';
 import { generateGameSparkline } from './sparkline.js';
 import type { OpportunityScoreGetter } from './types.js';
+import { CATALOG_PAGE_SIZE } from './types.js';
 
 export function renderGridView(
   games: NormalizedGame[],
@@ -25,7 +26,7 @@ export function renderGridView(
         ? `
       <div class="steamdb-pagination-row">
         <button type="button" class="btn-steamdb-more" id="btn-table-load-more">
-          Показать еще (+100)
+          Показать еще (+${CATALOG_PAGE_SIZE})
         </button>
         <button type="button" class="btn-steamdb-all" id="btn-table-load-all">
           Показать все (${games.length})

@@ -951,6 +951,8 @@ class App {
     const statusText = document.getElementById('server-status-text');
 
     const list = await fetchSnapshotList();
+    // /api/snapshots недоступен — статика (GitHub Pages) или сервер лежит: запускать скан некуда
+    this.headerStatusBar?.setScanAvailable(list !== null);
     if (list) {
       this.snapshotsList = list;
       statusDot?.classList.remove('offline');
@@ -1106,6 +1108,7 @@ class App {
     liveEventService.onStatusChange(status => {
       this.headerStatusBar?.setSseStatus(status);
       if (status === 'connected') {
+        this.headerStatusBar?.setScanAvailable(true); // сервер поднялся после загрузки страницы
         statusDot?.classList.remove('offline');
         if (statusText) statusText.textContent = 'HTTP :4200 (SSE Live)';
       } else if (status === 'reconnecting') {
@@ -1292,6 +1295,7 @@ class App {
       topDayGameTitle: m.topGameTitle,
       updatedText: formatMinutesAgo(this.snapshot.timestamp),
     });
+    this.headerStatusBar?.setSourceStatus(this.snapshot.sourceStatus);
     this.refreshFreshness();
   }
 

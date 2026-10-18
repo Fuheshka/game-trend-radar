@@ -391,7 +391,7 @@ describe('GameTableView (SteamDB-style high density table & interactive catalog)
     expect(onSelect).not.toHaveBeenCalled();
   });
 
-  it('10. Должен поддерживать рендеринг 50+ видимых строк высокой плотности', () => {
+  it('10. Первая страница — 50 строк, «Показать еще» добавляет ещё 50', () => {
     // Генерируем 60 игр
     const largeGameList: NormalizedGame[] = [];
     for (let i = 1; i <= 60; i++) {
@@ -418,8 +418,14 @@ describe('GameTableView (SteamDB-style high density table & interactive catalog)
     });
 
     expect(tableView.getFilteredCount()).toBe(60);
-    // Проверяем, что в HTML отрисовано не менее 50 строк
-    const matches = (mockContainer.innerHTML.match(/steamdb-table-row/g) || []).length;
-    expect(matches).toBeGreaterThanOrEqual(50);
+    const rows = () => (mockContainer.innerHTML.match(/<tr class="steamdb-table-row/g) || []).length;
+    expect(rows()).toBe(50);
+    expect(mockContainer.innerHTML).toContain('Показать еще (+50)');
+    expect(mockContainer.innerHTML).toContain('Показать все (60)');
+
+    const loadMore = { closest: (sel: string) => (sel === '#btn-table-load-more' ? loadMore : null) };
+    listeners['click']({ target: loadMore, stopPropagation: vi.fn() });
+    expect(rows()).toBe(60);
+    expect(mockContainer.innerHTML).not.toContain('btn-table-load-more');
   });
 });

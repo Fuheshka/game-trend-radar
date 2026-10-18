@@ -99,7 +99,7 @@ Set env vars in `.env` on the server (see [`.env.example`](.env.example); `ecosy
 
 - `POST /api/scan` returns `202` immediately; progress arrives over SSE. Use `?wait=1` to block until the snapshot is returned.
 - A scan with an empty Roblox response is **rejected** (nothing is saved, `scan:failed` is broadcast) — a bad API day cannot overwrite good data. Per-source status is stored in `snapshot.sourceStatus`.
-- `GET /healthz` — status (`ok`/`stale`/`empty`), snapshot age, next auto-scan. Use it for uptime monitors.
+- `GET /healthz` — status (`ok`/`stale`/`empty`), snapshot age, next auto-scan, per-source collector status (`sources`; `warning` when a storefront parser suddenly collects far fewer games). Use it for uptime monitors.
 - `GET /api/history?hours=24` — intraday time series.
 - SSE events carry `id:`; reconnecting clients replay missed events via `Last-Event-ID`.
 - Static files and API JSON are gzip-compressed with ETag; hashed assets are `immutable`.

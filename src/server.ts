@@ -255,6 +255,8 @@ export function createRadarServer(options: RadarServerOptions = {}) {
             status: latest === null ? 'empty' : ageMin! > staleLimit ? 'stale' : 'ok',
             uptimeSec: Math.round((Date.now() - startedAt) / 1000),
             lastSnapshot: latest ? { id: latest.id, timestamp: latest.timestamp, ageMinutes: ageMin } : null,
+            // Статус коллекторов последнего скана; warning — тихая деградация парсера витрины
+            sources: latest?.sourceStatus ?? null,
             scanning: activeScanPromise !== null,
             lastScanError,
             sseClients: eventBus.getClientCount(),

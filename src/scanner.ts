@@ -14,6 +14,7 @@ import {
   NormalizedGame,
   PlatformType,
   ShortsVideoItem,
+  SourceStatus,
 } from './types/index.js';
 import { MarketEventBus } from './events/event_bus.js';
 
@@ -25,13 +26,38 @@ export interface CollectorProgressEvent {
   pct: number;
 }
 
-export interface SourceStatus {
-  ok: boolean;
-  count: number;
-  error?: string;
-}
+export type { SourceStatus };
 
 export const MIN_TOTAL_GAMES = 5;
+
+/** Минимум игр с витрины, ниже которого сбор считается неполным (типичный объём: Roblox ~280, Яндекс ~150, Poki 100). */
+export const SOURCE_MIN_COUNT: Partial<Record<CollectorSource, number>> = { roblox: 50, yandex_games: 50, poki: 30 };
+/** Падение ниже этой доли от последнего здорового скана — предупреждение. YouTube не проверяется: 5±3 позиций — норма. */
+export const SOURCE_DROP_RATIO = 0.5;
+
+/**
+ * Парсеры витрин при смене вёрстки не падают, а тихо собирают меньше игр.
+ * Сравнивает count с минимумом и с базой — count последнего здорового скана. База переносится
+ * через деградировавшие сканы, поэтому предупреждение держится до восстановления, а не один скан.
+ */
+export function assessSourceHealth(
+  source: CollectorSource,
+  status: SourceStatus,
+  previous?: SourceStatus
+): SourceStatus {
+  const min = SOURCE_MIN_COUNT[source];
+  if (min === undefined) return status;
+  const baseline = previous ? (previous.ok && !previous.warning ? previous.count : previous.baseline) : undefined;
+  let warning: string | undefined;
+  if (status.ok && status.count < min) {
+    warning = `собрано ${status.count} игр, ожидается не меньше ${min}`;
+  } else if (status.ok && baseline && status.count < baseline * SOURCE_DROP_RATIO) {
+    const drop = Math.round((1 - status.count / baseline) * 100);
+    warning = `собрано ${status.count} игр против ${baseline} в последнем полном скане (−${drop}%)`;
+  }
+  const healthy = status.ok && !warning;
+  return { ...status, ...(warning ? { warning } : {}), ...(!healthy && baseline ? { baseline } : {}) };
+}
 
 export class ScanValidationError extends Error {
   constructor(message: string, public readonly sourceStatus: Record<string, SourceStatus>) {
@@ -134,18 +160,31 @@ export class MarketScanner extends EventEmitter {
 
     log('⏳ Опрос витрин данных...');
 
+    // Статусы прошлого скана — база для детекта тихой деградации парсеров
+    let previousStatus: Record<string, SourceStatus> | undefined;
+    try {
+      previousStatus = store.getLatestSnapshot()?.sourceStatus;
+    } catch {
+      // битый прошлый снимок не мешает сканировать; сравнение просто пропускаем
+    }
+
     // Все витрины стартуют параллельно; прогресс публикуется в фиксированном порядке.
     const sourceStatus = {} as Record<CollectorSource, SourceStatus>;
+    const record = (source: CollectorSource, status: SourceStatus): void => {
+      sourceStatus[source] = assessSourceHealth(source, status, previousStatus?.[source]);
+      const warning = sourceStatus[source].warning;
+      if (warning) log(`  [!] ${source}: неполный сбор — ${warning}`);
+    };
     const settle = <T>(source: CollectorSource, work: () => Promise<T[]>): Promise<T[]> =>
       Promise.resolve()
         .then(work)
         .then(items => {
-          sourceStatus[source] = { ok: items.length > 0, count: items.length };
+          record(source, { ok: items.length > 0, count: items.length });
           return items;
         })
         .catch((err: unknown) => {
           const error = err instanceof Error ? err.message : String(err);
-          sourceStatus[source] = { ok: false, count: 0, error };
+          record(source, { ok: false, count: 0, error });
           log(`  [!] ${source}: ошибка сбора — ${error}`);
           return [] as T[];
         });

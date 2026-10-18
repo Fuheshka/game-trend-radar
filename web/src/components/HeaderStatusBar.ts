@@ -20,6 +20,29 @@ export interface HeaderKpiData {
   updatedText?: string;
 }
 
+export type SourceStatusMap = Record<string, { ok: boolean; count: number; error?: string; warning?: string; baseline?: number }>;
+
+const SOURCE_SHORT_LABEL: Record<string, string> = {
+  roblox: 'Roblox',
+  yandex_games: 'Яндекс',
+  poki: 'Poki',
+  youtube_shorts: 'YouTube',
+};
+
+/** Проблемные источники снимка: сбой (ok=false) или неполный сбор (warning). Пустой массив — всё в порядке. */
+export function describeSourceProblems(status?: SourceStatusMap): Array<{ short: string; detail: string }> {
+  if (!status) return [];
+  return Object.entries(status)
+    .filter(([, s]) => !s.ok || s.warning)
+    .map(([source, s]) => {
+      const label = SOURCE_SHORT_LABEL[source] ?? source;
+      if (!s.ok) {
+        return { short: `${label}: сбой`, detail: `${label}: ${s.error ? `ошибка сбора — ${s.error}` : '0 игр'}` };
+      }
+      return { short: s.baseline ? `${label} ${s.count}/${s.baseline}` : `${label} ${s.count}`, detail: `${label}: ${s.warning}` };
+    });
+}
+
 export interface SnapshotOption {
   id: string;
   label: string;
@@ -76,6 +99,7 @@ export class HeaderStatusBarComponent {
 
   // DOM Elements
   private btnScan: HTMLButtonElement | null = null;
+  private scanUnavailableHint: HTMLElement | null = null;
   private snapshotSelect: HTMLSelectElement | null = null;
   private exportDropdownWrapper: HTMLElement | null = null;
   private btnExportDropdown: HTMLElement | null = null;
@@ -90,6 +114,9 @@ export class HeaderStatusBarComponent {
   private kpiArbitrageCount: HTMLElement | null = null;
   private kpiTopGame: HTMLElement | null = null;
   private kpiUpdatedTime: HTMLElement | null = null;
+  private kpiSourceWarning: HTMLElement | null = null;
+  private kpiSourceWarningDivider: HTMLElement | null = null;
+  private kpiSourceWarningText: HTMLElement | null = null;
 
   // Sound toggle
   private btnSoundToggle: HTMLElement | null = null;
@@ -111,6 +138,7 @@ export class HeaderStatusBarComponent {
 
   private bindElements(): void {
     this.btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
+    this.scanUnavailableHint = document.getElementById('scan-unavailable-hint');
     this.snapshotSelect = document.getElementById('snapshot-select') as HTMLSelectElement | null;
     this.exportDropdownWrapper = document.getElementById('export-dropdown-wrapper');
     this.btnExportDropdown = document.getElementById('btn-export-dropdown');
@@ -126,6 +154,9 @@ export class HeaderStatusBarComponent {
     this.kpiArbitrageCount = document.getElementById('kpi-arbitrage-count');
     this.kpiTopGame = document.getElementById('kpi-top-game');
     this.kpiUpdatedTime = document.getElementById('kpi-updated-time');
+    this.kpiSourceWarning = document.getElementById('kpi-source-warning');
+    this.kpiSourceWarningDivider = document.getElementById('kpi-source-warning-divider');
+    this.kpiSourceWarningText = document.getElementById('kpi-source-warning-text');
 
     // Progress Elements
     this.headerProgressBar = document.getElementById('header-progress-bar');
@@ -307,6 +338,12 @@ export class HeaderStatusBarComponent {
     }
   }
 
+  /** Без API (статика GitHub Pages) кнопка скана бесполезна — вместо неё ссылка на сервер. */
+  public setScanAvailable(available: boolean): void {
+    if (this.btnScan) this.btnScan.hidden = !available;
+    if (this.scanUnavailableHint) this.scanUnavailableHint.hidden = available;
+  }
+
   /**
    * Заполняет выпадающий список исторических снимков
    */
@@ -355,6 +392,18 @@ export class HeaderStatusBarComponent {
 
     if (this.kpiUpdatedTime) {
       this.kpiUpdatedTime.textContent = data.updatedText || 'Только что';
+    }
+  }
+
+  /** Предупреждение в строке KPI, если источник снимка упал или собрал подозрительно мало. */
+  public setSourceStatus(status?: SourceStatusMap): void {
+    const problems = describeSourceProblems(status);
+    const hidden = problems.length === 0;
+    if (this.kpiSourceWarning) this.kpiSourceWarning.hidden = hidden;
+    if (this.kpiSourceWarningDivider) this.kpiSourceWarningDivider.hidden = hidden;
+    if (this.kpiSourceWarningText) {
+      this.kpiSourceWarningText.textContent = problems.map(p => p.short).join(', ');
+      this.kpiSourceWarningText.title = problems.map(p => p.detail).join('\n');
     }
   }
 
