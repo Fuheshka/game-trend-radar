@@ -18,6 +18,11 @@ export function formatSnapshotDateRu(dateStr: string): string {
   return dateStr;
 }
 
+/** Подпись среза в селекторе шапки: '18 окт (320 игр)'. */
+export function formatSnapshotOptionLabel(dateStr: string, gamesCount: number): string {
+  return `${formatSnapshotDateRu(dateStr)} (${gamesCount} игр)`;
+}
+
 /** 1 234 567 → '1.2M', 1 000 000 → '1M', 12 345 → '12.3k'. */
 export function formatCompactNumber(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;

@@ -103,10 +103,15 @@ test('мобильная шапка 390px: без горизонтального
 test('GitHub Pages без API: вместо «Запустить скан» — ссылка на сервер, видно предупреждение об источнике', async ({
   page,
 }) => {
+  const sseRequests: string[] = [];
+  page.on('request', req => {
+    if (req.url().includes('/api/events')) sseRequests.push(req.url());
+  });
   await openDashboard(page, {
     staticSnapshot: {
       ...FALLBACK_SNAPSHOT,
       id: 'snapshot-pages',
+      timestamp: '2026-10-18T03:00:00.000Z',
       sourceStatus: {
         roblox: { ok: true, count: 279 },
         poki: { ok: true, count: 35, baseline: 100, warning: 'собрано 35 игр против 100 в последнем полном скане (−65%)' },
@@ -123,6 +128,37 @@ test('GitHub Pages без API: вместо «Запустить скан» — 
   await expect(warning).toBeVisible();
   await expect(warning).toContainText('Poki 35/100');
   await expect(page.locator('#kpi-source-warning-text')).toHaveAttribute('title', /−65%/);
+
+  // Селектор — одна опция статического снимка, а не вечное «Загрузка срезов...»
+  const select = page.locator('#snapshot-select');
+  await expect(select.locator('option')).toHaveCount(1);
+  await expect(select.locator('option:checked')).toHaveText('18 окт (320 игр)');
+
+  // SSE не подключается: метка «Статика» не сменяется на «Реконнект...» (раньше — через ~1 с)
+  const sseLabel = page.locator('#sse-label');
+  await expect(sseLabel).toHaveText('Статика');
+  const since = Date.now();
+  let changedTo: string | null = null;
+  await expect
+    .poll(
+      async () => {
+        const text = await sseLabel.textContent();
+        if (changedTo === null && text !== 'Статика') changedTo = text;
+        if (changedTo !== null) return `сменилась на «${changedTo}»`;
+        return Date.now() - since > 3_500 ? 'держится' : 'ждём';
+      },
+      { timeout: 8_000, intervals: [250] }
+    )
+    .toBe('держится');
+  expect(sseRequests).toEqual([]);
+});
+
+test('демо-режим (ни API, ни статического снимка): в селекторе «Демо-данные»', async ({ page }) => {
+  await openDashboard(page);
+  const select = page.locator('#snapshot-select');
+  await expect(select.locator('option')).toHaveCount(1);
+  await expect(select.locator('option:checked')).toHaveText('Демо-данные');
+  await expect(page.locator('#sse-label')).toHaveText('Оффлайн');
 });
 
 test('с API кнопка скана на месте, без проблем с источниками предупреждения нет', async ({ page }) => {

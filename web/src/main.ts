@@ -45,7 +45,7 @@ import {
   requestScan,
   storeScanToken,
 } from './services/snapshotApi.js';
-import { formatSnapshotDateRu, formatCompactNumber } from './utils/format.js';
+import { formatSnapshotDateRu, formatSnapshotOptionLabel, formatCompactNumber } from './utils/format.js';
 
 export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu };
 export type { PopularSearchTag };
@@ -118,7 +118,7 @@ class App {
     this.renderLegend();
     this.renderSearchTags();
 
-    // Setup real-time SSE stream connection
+    // Подписки на SSE; подключается fetchSnapshots, когда API доступен
     this.setupLiveEventService();
     setInterval(() => this.refreshFreshness(), 60_000);
 
@@ -954,6 +954,8 @@ class App {
     // /api/snapshots недоступен — статика (GitHub Pages) или сервер лежит: запускать скан некуда
     this.headerStatusBar?.setScanAvailable(list !== null);
     if (list) {
+      // SSE только при живом API: на статике /api/events нет, и EventSource ретраил бы его бесконечно
+      liveEventService.connect();
       this.snapshotsList = list;
       statusDot?.classList.remove('offline');
       if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
@@ -973,7 +975,7 @@ class App {
   private populateSnapshotSelect(): void {
     const options = this.snapshotsList.map(s => ({
       id: s.id,
-      label: `${formatSnapshotDateRu(s.date)} (${s.totalGamesScanned} игр)`,
+      label: formatSnapshotOptionLabel(s.date, s.totalGamesScanned),
       date: s.date,
       gamesCount: s.totalGamesScanned,
     }));
@@ -1071,7 +1073,7 @@ class App {
         this.headerStatusBar?.setSnapshots([
           {
             id: data.id,
-            label: `${formatSnapshotDateRu(data.timestamp)} (${data.totalGamesScanned} игр)`,
+            label: formatSnapshotOptionLabel(data.timestamp, data.totalGamesScanned),
           },
         ], data.id);
       }
@@ -1092,12 +1094,18 @@ class App {
       statusDot?.classList.remove('offline');
       if (statusText) statusText.textContent = 'GitHub Pages (Статика)';
       this.headerStatusBar?.setSseStatus(true, 'Статика');
+      this.headerStatusBar?.setSnapshots([
+        { id: staticData.id, label: formatSnapshotOptionLabel(staticData.timestamp, staticData.totalGamesScanned) },
+      ], staticData.id);
       return;
     }
 
     statusDot?.classList.add('offline');
     if (statusText) statusText.textContent = 'Демонстрационный режим';
     this.headerStatusBar?.setSseStatus(false, 'Оффлайн');
+    if (this.snapshot === FALLBACK_SNAPSHOT) {
+      this.headerStatusBar?.setSnapshots([{ id: FALLBACK_SNAPSHOT.id, label: 'Демо-данные' }], FALLBACK_SNAPSHOT.id);
+    }
   }
 
   private setupLiveEventService(): void {
@@ -1180,8 +1188,6 @@ class App {
         }
       }
     });
-
-    liveEventService.connect();
   }
 
   private async triggerLiveScan(): Promise<void> {
