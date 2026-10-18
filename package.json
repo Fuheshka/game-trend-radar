@@ -1,9 +1,9 @@
 {
   "name": "game-trend-radar",
   "version": "1.0.0",
+  "private": true,
   "description": "Cross-platform game market intelligence & trend analyzer for Roblox, Yandex Games, YouTube Shorts, and Web Portals",
   "type": "module",
-  "main": "dist/index.js",
   "scripts": {
     "start": "tsx src/cli.ts",
     "radar": "tsx src/cli.ts",
@@ -18,7 +18,7 @@
     "report": "tsx src/cli.ts report",
     "recommend": "tsx src/cli.ts recommend",
     "update-trends": "tsx src/cron/trend_scheduler.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.web.json",
     "test": "vitest run",
     "build": "tsc",
     "deploy": "bash scripts/deploy.sh",

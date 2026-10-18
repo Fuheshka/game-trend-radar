@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { GameArchetype, NormalizedGame, ShortsVideoItem, DetectedMemeTrend, DynamicMeme, DynamicMemesData } from '../types/index.js';
 import { classifyArchetype } from '../analyzer/classifier.js';
+import { asRecord, itemsOf, num, str } from '../utils/json.js';
 
 export interface ViralTrendTopic {
   keyword: string;
@@ -249,22 +250,25 @@ export class YouTubeShortsAnalyzer {
         throw new Error(`Invidious HTTP ${res.status}`);
       }
 
-      const data = (await res.json()) as any;
-      const rawList = Array.isArray(data) ? data : data.items || [];
-
-      return rawList.slice(0, limit).map((v: any): ShortsVideoItem => {
-        const id = String(v.videoId || v.id || Math.random().toString(36).substring(2, 9));
-        return {
+      const items: ShortsVideoItem[] = [];
+      for (const raw of itemsOf(await res.json()).slice(0, limit)) {
+        const v = asRecord(raw);
+        // Без id ролик нельзя ни дедуплицировать, ни открыть — пропускаем.
+        const id = str(v.videoId) || str(v.id);
+        if (!id) continue;
+        const published = num(v.published);
+        items.push({
           id,
-          title: String(v.title || ''),
-          description: String(v.description || v.shortDescription || ''),
-          viewCount: Number(v.viewCount || v.views || 0),
-          publishedAt: v.published ? new Date(v.published * 1000).toISOString() : undefined,
+          title: str(v.title),
+          description: str(v.description) || str(v.shortDescription),
+          viewCount: num(v.viewCount) || num(v.views),
+          publishedAt: published ? new Date(published * 1000).toISOString() : undefined,
           url: `https://www.youtube.com/shorts/${id}`,
-          channelTitle: String(v.author || v.uploaderName || ''),
+          channelTitle: str(v.author) || str(v.uploaderName),
           matchedTags: [cleanTag],
-        };
-      });
+        });
+      }
+      return items;
     } finally {
       clearTimeout(timeoutId);
     }
@@ -282,34 +286,36 @@ export class YouTubeShortsAnalyzer {
       clearTimeout(timeoutId);
       if (!res.ok) throw new Error(`YouTube API HTTP ${res.status}`);
 
-      const data = (await res.json()) as any;
-      const searchItems = data.items || [];
-      const videoIds = searchItems.map((item: any) => item.id?.videoId).filter(Boolean);
+      const searchItems = itemsOf(await res.json()).map(asRecord);
+      const videoIds = searchItems.map(item => str(asRecord(item.id).videoId)).filter(Boolean);
 
       if (videoIds.length === 0) return [];
 
       // Запрос статистики (просмотров) для найденных роликов
       const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${this.apiKey}`;
       const statsRes = await this.fetchFn(statsUrl);
-      const statsData = statsRes.ok ? await statsRes.json() : { items: [] };
+      const statsItems = statsRes.ok ? itemsOf(await statsRes.json()) : [];
       const statsMap = new Map<string, number>();
 
-      for (const item of statsData.items || []) {
-        statsMap.set(item.id, Number(item.statistics?.viewCount || 0));
+      for (const raw of statsItems) {
+        const item = asRecord(raw);
+        statsMap.set(str(item.id), num(asRecord(item.statistics).viewCount));
       }
 
-      return searchItems.map((v: any): ShortsVideoItem => {
-        const vidId = v.id?.videoId || '';
-        return {
+      return searchItems.flatMap((v): ShortsVideoItem[] => {
+        const vidId = str(asRecord(v.id).videoId);
+        if (!vidId) return [];
+        const snippet = asRecord(v.snippet);
+        return [{
           id: vidId,
-          title: v.snippet?.title || '',
-          description: v.snippet?.description || '',
+          title: str(snippet.title),
+          description: str(snippet.description),
           viewCount: statsMap.get(vidId) || 0,
-          publishedAt: v.snippet?.publishedAt,
+          publishedAt: str(snippet.publishedAt) || undefined,
           url: `https://www.youtube.com/shorts/${vidId}`,
-          channelTitle: v.snippet?.channelTitle || '',
+          channelTitle: str(snippet.channelTitle),
           matchedTags: [cleanTag],
-        };
+        }];
       });
     } finally {
       clearTimeout(timeoutId);

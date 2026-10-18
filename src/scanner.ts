@@ -7,7 +7,14 @@ import { OpportunityScorer } from './analyzer/scorer.js';
 import { VerdictEngine } from './analyzer/verdict.js';
 import { ArbitrageAnalyzer } from './analyzer/arbitrage.js';
 import { SnapshotStore } from './storage/snapshot_store.js';
-import { GameArchetype, MarketSnapshot, NormalizedGame, PlatformType } from './types/index.js';
+import {
+  DetectedMemeTrend,
+  GameArchetype,
+  MarketSnapshot,
+  NormalizedGame,
+  PlatformType,
+  ShortsVideoItem,
+} from './types/index.js';
 import { MarketEventBus } from './events/event_bus.js';
 
 export type CollectorSource = 'roblox' | 'yandex_games' | 'poki' | 'youtube_shorts';
@@ -58,9 +65,9 @@ export interface MarketScannerOptions extends ScanOptions {
   pokiCollector?: { fetchPopular: () => Promise<NormalizedGame[]> };
   youtubeAnalyzer?: {
     getViralShortsTrends: () => Promise<NormalizedGame[]>;
-    scanTrendingSlices: (tags: string[]) => Promise<any[]>;
-    detectViralMemes: (videos: any[]) => any[];
-    calculateViralMultiplier: (archetype: GameArchetype, memes: any[]) => number;
+    scanTrendingSlices: (tags: string[]) => Promise<ShortsVideoItem[]>;
+    detectViralMemes: (videos: ShortsVideoItem[]) => DetectedMemeTrend[];
+    calculateViralMultiplier: (archetype: GameArchetype, memes: DetectedMemeTrend[]) => number;
   };
   scorer?: OpportunityScorer;
   verdictEngine?: VerdictEngine;
@@ -150,7 +157,7 @@ export class MarketScanner extends EventEmitter {
       settle('youtube_shorts', () => youtubeAnalyzer.getViralShortsTrends()),
       Promise.resolve()
         .then(() => youtubeAnalyzer.scanTrendingSlices(['#shorts', '#roblox', '#gamedev']))
-        .catch((): any[] => []),
+        .catch((): ShortsVideoItem[] => []),
     ]);
 
     // 1. Roblox (pct: 25)

@@ -1,4 +1,6 @@
 import { MarketSnapshot, PlatformType, GameArchetype, NormalizedGame, ArbitrageOpportunity, MarketVerdict } from '../types.js';
+import { escapeHtml } from '../utils/dom.js';
+import { formatCompactNumber } from '../utils/format.js';
 
 export type SignalIconType = 'flame' | 'zap' | 'trending-up' | 'globe' | 'gamepad' | 'check-circle';
 
@@ -31,22 +33,14 @@ export interface LiveTickerOptions {
   onSelectSignal: (signal: TickerSignal) => void;
 }
 
-export function formatCompactNumber(n: number): string {
-  if (n >= 1_000_000) {
-    const val = (n / 1_000_000).toFixed(1).replace(/\.0$/, '');
-    return `${val}M`;
-  }
-  if (n >= 1_000) {
-    const val = (n / 1_000).toFixed(1).replace(/\.0$/, '');
-    return `${val}k`;
-  }
-  return Math.round(n).toString();
-}
+export { formatCompactNumber };
 
 export function extractTickerSignals(snapshot: MarketSnapshot): TickerSignal[] {
   const signals: TickerSignal[] = [];
   const games = snapshot.games || [];
-  const opps = snapshot.opportunities || (snapshot as any).arbitrageOpportunities || [];
+  // `opportunities` — имя поля в старых снимках, до переименования в arbitrageOpportunities
+  const legacy = snapshot as MarketSnapshot & { opportunities?: ArbitrageOpportunity[] };
+  const opps = legacy.opportunities || snapshot.arbitrageOpportunities || [];
   const verdicts = snapshot.verdicts || [];
 
   // 1. Roblox Top Online Games
@@ -345,7 +339,7 @@ export class LiveTickerComponent {
 
       itemBtn.innerHTML = `
         <span class="ticker-item-icon">${this.getSignalSvg(sig.icon)}</span>
-        <span class="ticker-item-text">${this.escapeHtml(sig.statusText)}</span>
+        <span class="ticker-item-text">${escapeHtml(sig.statusText)}</span>
       `;
 
       itemBtn.addEventListener('click', e => {
@@ -383,12 +377,4 @@ export class LiveTickerComponent {
     }
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

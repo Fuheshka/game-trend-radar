@@ -1,5 +1,6 @@
 import { TickerSignal } from './LiveTicker.js';
 import { GameArchetype } from '../types.js';
+import { escapeHtml, safeHref } from '../utils/dom.js';
 
 export interface GameDrawerOptions {
   backdrop: HTMLElement;
@@ -58,14 +59,14 @@ export class GameDrawerComponent {
     if (bodyEl) {
       const tagsHtml = (signal.details.tags || [])
         .slice(0, 8)
-        .map(t => `<span class="drawer-chip">${this.escapeHtml(t)}</span>`)
+        .map(t => `<span class="drawer-chip">${escapeHtml(t)}</span>`)
         .join('');
 
       bodyEl.innerHTML = `
         <!-- Main Highlight Metric Card -->
         <div class="drawer-stat-card ${signal.badgeClass}">
-          <div class="stat-card-label">${this.escapeHtml(signal.details.metricLabel)}</div>
-          <div class="stat-card-value">${this.escapeHtml(signal.details.metricValue)}</div>
+          <div class="stat-card-label">${escapeHtml(signal.details.metricLabel)}</div>
+          <div class="stat-card-value">${escapeHtml(signal.details.metricValue)}</div>
         </div>
 
         <!-- Analytical Description -->
@@ -78,7 +79,7 @@ export class GameDrawerComponent {
             </svg>
             Инсайт и Сигнал Рынка
           </h4>
-          <p class="drawer-section-text">${this.escapeHtml(signal.details.description)}</p>
+          <p class="drawer-section-text">${escapeHtml(signal.details.description)}</p>
         </div>
 
         <!-- Strategy / Recommendation -->
@@ -92,7 +93,7 @@ export class GameDrawerComponent {
               </svg>
               Рекомендация по адаптации
             </h4>
-            <p class="drawer-section-text">${this.escapeHtml(signal.details.actionRu)}</p>
+            <p class="drawer-section-text">${escapeHtml(signal.details.actionRu)}</p>
           </div>
         `
             : ''
@@ -131,7 +132,7 @@ export class GameDrawerComponent {
           ${
             signal.details.externalUrl
               ? `
-            <a href="${signal.details.externalUrl}" target="_blank" rel="noopener noreferrer" class="drawer-btn link">
+            <a href="${safeHref(signal.details.externalUrl)}" target="_blank" rel="noopener noreferrer" class="drawer-btn link">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
@@ -191,12 +192,4 @@ export class GameDrawerComponent {
     window.removeEventListener('keydown', this.boundOnKeyDown);
   }
 
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 }

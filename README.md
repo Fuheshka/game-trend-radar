@@ -43,7 +43,7 @@ npm run recommend
 
 ### Web Dashboard & GitHub Pages
 - **Local Dashboard:** `npm run ui` starts the HTTP server on port `:4200` and opens the browser.
-- **GitHub Pages:** Automated deployment configured via `.github/workflows/deploy-pages.yml`. Static build: `npm run pages:build`.
+- **GitHub Pages:** Automated deployment configured via `.github/workflows/deploy-pages.yml` (on push to `main` and every 6 hours). Scan data is not committed: the workflow downloads the latest snapshot from the production API (`vars.SNAPSHOT_URL`, default `https://radar.fuheshka.qd.je/api/snapshots/latest`) and fails rather than publishing demo data. Static build: `npm run pages:build`.
 
 ---
 
@@ -92,8 +92,9 @@ Set env vars in `.env` on the server (see [`.env.example`](.env.example); `ecosy
 | Variable | Meaning |
 |---|---|
 | `SCAN_INTERVAL_MIN` | Built-in auto-scan every N minutes (`0` = off, default in PM2: 30). Failed scans retry with exponential backoff; each point is also appended to `data/history/*.jsonl` (14 days). |
-| `SCAN_TOKEN` | Bearer token required for `POST /api/scan`. Empty = unprotected (dev only). |
+| `SCAN_TOKEN` | Bearer token required for `POST /api/scan`. Empty = open in dev; with `NODE_ENV=production` manual scans are disabled (403). |
 | `SCAN_COOLDOWN_MS` | Min pause between manual scans (429 + `Retry-After` otherwise). |
+| `SSE_MAX_CLIENTS` | Max concurrent `/api/events` connections (default 100; 503 + `Retry-After` beyond). |
 | `CORS_ORIGIN` | Restrict CORS to your domain (default `*`). |
 
 - `POST /api/scan` returns `202` immediately; progress arrives over SSE. Use `?wait=1` to block until the snapshot is returned.
@@ -104,7 +105,7 @@ Set env vars in `.env` on the server (see [`.env.example`](.env.example); `ecosy
 - Static files and API JSON are gzip-compressed with ETag; hashed assets are `immutable`.
 
 ### Auto-deploy
-`.github/workflows/deploy-server.yml` runs typecheck + tests on push to `main`, then SSHes into the server and runs `scripts/deploy.sh` (ff-only pull, `npm ci`, build, `pm2 reload`, healthcheck, **automatic rollback** on failure). Required repo secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (optional `DEPLOY_PORT`).
+`.github/workflows/deploy-server.yml` runs typecheck + tests + web build on push to `main`, then SSHes into the server and runs `scripts/deploy.sh` (ff-only pull, `npm ci`, build, `pm2 reload`, healthcheck, **automatic rollback** on failure). Required repo secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (optional `DEPLOY_PORT`; recommended `DEPLOY_KNOWN_HOSTS` — the verified `ssh-keyscan -p <port> <host>` output, otherwise the host key is accepted blindly). Pull requests are checked by `.github/workflows/ci.yml`.
 
 ---
 

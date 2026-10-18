@@ -43,7 +43,7 @@ npm run recommend
 
 ### Веб-дашборд и GitHub Pages
 - **Локальный запуск:** `npm run ui` (стартует HTTP-сервер на `:4200` и открывает страницу).
-- **GitHub Pages:** автоматический деплой настроен через `.github/workflows/deploy-pages.yml`. Статический билд: `npm run pages:build`.
+- **GitHub Pages:** автоматический деплой через `.github/workflows/deploy-pages.yml` (на push в `main` и каждые 6 часов). Данные сканов в git не коммитятся: workflow скачивает свежий снимок с production API (`vars.SNAPSHOT_URL`, по умолчанию `https://radar.fuheshka.qd.je/api/snapshots/latest`) и падает, а не публикует демо-данные. Статический билд: `npm run pages:build`.
 
 ---
 
@@ -154,8 +154,9 @@ curl -N -H "Accept: text/event-stream" https://fuheshka.qd.je/api/events
 | Переменная | Смысл |
 |---|---|
 | `SCAN_INTERVAL_MIN` | Встроенный автоскан каждые N минут (`0` = выкл., в PM2 по умолчанию 30). При сбое — повтор с экспоненциальной паузой; каждая точка пишется в `data/history/*.jsonl` (14 дней). |
-| `SCAN_TOKEN` | Bearer-токен для `POST /api/scan`. Пусто = без защиты (только для dev). |
+| `SCAN_TOKEN` | Bearer-токен для `POST /api/scan`. Пусто: в dev скан открыт, при `NODE_ENV=production` ручной скан отключён (403). |
 | `SCAN_COOLDOWN_MS` | Минимальная пауза между ручными сканами (иначе 429 + `Retry-After`). |
+| `SSE_MAX_CLIENTS` | Лимит одновременных подключений к `/api/events` (по умолчанию 100; сверх — 503 + `Retry-After`). |
 | `CORS_ORIGIN` | Ограничить CORS своим доменом (по умолчанию `*`). |
 
 - `POST /api/scan` сразу отвечает `202`, прогресс идёт по SSE. `?wait=1` — дождаться снимка в ответе.
@@ -166,7 +167,7 @@ curl -N -H "Accept: text/event-stream" https://fuheshka.qd.je/api/events
 - Статика и JSON API сжимаются gzip, есть ETag; хешированные ассеты — `immutable`.
 
 ### Автодеплой
-`.github/workflows/deploy-server.yml`: на push в `main` — typecheck + тесты, затем SSH на сервер и `scripts/deploy.sh` (ff-only pull, `npm ci`, сборка, `pm2 reload`, healthcheck, **автоматический откат** при сбое). Secrets репозитория: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (опционально `DEPLOY_PORT`).
+`.github/workflows/deploy-server.yml`: на push в `main` — typecheck + тесты + сборка фронтенда, затем SSH на сервер и `scripts/deploy.sh` (ff-only pull, `npm ci`, сборка, `pm2 reload`, healthcheck, **автоматический откат** при сбое). Secrets репозитория: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH` (опционально `DEPLOY_PORT`; рекомендуется `DEPLOY_KNOWN_HOSTS` — проверенный вывод `ssh-keyscan -p <port> <host>`, иначе ключ хоста принимается вслепую). PR проверяются `.github/workflows/ci.yml`.
 
 ---
 

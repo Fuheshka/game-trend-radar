@@ -1,12 +1,20 @@
-import { MarketSnapshot, MarketVerdict, GameArchetype, PlatformType, NormalizedGame, SnapshotSummary } from './types.js';
+import {
+  MarketSnapshot,
+  MarketVerdict,
+  GameArchetype,
+  PlatformType,
+  NormalizedGame,
+  SnapshotSummary,
+  PLATFORM_TYPES,
+} from './types.js';
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
+import { escapeHtml, pickOption } from './utils/dom.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { RadarOverviewViewComponent } from './components/RadarOverviewView.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
 import { DetailDrawerComponent } from './components/DetailDrawer.js';
-import { GameCatalogComponent, CatalogViewMode, CatalogSortBy } from './components/GameCatalog.js';
-import { GameTableViewComponent } from './components/GameTableView.js';
+import { GameTableViewComponent, TableSortColumn, TableSortDirection } from './components/GameTableView.js';
 import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { MoversViewComponent } from './components/MoversView.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
@@ -21,43 +29,41 @@ import {
   generateExportFilename,
   downloadBlob,
 } from './services/exporter.js';
+import {
+  POPULAR_SEARCH_TAGS,
+  PopularSearchTag,
+  isTagActive,
+  countGamesForTag,
+  verdictMatchesQuery,
+} from './app/search.js';
+import { computeMarketMetrics } from './app/metrics.js';
+import {
+  fetchSnapshotList,
+  fetchSnapshotById,
+  fetchLatestSnapshot,
+  fetchStaticSnapshot,
+  requestScan,
+  storeScanToken,
+} from './services/snapshotApi.js';
+import { formatSnapshotDateRu, formatCompactNumber } from './utils/format.js';
 
-export interface PopularSearchTag {
-  id: string;
-  label: string;
-  query: string;
-}
+export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu };
+export type { PopularSearchTag };
 
-export const POPULAR_SEARCH_TAGS: PopularSearchTag[] = [
-  { id: 'simulators', label: 'Симуляторы', query: 'симулятор' },
-  { id: 'horror', label: 'Хоррор', query: 'хоррор' },
-  { id: 'obby', label: 'Обби', query: 'обби' },
-  { id: 'puzzles', label: 'Головоломки', query: 'головоломк' },
-  { id: 'sandbox', label: 'Песочница', query: 'песочниц' },
-  { id: 'clickers', label: 'Кликеры', query: 'кликер' },
-  { id: 'shorts', label: 'Мемы Shorts', query: 'shorts' },
-  { id: 'merge', label: 'Мёрдж', query: 'мёрдж' },
-  { id: 'shooters', label: 'Шутеры', query: 'шутер' },
-  { id: 'tycoons', label: 'Тайкуны', query: 'тайкун' },
-  { id: 'ragdoll', label: 'Рэгдолл', query: 'рэгдолл' },
-];
 
-export function formatSnapshotDateRu(dateStr: string): string {
-  const dateOnly = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
-  const parts = dateOnly.split('-');
-  if (parts.length === 3) {
-    const day = parseInt(parts[2], 10);
-    const monthIndex = parseInt(parts[1], 10) - 1;
-    const monthsRu = [
-      'янв', 'фев', 'мар', 'апр', 'май', 'июн',
-      'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'
-    ];
-    if (monthIndex >= 0 && monthIndex < 12) {
-      return `${day} ${monthsRu[monthIndex]}`;
-    }
-  }
-  return dateStr;
-}
+export const VERDICT_SORTS = ['score_desc', 'score_asc', 'ccu_desc', 'velocity_desc', 'title_asc'] as const;
+type VerdictSort = (typeof VERDICT_SORTS)[number];
+export const STATUS_FILTERS = ['all', 'GREEN_LIGHT', 'YELLOW_LIGHT', 'RED_LIGHT', 'arbitrage'] as const;
+type StatusFilter = (typeof STATUS_FILTERS)[number];
+export const PLATFORM_FILTERS = ['all', ...PLATFORM_TYPES] as const;
+
+/** Значения селекта сортировки каталога → колонка и направление таблицы. */
+export const CATALOG_SORTS: Record<string, [TableSortColumn, TableSortDirection]> = {
+  ccu_desc: ['ccu', 'desc'],
+  ccu_asc: ['ccu', 'asc'],
+  likes_desc: ['likes', 'desc'],
+  title_asc: ['title', 'asc'],
+};
 
 class App {
   private snapshot: MarketSnapshot = FALLBACK_SNAPSHOT;
@@ -66,10 +72,10 @@ class App {
   private currentSnapshotId: string = '';
   private previousSnapshot: MarketSnapshot | null = null;
   private activePlatform: 'all' | PlatformType = 'all';
-  private activeStatus: 'all' | 'GREEN_LIGHT' | 'YELLOW_LIGHT' | 'RED_LIGHT' | 'arbitrage' = 'all';
+  private activeStatus: StatusFilter = 'all';
   private activeArchetype: GameArchetype | null = null;
   private searchQuery: string = '';
-  private sortBy: 'score_desc' | 'score_asc' | 'ccu_desc' | 'velocity_desc' | 'title_asc' = 'score_desc';
+  private sortBy: VerdictSort = 'score_desc';
   private isScanning: boolean = false;
   private currentView: WorkspaceId = 'radar';
   private metricsInitialized = false;
@@ -80,14 +86,15 @@ class App {
     topScore: 0,
     arbitrageCount: 0,
   };
+  /** Снимок, чьи метрики сейчас на экране — демо-данные не годятся базой для % изменения CCU. */
+  private metricsSnapshotId: string | null = null;
 
   private radarOverviewView?: RadarOverviewViewComponent;
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
   private liveTicker!: LiveTickerComponent;
   private detailDrawer!: DetailDrawerComponent;
-  private gameCatalog!: GameCatalogComponent;
-  private gameTableView!: GameTableViewComponent;
+  private gameTableView?: GameTableViewComponent;
   private arbitrageMatrix!: ArbitrageMatrixComponent;
   private moversView!: MoversViewComponent;
   private promptModal!: PromptGeneratorModalComponent;
@@ -183,7 +190,7 @@ class App {
     // Sort select
     const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
     sortSelect?.addEventListener('change', e => {
-      this.sortBy = (e.target as HTMLSelectElement).value as any;
+      this.sortBy = pickOption((e.target as HTMLSelectElement).value, VERDICT_SORTS) ?? 'score_desc';
       soundService.playClick();
       this.applyFiltersAndSort();
     });
@@ -194,7 +201,7 @@ class App {
       pill.addEventListener('click', () => {
         platformPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        this.activePlatform = pill.getAttribute('data-platform') as any;
+        this.activePlatform = pickOption(pill.getAttribute('data-platform'), PLATFORM_FILTERS) ?? 'all';
         soundService.playClick();
         this.applyFiltersAndSort();
       });
@@ -206,7 +213,7 @@ class App {
       pill.addEventListener('click', () => {
         statusPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        this.activeStatus = pill.getAttribute('data-status') as any;
+        this.activeStatus = pickOption(pill.getAttribute('data-status'), STATUS_FILTERS) ?? 'all';
         soundService.playClick();
         this.applyFiltersAndSort();
       });
@@ -229,8 +236,8 @@ class App {
         const presetVal = parseInt(btn.getAttribute('data-ccu') || '0', 10);
         btn.classList.toggle('active', presetVal === val);
       });
-      if (this.gameCatalog) {
-        this.gameCatalog.setMinCcu(val);
+      if (this.gameTableView) {
+        this.gameTableView.setMinCcu(val);
         this.updateCatalogCountUI();
       }
     };
@@ -262,8 +269,8 @@ class App {
     catalogSearchInput?.addEventListener('input', e => {
       const query = (e.target as HTMLInputElement).value;
       updateCatalogClearVisibility();
-      if (this.gameCatalog) {
-        this.gameCatalog.setSearchQuery(query);
+      if (this.gameTableView) {
+        this.gameTableView.setSearchQuery(query);
         this.updateCatalogCountUI();
       }
     });
@@ -275,8 +282,8 @@ class App {
       }
       updateCatalogClearVisibility();
       soundService.playClick();
-      if (this.gameCatalog) {
-        this.gameCatalog.setSearchQuery('');
+      if (this.gameTableView) {
+        this.gameTableView.setSearchQuery('');
         this.updateCatalogCountUI();
       }
     });
@@ -287,10 +294,10 @@ class App {
       pill.addEventListener('click', () => {
         catalogPlatformPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        const platform = pill.getAttribute('data-catalog-platform') as any;
+        const platform = pickOption(pill.getAttribute('data-catalog-platform'), PLATFORM_FILTERS) ?? 'all';
         soundService.playClick();
-        if (this.gameCatalog) {
-          this.gameCatalog.setPlatform(platform);
+        if (this.gameTableView) {
+          this.gameTableView.setPlatform(platform);
           this.updateCatalogCountUI();
         }
       });
@@ -299,10 +306,10 @@ class App {
     // Catalog Sort Select
     const catalogSortSelect = document.getElementById('catalog-sort-select') as HTMLSelectElement;
     catalogSortSelect?.addEventListener('change', e => {
-      const sort = (e.target as HTMLSelectElement).value as any;
+      const sort = CATALOG_SORTS[(e.target as HTMLSelectElement).value];
       soundService.playClick();
-      if (this.gameCatalog) {
-        this.gameCatalog.setSort(sort);
+      if (this.gameTableView && sort) {
+        this.gameTableView.setSort(sort[0], sort[1]);
       }
     });
 
@@ -314,14 +321,14 @@ class App {
       btnViewGrid.classList.add('active');
       btnViewTable?.classList.remove('active');
       soundService.playClick();
-      this.gameCatalog?.setViewMode('grid');
+      this.gameTableView?.setViewMode('grid');
     });
 
     btnViewTable?.addEventListener('click', () => {
       btnViewTable.classList.add('active');
       btnViewGrid?.classList.remove('active');
       soundService.playClick();
-      this.gameCatalog?.setViewMode('table');
+      this.gameTableView?.setViewMode('table');
     });
   }
 
@@ -360,8 +367,8 @@ class App {
         this.radarChart?.updateData(this.getFilteredVerdicts(), null);
         this.applyFiltersAndSort();
         this.renderLegend();
-        if (this.gameCatalog) {
-          this.gameCatalog.setSearchQuery('');
+        if (this.gameTableView) {
+          this.gameTableView.setSearchQuery('');
           this.updateCatalogCountUI();
         }
       },
@@ -671,15 +678,13 @@ class App {
           if (catalogSearchInput) {
             catalogSearchInput.value = tag;
           }
-          this.gameTableView.setSearchQuery(tag);
+          this.gameTableView?.setSearchQuery(tag);
           this.updateCatalogCountUI();
         },
         onFilterChange: () => {
           this.updateCatalogCountUI();
         },
       });
-      // Backward compatibility pointer
-      this.gameCatalog = this.gameTableView as any;
       this.updateCatalogCountUI();
     }
 
@@ -772,7 +777,7 @@ class App {
     const countText = document.getElementById('catalog-count-text');
     const tabBadge = document.getElementById('tab-games-count');
     const total = this.snapshot.games?.length || this.snapshot.totalGamesScanned || 0;
-    const filtered = this.gameCatalog ? this.gameCatalog.getFilteredCount() : total;
+    const filtered = this.gameTableView ? this.gameTableView.getFilteredCount() : total;
 
     if (tabBadge) {
       tabBadge.textContent = total.toString();
@@ -935,23 +940,18 @@ class App {
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('server-status-text');
 
-    try {
-      const res = await fetch('/api/snapshots');
-      if (res.ok) {
-        const list: SnapshotSummary[] = await res.json();
-        this.snapshotsList = list;
-        statusDot?.classList.remove('offline');
-        if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
+    const list = await fetchSnapshotList();
+    if (list) {
+      this.snapshotsList = list;
+      statusDot?.classList.remove('offline');
+      if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
 
-        if (this.snapshotsList.length > 0) {
-          this.populateSnapshotSelect();
-          // Load the latest snapshot (first in list)
-          await this.selectSnapshot(this.snapshotsList[0].id, false);
-          return;
-        }
+      if (this.snapshotsList.length > 0) {
+        this.populateSnapshotSelect();
+        // Load the latest snapshot (first in list)
+        await this.selectSnapshot(this.snapshotsList[0].id, false);
+        return;
       }
-    } catch {
-      // Backend unavailable or fetch error, proceed to fallback
     }
 
     // Fallback: try fetching /api/snapshots/latest or static fallback
@@ -977,14 +977,7 @@ class App {
     }
 
     try {
-      let data: MarketSnapshot | undefined = this.snapshotsCache.get(snapshotId);
-      if (!data) {
-        const res = await fetch(`/api/snapshots/${snapshotId}`);
-        if (res.ok) {
-          data = await res.json();
-          this.snapshotsCache.set(snapshotId, data!);
-        }
-      }
+      const data = await fetchSnapshotById(snapshotId, this.snapshotsCache);
 
       if (data) {
         this.snapshot = data;
@@ -994,18 +987,8 @@ class App {
         const currIdx = this.snapshotsList.findIndex(s => s.id === snapshotId);
         if (currIdx >= 0 && currIdx + 1 < this.snapshotsList.length) {
           const prevSummary = this.snapshotsList[currIdx + 1];
-          let prevData = this.snapshotsCache.get(prevSummary.id);
-          if (!prevData) {
-            try {
-              const prevRes = await fetch(`/api/snapshots/${prevSummary.id}`);
-              if (prevRes.ok) {
-                prevData = await prevRes.json();
-                this.snapshotsCache.set(prevSummary.id, prevData!);
-              }
-            } catch {
-              // Ignore failure for previous snapshot
-            }
-          }
+          // Сбой загрузки предыдущего снимка не мешает показать текущий
+          const prevData = await fetchSnapshotById(prevSummary.id, this.snapshotsCache).catch(() => undefined);
           this.previousSnapshot = prevData || null;
         } else {
           this.previousSnapshot = null;
@@ -1049,7 +1032,6 @@ class App {
     this.renderSearchTags();
     this.liveTicker?.updateData(this.snapshot);
     this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
-    this.gameCatalog?.updateData(this.snapshot.games || []);
     this.gameTableView?.updateData(this.snapshot.games || [], this.snapshot.verdicts || []);
     this.updateCatalogCountUI();
     this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
@@ -1063,31 +1045,26 @@ class App {
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('server-status-text');
 
-    try {
-      const res = await fetch('/api/snapshots/latest');
-      if (res.ok) {
-        const data: MarketSnapshot = await res.json();
-        this.snapshot = data;
-        this.currentSnapshotId = data.id;
-        this.snapshotsCache.set(data.id, data);
-        statusDot?.classList.remove('offline');
-        if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
-        this.headerStatusBar?.setSseStatus(true, 'SSE Live');
+    const data = await fetchLatestSnapshot();
+    if (data) {
+      this.snapshot = data;
+      this.currentSnapshotId = data.id;
+      this.snapshotsCache.set(data.id, data);
+      statusDot?.classList.remove('offline');
+      if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
+      this.headerStatusBar?.setSseStatus(true, 'SSE Live');
 
-        // Populate single fallback option if snapshotsList is empty
-        const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
-        if (select && select.options.length <= 1) {
-          this.headerStatusBar?.setSnapshots([
-            {
-              id: data.id,
-              label: `${formatSnapshotDateRu(data.timestamp)} (${data.totalGamesScanned} игр)`,
-            },
-          ], data.id);
-        }
-      } else {
-        await this.tryStaticSnapshotFallback(statusDot, statusText);
+      // Populate single fallback option if snapshotsList is empty
+      const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
+      if (select && select.options.length <= 1) {
+        this.headerStatusBar?.setSnapshots([
+          {
+            id: data.id,
+            label: `${formatSnapshotDateRu(data.timestamp)} (${data.totalGamesScanned} игр)`,
+          },
+        ], data.id);
       }
-    } catch {
+    } else {
       await this.tryStaticSnapshotFallback(statusDot, statusText);
     }
 
@@ -1098,18 +1075,13 @@ class App {
     statusDot: HTMLElement | null,
     statusText: HTMLElement | null
   ): Promise<void> {
-    try {
-      const staticRes = await fetch('./data/latest_snapshot.json');
-      if (staticRes.ok) {
-        const staticData: MarketSnapshot = await staticRes.json();
-        this.snapshot = staticData;
-        statusDot?.classList.remove('offline');
-        if (statusText) statusText.textContent = 'GitHub Pages (Статика)';
-        this.headerStatusBar?.setSseStatus(true, 'Статика');
-        return;
-      }
-    } catch {
-      // Ignore static fetch errors and fallback to hardcoded snapshot
+    const staticData = await fetchStaticSnapshot();
+    if (staticData) {
+      this.snapshot = staticData;
+      statusDot?.classList.remove('offline');
+      if (statusText) statusText.textContent = 'GitHub Pages (Статика)';
+      this.headerStatusBar?.setSseStatus(true, 'Статика');
+      return;
     }
 
     statusDot?.classList.add('offline');
@@ -1215,33 +1187,22 @@ class App {
 
     this.localScanRequested = true;
     try {
-      const headers: Record<string, string> = {};
-      let token = '';
-      try {
-        token = localStorage.getItem('radar_scan_token') || '';
-      } catch {
-        // localStorage недоступен (приватный режим)
-      }
-      if (token) headers.Authorization = `Bearer ${token}`;
-
-      const res = await fetch('/api/scan', { method: 'POST', headers });
-      if (res.status === 401) {
+      const result = await requestScan();
+      if (result.kind === 'unauthorized') {
         const entered = window.prompt('Для запуска скана нужен токен доступа (SCAN_TOKEN):');
-        try {
-          if (entered) localStorage.setItem('radar_scan_token', entered);
-          else localStorage.removeItem('radar_scan_token');
-        } catch {
-          // ignore
-        }
+        storeScanToken(entered);
         this.showToast(entered ? 'Токен сохранён — нажмите «Запустить скан» ещё раз.' : 'Нужен токен доступа.');
         this.localScanRequested = false;
         this.resetScanningState();
-      } else if (res.status === 429) {
-        const body = (await res.json().catch(() => ({}))) as { retryAfterSec?: number };
-        this.showToast(`Скан недавно выполнялся. Повторите через ${body.retryAfterSec ?? 30} с.`);
+      } else if (result.kind === 'disabled') {
+        this.showToast('Ручной скан отключён на сервере. Данные обновляются автосканом.');
         this.localScanRequested = false;
         this.resetScanningState();
-      } else if (!res.ok) {
+      } else if (result.kind === 'cooldown') {
+        this.showToast(`Скан недавно выполнялся. Повторите через ${result.retryAfterSec} с.`);
+        this.localScanRequested = false;
+        this.resetScanningState();
+      } else if (result.kind === 'error') {
         this.showToast('Сервер вернул ошибку при сканировании.');
         this.localScanRequested = false;
         this.resetScanningState();
@@ -1273,109 +1234,53 @@ class App {
     const arbitrageCountEl = document.getElementById('metric-arbitrage-count');
     const platformsHintEl = document.getElementById('metric-platforms-hint');
 
-    const counts = this.snapshot.platformCounts;
-    const totalGames = this.snapshot.totalGamesScanned || 0;
-    const totalCCU = this.snapshot.robloxTotalCCU || 0;
-
-    const sortedVerdicts = [...(this.snapshot.verdicts || [])].sort(
-      (a, b) => b.opportunityScore.overallScore - a.opportunityScore.overallScore
-    );
-
-    const topScore = sortedVerdicts.length > 0 ? sortedVerdicts[0].opportunityScore.overallScore : 0;
-    if (topGenreEl && sortedVerdicts.length > 0) {
-      topGenreEl.textContent = sortedVerdicts[0].titleRu;
+    // База для % изменения CCU — реальный снимок, показанный ДО этого обновления
+    const baselineIsReal = this.metricsSnapshotId !== null && this.metricsSnapshotId !== FALLBACK_SNAPSHOT.id;
+    const m = computeMarketMetrics(this.snapshot, this.previousSnapshot, baselineIsReal ? this.prevMetrics.totalCcu : 0);
+    this.metricsSnapshotId = this.snapshot.id;
+    if (topGenreEl && m.topGenreTitle !== null) {
+      topGenreEl.textContent = m.topGenreTitle;
     }
-
-    const arbitrageCount =
-      this.snapshot.arbitrageOpportunities?.length ??
-      this.snapshot.verdicts.filter(v => v.hasArbitrageOpportunity).length;
 
     const first = !this.metricsInitialized;
     const from = first
-      ? { totalGames, totalCcu: totalCCU, topScore, arbitrageCount }
+      ? { totalGames: m.totalGames, totalCcu: m.totalCcu, topScore: m.topScore, arbitrageCount: m.arbitrageCount }
       : this.prevMetrics;
     this.metricsInitialized = true;
 
     if (totalGamesEl) {
-      animateCounter(
-        totalGamesEl,
-        from.totalGames,
-        totalGames,
-        1000,
-        val => Math.round(val).toLocaleString()
-      );
+      animateCounter(totalGamesEl, from.totalGames, m.totalGames, 1000, val => Math.round(val).toLocaleString());
     }
-
     if (totalCcuEl) {
-      animateCounter(
-        totalCcuEl,
-        from.totalCcu,
-        totalCCU,
-        1000,
-        val => this.formatNumber(val)
-      );
+      animateCounter(totalCcuEl, from.totalCcu, m.totalCcu, 1000, val => formatCompactNumber(val));
     }
-
     if (topScoreEl) {
-      animateCounter(
-        topScoreEl,
-        from.topScore,
-        topScore,
-        1000,
-        val => `${Math.round(val)}/100`
-      );
+      animateCounter(topScoreEl, from.topScore, m.topScore, 1000, val => `${Math.round(val)}/100`);
     }
-
     if (arbitrageCountEl) {
-      animateCounter(
-        arbitrageCountEl,
-        from.arbitrageCount,
-        arbitrageCount,
-        1000,
-        val => Math.round(val).toString()
-      );
+      animateCounter(arbitrageCountEl, from.arbitrageCount, m.arbitrageCount, 1000, val => Math.round(val).toString());
     }
-
     if (platformsHintEl) {
-      platformsHintEl.textContent = `Roblox: ${counts.roblox || 0} · Yandex: ${counts.yandex_games || 0} · Poki: ${counts.poki || 0}`;
+      platformsHintEl.textContent = m.platformsHint;
     }
 
     this.prevMetrics = {
-      totalGames,
-      totalCcu: totalCCU,
-      topScore,
-      arbitrageCount,
+      totalGames: m.totalGames,
+      totalCcu: m.totalCcu,
+      topScore: m.topScore,
+      arbitrageCount: m.arbitrageCount,
     };
 
     this.updateCatalogCountUI();
     this.updateArbitrageCountUI();
     this.triggerMetricCardsPulse();
 
-    let topGameTitle = 'Steal An Egg';
-    if (this.snapshot.games && this.snapshot.games.length > 0) {
-      const sortedGames = [...this.snapshot.games].sort((a, b) => (b.metricValue || 0) - (a.metricValue || 0));
-      if (sortedGames[0]) {
-        topGameTitle = sortedGames[0].title;
-      }
-    } else if (sortedVerdicts.length > 0 && sortedVerdicts[0].sampleTitles?.[0]) {
-      topGameTitle = sortedVerdicts[0].sampleTitles[0];
-    }
-
-    let ccuChangePercent = 0;
-    if (this.previousSnapshot && this.previousSnapshot.robloxTotalCCU > 0) {
-      const delta = totalCCU - this.previousSnapshot.robloxTotalCCU;
-      ccuChangePercent = Number(((delta / this.previousSnapshot.robloxTotalCCU) * 100).toFixed(1));
-    } else if (this.prevMetrics.totalCcu > 0 && totalCCU > 0) {
-      const delta = totalCCU - this.prevMetrics.totalCcu;
-      ccuChangePercent = Number(((delta / this.prevMetrics.totalCcu) * 100).toFixed(1));
-    }
-
     this.headerStatusBar?.updateKpi({
-      totalGames,
-      totalCcu: totalCCU,
-      ccuChangePercent,
-      arbitrageCount,
-      topDayGameTitle: topGameTitle,
+      totalGames: m.totalGames,
+      totalCcu: m.totalCcu,
+      ccuChangePercent: m.ccuChangePercent,
+      arbitrageCount: m.arbitrageCount,
+      topDayGameTitle: m.topGameTitle,
       updatedText: formatMinutesAgo(this.snapshot.timestamp),
     });
     this.refreshFreshness();
@@ -1421,7 +1326,7 @@ class App {
       item.innerHTML = `
         <div class="legend-left">
           <span class="legend-marker" style="background: ${color}; box-shadow: 0 0 8px ${color};"></span>
-          <span class="legend-name">${v.titleRu}</span>
+          <span class="legend-name">${escapeHtml(v.titleRu)}</span>
         </div>
         <span class="legend-score" style="color: ${color};">${v.opportunityScore.overallScore} pts</span>
       `;
@@ -1474,7 +1379,7 @@ class App {
 
       // 4. Search query & dynamic tags
       if (this.searchQuery) {
-        if (!this.doesVerdictMatchQuery(v, this.searchQuery)) {
+        if (!verdictMatchesQuery(v, this.searchQuery, this.snapshot.games || [])) {
           return false;
         }
       }
@@ -1593,16 +1498,16 @@ class App {
       chip.setAttribute('data-query', tag.query);
       chip.setAttribute('data-label', tag.label);
 
-      const isActive = this.isTagActive(tag);
+      const isActive = isTagActive(tag, this.searchQuery);
       if (isActive) {
         chip.classList.add('active');
       }
 
-      const matchCount = this.getMatchingCountForTag(tag);
+      const matchCount = countGamesForTag(tag, this.snapshot);
       const countBadge = matchCount > 0 ? `<span class="search-tag-count">${matchCount}</span>` : '';
 
       chip.innerHTML = `
-        <span class="search-tag-text">${tag.label}</span>
+        <span class="search-tag-text">${escapeHtml(tag.label)}</span>
         ${countBadge}
       `;
 
@@ -1611,7 +1516,7 @@ class App {
         const searchClearBtn = document.getElementById('search-clear-btn');
         soundService.playClick();
 
-        if (this.isTagActive(tag)) {
+        if (isTagActive(tag, this.searchQuery)) {
           // Toggle off if currently active
           if (searchInput) searchInput.value = '';
           this.searchQuery = '';
@@ -1632,132 +1537,16 @@ class App {
     }
   }
 
-  private isTagActive(tag: PopularSearchTag): boolean {
-    if (!this.searchQuery) return false;
-    const q = this.searchQuery.toLowerCase().trim();
-    const tQuery = tag.query.toLowerCase();
-    const tLabel = tag.label.toLowerCase();
-    return q === tQuery || q === tLabel || tLabel.includes(q) || tQuery.includes(q) || q.includes(tQuery);
-  }
-
   private updateActiveSearchTagUI(): void {
     const chips = document.querySelectorAll<HTMLButtonElement>('.search-tag-chip');
     chips.forEach(chip => {
       const q = chip.getAttribute('data-query') || '';
       const label = chip.getAttribute('data-label') || '';
       const tag: PopularSearchTag = { id: chip.getAttribute('data-tag-id') || '', label, query: q };
-      chip.classList.toggle('active', this.isTagActive(tag));
+      chip.classList.toggle('active', isTagActive(tag, this.searchQuery));
     });
   }
 
-  private getMatchingCountForTag(tag: PopularSearchTag): number {
-    const q = tag.query.toLowerCase();
-    const label = tag.label.toLowerCase();
-    const games = this.snapshot.games || [];
-    let count = 0;
-
-    for (const g of games) {
-      const inTitle = g.title.toLowerCase().includes(q) || g.title.toLowerCase().includes(label);
-      const inGenre = (g.genre && (g.genre.toLowerCase().includes(q) || g.genre.toLowerCase().includes(label))) || false;
-      const inTags = (g.tags || []).some(t => t.toLowerCase().includes(q) || t.toLowerCase().includes(label));
-
-      let inArch = false;
-      if (q === 'симулятор' || q === 'кликер') inArch = g.archetype === 'SIMULATION_INCREMENTAL';
-      else if (q === 'хоррор') inArch = g.archetype === 'SURVIVAL_HORROR';
-      else if (q === 'обби') inArch = g.archetype === 'OBBY_PARKOUR';
-      else if (q === 'головоломк') inArch = g.archetype === 'WORD_PUZZLE';
-      else if (q === 'песочниц' || q === 'рэгдолл') inArch = g.archetype === 'PHYSICS_SANDBOX';
-      else if (q === 'мёрдж' || q === 'тайкун') inArch = g.archetype === 'MERGE_IDLE';
-      else if (q === 'шутер') inArch = g.archetype === 'ACTION_SHOOTER';
-      else if (q === 'shorts') inArch = g.platform === 'youtube_trends' || (g.tags && g.tags.some(t => t.toLowerCase().includes('short')));
-
-      if (inTitle || inGenre || inTags || inArch) {
-        count++;
-      }
-    }
-
-    if (count === 0) {
-      for (const v of this.snapshot.verdicts || []) {
-        if (this.doesVerdictMatchQuery(v, q)) {
-          count += Math.max(1, v.sampleTitles.length);
-        }
-      }
-    }
-
-    return count;
-  }
-
-  private doesVerdictMatchQuery(v: MarketVerdict, q: string): boolean {
-    if (!q) return true;
-    const lower = q.toLowerCase().trim();
-
-    // 1. Direct text fields
-    if (
-      v.titleRu.toLowerCase().includes(lower) ||
-      v.archetype.toLowerCase().includes(lower) ||
-      v.sampleTitles.some(s => s.toLowerCase().includes(lower)) ||
-      v.actionRecommendation.toLowerCase().includes(lower) ||
-      v.coreLoopBlueprint.toLowerCase().includes(lower) ||
-      v.avoidPitfalls.toLowerCase().includes(lower) ||
-      (v.monetizationStrategy && v.monetizationStrategy.toLowerCase().includes(lower))
-    ) {
-      return true;
-    }
-
-    // 2. Archetype keyword mapping (e.g. головоломка -> WORD_PUZZLE, песочница -> PHYSICS_SANDBOX, кликер -> SIMULATION_INCREMENTAL)
-    const keywords: Record<GameArchetype, string[]> = {
-      SIMULATION_INCREMENTAL: ['симулятор', 'симуляторы', 'эволюция', 'кликер', 'кликеры', 'тайкун', 'тайкуны', 'добыча', 'прокачка'],
-      PHYSICS_SANDBOX: ['песочница', 'песочницы', 'сендбокс', 'sandbox', 'рэгдолл', 'ragdoll', 'физика', 'разрушение', 'melon'],
-      MERGE_IDLE: ['мёрдж', 'мердж', 'merge', 'сортировка', 'айдл', 'idle', 'тайкун', 'крафт'],
-      SURVIVAL_HORROR: ['хоррор', 'хорроры', 'horror', 'побег', 'выживание', 'survival', 'escape', 'doors', 'фредди', 'fnaf'],
-      WORD_PUZZLE: ['головоломка', 'головоломки', 'пазл', 'пазлы', 'puzzle', 'слова', 'словесные', 'филворд', 'кроссворд', 'логика', 'викторина'],
-      ACTION_SHOOTER: ['шутер', 'шутеры', 'shooter', 'экшен', 'action', 'стрелялка', 'стрелялки', 'оружие', 'standoff'],
-      OBBY_PARKOUR: ['обби', 'паркур', 'obby', 'parkour', 'башня', 'прыжки', 'tower'],
-      OTHER_CASUAL: ['казуальные', 'casual', 'аркады', 'arcade'],
-    };
-
-    const archKeywords = keywords[v.archetype] || [];
-    if (archKeywords.some(k => k.includes(lower) || lower.includes(k))) {
-      return true;
-    }
-
-    // 3. YouTube Shorts / viral meme search
-    if (lower.includes('мем') || lower.includes('short') || lower.includes('viral') || lower.includes('вирус')) {
-      if (v.opportunityScore?.viralMultiplier && v.opportunityScore.viralMultiplier > 1.0) {
-        return true;
-      }
-      if (
-        v.sampleTitles.some(s =>
-          s.toLowerCase().includes('brainrot') ||
-          s.toLowerCase().includes('egg') ||
-          s.toLowerCase().includes('skibidi') ||
-          s.toLowerCase().includes('shorts')
-        )
-      ) {
-        return true;
-      }
-    }
-
-    // 4. Any associated games in this snapshot
-    const matchingGames = (this.snapshot.games || []).some(
-      g =>
-        g.archetype === v.archetype &&
-        (g.title.toLowerCase().includes(lower) ||
-          (g.genre && g.genre.toLowerCase().includes(lower)) ||
-          (g.tags && g.tags.some(t => t.toLowerCase().includes(lower))))
-    );
-    if (matchingGames) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private formatNumber(n: number): string {
-    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-    if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
-    return Math.round(n).toLocaleString();
-  }
 }
 
 // Instantiate on DOM ready in browser

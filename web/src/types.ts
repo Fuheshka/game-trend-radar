@@ -1,5 +1,7 @@
 export type PlatformType = 'roblox' | 'yandex_games' | 'poki' | 'youtube_trends';
 
+export const PLATFORM_TYPES: readonly PlatformType[] = ['roblox', 'yandex_games', 'poki', 'youtube_trends'];
+
 export type GameArchetype =
   | 'SIMULATION_INCREMENTAL'
   | 'PHYSICS_SANDBOX'

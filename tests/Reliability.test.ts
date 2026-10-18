@@ -175,3 +175,54 @@ describe('защита POST /api/scan', () => {
     }
   });
 });
+
+describe('production-защита сервера', () => {
+  it('в production без SCAN_TOKEN ручной POST /api/scan отключён (403)', async () => {
+    const dir = tmp();
+    const server = createRadarServer({
+      port: 0,
+      host: '127.0.0.1',
+      silent: true,
+      open: false,
+      store: new SnapshotStore(dir),
+      staticDir: dir,
+      scanToken: '',
+      production: true,
+      scanIntervalMinutes: 0,
+    });
+    const port = await server.start();
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/api/scan`, { method: 'POST' });
+      expect(res.status).toBe(403);
+    } finally {
+      await server.stop();
+    }
+  });
+
+  it('отдаёт 503 на /api/events сверх лимита SSE-клиентов', async () => {
+    const dir = tmp();
+    const server = createRadarServer({
+      port: 0,
+      host: '127.0.0.1',
+      silent: true,
+      open: false,
+      store: new SnapshotStore(dir),
+      staticDir: dir,
+      scanIntervalMinutes: 0,
+      maxSseClients: 1,
+    });
+    const port = await server.start();
+    const url = `http://127.0.0.1:${port}/api/events`;
+    const first = new AbortController();
+    try {
+      const ok = await fetch(url, { signal: first.signal });
+      expect(ok.status).toBe(200);
+      const rejected = await fetch(url);
+      expect(rejected.status).toBe(503);
+      expect(rejected.headers.get('retry-after')).toBe('30');
+    } finally {
+      first.abort();
+      await server.stop();
+    }
+  });
+});

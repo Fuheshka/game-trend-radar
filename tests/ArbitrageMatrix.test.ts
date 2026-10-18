@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ArbitrageMatrixComponent } from '../web/src/components/ArbitrageMatrix.js';
 import { ArbitrageOpportunity } from '../web/src/types.js';
+import { escapeHtml } from '../web/src/utils/dom.js';
 
 describe('ArbitrageMatrixComponent (Аналитический экран «Матрица Арбитража»)', () => {
   let mockContainer: any;
@@ -169,7 +170,7 @@ describe('ArbitrageMatrixComponent (Аналитический экран «Ма
       opportunities: sampleOpportunities,
     });
 
-    expect(mockContainer.innerHTML).toContain('< 15 МБ');
+    expect(mockContainer.innerHTML).toContain('&lt; 15 МБ');
     expect(mockContainer.innerHTML).toContain('Rewarded Video');
     expect(mockContainer.innerHTML).toContain('Укради Яйцо: Побег от Монстра');
     expect(mockContainer.innerHTML).toContain('Название для РФ');
@@ -212,10 +213,10 @@ describe('ArbitrageMatrixComponent (Аналитический экран «Ма
     expect(mockContainer.innerHTML).toContain('Steal An Egg');
   });
 
-  it('8. Должен корректно отрисовывать все арбитражные связки из реального снимка рынка (latest_snapshot.json)', async () => {
+  it('8. Должен корректно отрисовывать все арбитражные связки из реального снимка рынка (fixtures/arbitrage_snapshot.json)', async () => {
     const fs = await import('fs');
     const path = await import('path');
-    const snapshotPath = path.resolve(__dirname, '../web/public/data/latest_snapshot.json');
+    const snapshotPath = path.resolve(__dirname, 'fixtures/arbitrage_snapshot.json');
     const snapshotRaw = fs.readFileSync(snapshotPath, 'utf-8');
     const snapshot = JSON.parse(snapshotRaw);
 
@@ -228,8 +229,8 @@ describe('ArbitrageMatrixComponent (Аналитический экран «Ма
     expect(component.getTotalCount()).toBeGreaterThan(0);
 
     for (const opp of snapshot.arbitrageOpportunities) {
-      expect(mockContainer.innerHTML).toContain(opp.robloxGame.title);
-      expect(mockContainer.innerHTML).toContain(opp.suggestedRuTitle);
+      expect(mockContainer.innerHTML).toContain(escapeHtml(opp.robloxGame.title));
+      expect(mockContainer.innerHTML).toContain(escapeHtml(opp.suggestedRuTitle));
     }
   });
 
@@ -358,5 +359,22 @@ describe('ArbitrageMatrixComponent (Аналитический экран «Ма
     expect(onToast).toHaveBeenCalledWith(expect.stringContaining('скопирован'));
     expect(fakeBtnEl.classList.add).toHaveBeenCalledWith('copied');
   });
-});
 
+  it('13. Должен экранировать название игры и блокировать javascript:-ссылки из данных витрины', () => {
+    const hostile = {
+      ...sampleOpportunities[0],
+      robloxGame: {
+        ...sampleOpportunities[0].robloxGame,
+        title: '<img src=x onerror=alert(1)>',
+        url: 'javascript:alert(1)',
+      },
+      suggestedRuTitle: '"><script>alert(1)</script>',
+    } as ArbitrageOpportunity;
+
+    new ArbitrageMatrixComponent({ container: mockContainer as any, opportunities: [hostile] });
+
+    expect(mockContainer.innerHTML).not.toContain('<img src=x');
+    expect(mockContainer.innerHTML).not.toContain('<script>');
+    expect(mockContainer.innerHTML).not.toContain('javascript:');
+  });
+});
