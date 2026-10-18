@@ -6225,6 +6225,29 @@ kbd.tab-hotkey {
 /* ==========================================================================
    FRESHNESS BADGE + MOBILE HEADER / TABS (≤ 720px)
    ========================================================================== */
+/* Без API (GitHub Pages): ссылка на сервер вместо кнопки скана */
+.header-right [hidden] {
+  display: none;
+}
+
+.btn-scan-hint {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--border-hairline);
+  border-radius: 6px;
+  color: var(--text-fog);
+  font-size: 0.75rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-scan-hint:hover {
+  color: var(--accent-lime);
+  border-color: var(--accent-lime);
+}
+
 /* Неполный сбор витрины (sourceStatus.warning) или сбой коллектора */
 .header-kpi-strip [hidden] {
   display: none;
@@ -6271,7 +6294,8 @@ kbd.tab-hotkey {
     flex: 1 1 100%;
   }
 
-  .header-right .btn-scan-lime {
+  .header-right .btn-scan-lime,
+  .header-right .btn-scan-hint {
     flex: 1;
     justify-content: center;
   }

@@ -99,6 +99,7 @@ export class HeaderStatusBarComponent {
 
   // DOM Elements
   private btnScan: HTMLButtonElement | null = null;
+  private scanUnavailableHint: HTMLElement | null = null;
   private snapshotSelect: HTMLSelectElement | null = null;
   private exportDropdownWrapper: HTMLElement | null = null;
   private btnExportDropdown: HTMLElement | null = null;
@@ -137,6 +138,7 @@ export class HeaderStatusBarComponent {
 
   private bindElements(): void {
     this.btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
+    this.scanUnavailableHint = document.getElementById('scan-unavailable-hint');
     this.snapshotSelect = document.getElementById('snapshot-select') as HTMLSelectElement | null;
     this.exportDropdownWrapper = document.getElementById('export-dropdown-wrapper');
     this.btnExportDropdown = document.getElementById('btn-export-dropdown');
@@ -334,6 +336,12 @@ export class HeaderStatusBarComponent {
     } else {
       this.btnScan.textContent = '⚡ Запустить скан';
     }
+  }
+
+  /** Без API (статика GitHub Pages) кнопка скана бесполезна — вместо неё ссылка на сервер. */
+  public setScanAvailable(available: boolean): void {
+    if (this.btnScan) this.btnScan.hidden = !available;
+    if (this.scanUnavailableHint) this.scanUnavailableHint.hidden = available;
   }
 
   /**
