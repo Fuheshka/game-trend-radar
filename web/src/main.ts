@@ -9,9 +9,6 @@ import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
 import { RadarOverviewViewComponent } from './components/RadarOverviewView.js';
 import { LiveTickerComponent, TickerSignal } from './components/LiveTicker.js';
-import { GameTableViewComponent, TableSortColumn, TableSortDirection } from './components/GameTableView.js';
-import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
-import { MoversViewComponent } from './components/MoversView.js';
 import { WorkspaceTabsComponent, WorkspaceId } from './components/WorkspaceTabs.js';
 import { HeaderStatusBarComponent } from './components/HeaderStatusBar.js';
 import { soundService } from './services/sound.js';
@@ -34,6 +31,10 @@ import { SnapshotController } from './app/snapshotController.js';
 import { ScanController } from './app/scanController.js';
 import { MetricsController } from './app/metricsController.js';
 import { DrawerController } from './app/drawerController.js';
+import type { Workspace } from './app/workspaces/workspace.js';
+import { CatalogWorkspace, CATALOG_SORTS } from './app/workspaces/catalogWorkspace.js';
+import { ArbitrageWorkspace } from './app/workspaces/arbitrageWorkspace.js';
+import { MoversWorkspace } from './app/workspaces/moversWorkspace.js';
 import {
   VERDICT_SORTS,
   STATUS_FILTERS,
@@ -43,17 +44,9 @@ import {
 } from './app/verdictFilters.js';
 import { formatSnapshotDateRu } from './utils/format.js';
 
-export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu, VERDICT_SORTS, STATUS_FILTERS, PLATFORM_FILTERS };
+export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu, VERDICT_SORTS, STATUS_FILTERS, PLATFORM_FILTERS, CATALOG_SORTS };
 export type { PopularSearchTag };
 
-
-/** Значения селекта сортировки каталога → колонка и направление таблицы. */
-export const CATALOG_SORTS: Record<string, [TableSortColumn, TableSortDirection]> = {
-  ccu_desc: ['ccu', 'desc'],
-  ccu_asc: ['ccu', 'asc'],
-  likes_desc: ['likes', 'desc'],
-  title_asc: ['title', 'asc'],
-};
 
 class App {
   private state: AppState = createAppState();
@@ -65,9 +58,14 @@ class App {
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
   private liveTicker!: LiveTickerComponent;
-  private gameTableView?: GameTableViewComponent;
-  private arbitrageMatrix?: ArbitrageMatrixComponent;
-  private moversView?: MoversViewComponent;
+  private catalog = new CatalogWorkspace({ state: this.state, drawer: this.drawer });
+  private arbitrage = new ArbitrageWorkspace({ state: this.state, drawer: this.drawer });
+  private movers = new MoversWorkspace({ state: this.state, drawer: this.drawer });
+  private workspaces: Partial<Record<WorkspaceId, Workspace>> = {
+    catalog: this.catalog,
+    arbitrage: this.arbitrage,
+    movers: this.movers,
+  };
   private workspaceTabs!: WorkspaceTabsComponent;
   private headerStatusBar!: HeaderStatusBarComponent;
   private snapshots!: SnapshotController;
@@ -198,110 +196,7 @@ class App {
       soundService.playClick();
     });
 
-    // Catalog Min CCU Slider & Presets
-    const ccuSlider = document.getElementById('catalog-ccu-slider') as HTMLInputElement;
-    const ccuPresets = document.querySelectorAll<HTMLButtonElement>('.ccu-preset-btn');
-
-    const updateSliderUI = (val: number) => {
-      this.updateCcuSliderBadge(val);
-      ccuPresets.forEach(btn => {
-        const presetVal = parseInt(btn.getAttribute('data-ccu') || '0', 10);
-        btn.classList.toggle('active', presetVal === val);
-      });
-      if (this.gameTableView) {
-        this.gameTableView.setMinCcu(val);
-        this.updateCatalogCountUI();
-      }
-    };
-
-    ccuSlider?.addEventListener('input', e => {
-      const val = parseInt((e.target as HTMLInputElement).value, 10) || 0;
-      updateSliderUI(val);
-    });
-
-    ccuPresets.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const val = parseInt(btn.getAttribute('data-ccu') || '0', 10);
-        if (ccuSlider) ccuSlider.value = val.toString();
-        soundService.playClick();
-        updateSliderUI(val);
-      });
-    });
-
-    // Catalog Search Input & quick clear button
-    const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
-    const catalogClearBtn = document.getElementById('catalog-search-clear-btn');
-
-    const updateCatalogClearVisibility = () => {
-      if (catalogClearBtn) {
-        catalogClearBtn.classList.toggle('visible', !!catalogSearchInput?.value.trim());
-      }
-    };
-
-    catalogSearchInput?.addEventListener('input', e => {
-      const query = (e.target as HTMLInputElement).value;
-      updateCatalogClearVisibility();
-      if (this.gameTableView) {
-        this.gameTableView.setSearchQuery(query);
-        this.updateCatalogCountUI();
-      }
-    });
-
-    catalogClearBtn?.addEventListener('click', () => {
-      if (catalogSearchInput) {
-        catalogSearchInput.value = '';
-        catalogSearchInput.focus();
-      }
-      updateCatalogClearVisibility();
-      soundService.playClick();
-      if (this.gameTableView) {
-        this.gameTableView.setSearchQuery('');
-        this.updateCatalogCountUI();
-      }
-    });
-
-    // Catalog Platform Filter Pills
-    const catalogPlatformPills = document.querySelectorAll<HTMLButtonElement>('[data-catalog-platform]');
-    catalogPlatformPills.forEach(pill => {
-      pill.addEventListener('click', () => {
-        catalogPlatformPills.forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        const platform = pickOption(pill.getAttribute('data-catalog-platform'), PLATFORM_FILTERS) ?? 'all';
-        soundService.playClick();
-        if (this.gameTableView) {
-          this.gameTableView.setPlatform(platform);
-          this.updateCatalogCountUI();
-        }
-      });
-    });
-
-    // Catalog Sort Select
-    const catalogSortSelect = document.getElementById('catalog-sort-select') as HTMLSelectElement;
-    catalogSortSelect?.addEventListener('change', e => {
-      const sort = CATALOG_SORTS[(e.target as HTMLSelectElement).value];
-      soundService.playClick();
-      if (this.gameTableView && sort) {
-        this.gameTableView.setSort(sort[0], sort[1]);
-      }
-    });
-
-    // Catalog View Mode Toggles (Grid / Table)
-    const btnViewGrid = document.getElementById('btn-view-grid');
-    const btnViewTable = document.getElementById('btn-view-table');
-
-    btnViewGrid?.addEventListener('click', () => {
-      btnViewGrid.classList.add('active');
-      btnViewTable?.classList.remove('active');
-      soundService.playClick();
-      this.gameTableView?.setViewMode('grid');
-    });
-
-    btnViewTable?.addEventListener('click', () => {
-      btnViewTable.classList.add('active');
-      btnViewGrid?.classList.remove('active');
-      soundService.playClick();
-      this.gameTableView?.setViewMode('table');
-    });
+    this.catalog.bindToolbar();
   }
 
   private initWorkspaceTabs(): void {
@@ -310,34 +205,23 @@ class App {
       onSwitch: (workspace: WorkspaceId) => {
         this.state.currentView = workspace;
         soundService.playClick();
-        this.mountWorkspace(workspace);
-        if (workspace === 'catalog') {
-          this.updateCatalogCountUI();
-        } else if (workspace === 'arbitrage') {
-          this.updateArbitrageCountUI();
-        }
+        this.workspaces[workspace]?.show();
       },
       onEscape: () => {
         // Close drawer if open, otherwise clear search
         if (this.drawer.closeIfOpen()) return;
         const searchInput = document.getElementById('search-input') as HTMLInputElement;
         const searchClearBtn = document.getElementById('search-clear-btn');
-        const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
-        const catalogClearBtn = document.getElementById('catalog-search-clear-btn');
         if (searchInput) searchInput.value = '';
         if (searchClearBtn) searchClearBtn.classList.remove('visible');
-        if (catalogSearchInput) catalogSearchInput.value = '';
-        if (catalogClearBtn) catalogClearBtn.classList.remove('visible');
+        this.catalog.clearSearchInput();
         this.state.filters.searchQuery = '';
         this.state.filters.archetype = null;
         this.updateActiveSearchTagUI();
         this.radarChart?.updateData(this.getFilteredVerdicts(), null);
         this.applyFiltersAndSort();
         this.renderLegend();
-        if (this.gameTableView) {
-          this.gameTableView.setSearchQuery('');
-          this.updateCatalogCountUI();
-        }
+        this.catalog.resetSearchFilter();
       },
     });
   }
@@ -347,13 +231,8 @@ class App {
       // Cmd/Ctrl + K to focus search
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        if (this.state.currentView === 'catalog') {
-          const tableSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
-          if (tableSearchInput) {
-            tableSearchInput.focus();
-            tableSearchInput.select();
-            return;
-          }
+        if (this.state.currentView === 'catalog' && this.catalog.focusSearch()) {
+          return;
         }
         const searchInput = document.getElementById('search-input') as HTMLInputElement;
         searchInput?.focus();
@@ -413,10 +292,7 @@ class App {
     this.metrics = new MetricsController({
       state: this.state,
       header: this.headerStatusBar,
-      onCountsChanged: () => {
-        this.updateCatalogCountUI();
-        this.updateArbitrageCountUI();
-      },
+      onCountsChanged: () => this.updateTabCounts(),
     });
     this.snapshots = new SnapshotController({
       state: this.state,
@@ -600,131 +476,10 @@ class App {
     }
 
     // Бейджи вкладок считаются по снимку, даже пока сами вкладки не смонтированы
-    this.updateCatalogCountUI();
-    this.updateArbitrageCountUI();
+    this.updateTabCounts();
 
     // Prompt Generator Modal Component setup
     this.drawer.mountPromptModal();
-  }
-
-  /**
-   * Тяжёлые вкладки (каталог ~4k узлов, лидеры, арбитраж) монтируются при первом открытии:
-   * до этого они скрыты и только раздували DOM и время старта.
-   */
-  private mountWorkspace(view: WorkspaceId): void {
-    // Game Table View Component setup (SteamDB Charts high density view)
-    const catalogContainer = document.getElementById('catalog-container');
-    if (view === 'catalog' && !this.gameTableView && catalogContainer) {
-      this.gameTableView = new GameTableViewComponent({
-        container: catalogContainer,
-        games: this.state.snapshot.games || [],
-        verdicts: this.state.snapshot.verdicts || [],
-        initialViewMode: 'table',
-        onSelectGame: game => {
-          this.drawer.openGameFromList(game);
-        },
-        onTagClick: tag => {
-          soundService.playClick();
-          const catalogSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
-          if (catalogSearchInput) {
-            // Через событие input: тот же путь, что ручной ввод (фильтр, счётчик, кнопка ×)
-            catalogSearchInput.value = tag;
-            catalogSearchInput.dispatchEvent(new Event('input'));
-          }
-        },
-        onFilterChange: () => {
-          this.updateCatalogCountUI();
-        },
-        // Клик по заголовку таблицы: селект показывает совпадающий пресет или пустое значение
-        onSortChange: (column, direction) => {
-          const select = document.getElementById('catalog-sort-select') as HTMLSelectElement | null;
-          if (!select) return;
-          const preset = Object.keys(CATALOG_SORTS).find(
-            k => CATALOG_SORTS[k][0] === column && CATALOG_SORTS[k][1] === direction
-          );
-          select.value = preset ?? '';
-        },
-      });
-      this.updateCatalogCountUI();
-    }
-
-    // Arbitrage Matrix Component setup
-    const arbitrageContainer = document.getElementById('arbitrage-matrix-container');
-    if (view === 'arbitrage' && !this.arbitrageMatrix && arbitrageContainer) {
-      this.arbitrageMatrix = new ArbitrageMatrixComponent({
-        container: arbitrageContainer,
-        opportunities: this.state.snapshot.arbitrageOpportunities || [],
-        onSelectGame: game => {
-          this.drawer.openGameFromList(game);
-        },
-        onOpenRoblox: url => {
-          soundService.playClick();
-          window.open(url, '_blank', 'noopener,noreferrer');
-        },
-      });
-      this.updateArbitrageCountUI();
-    }
-
-    // Movers View Component setup (DefiLlama Movers & Shakers)
-    const moversContainer = document.getElementById('view-movers');
-    if (view === 'movers' && !this.moversView && moversContainer) {
-      this.moversView = new MoversViewComponent({
-        container: moversContainer,
-        currentSnapshot: this.state.snapshot,
-        previousSnapshot: this.state.previousSnapshot,
-        onSelectGame: game => {
-          this.drawer.openGameFromList(game);
-        },
-        onSelectArchetype: archetype => {
-          this.drawer.openArchetypeFromMovers(archetype);
-        },
-      });
-    }
-  }
-
-  /** Программный переход к вкладке — делегируем WorkspaceTabsComponent. */
-  private switchView(view: WorkspaceId): void {
-    this.workspaceTabs?.switchTo(view);
-  }
-
-  private updateArbitrageCountUI(): void {
-    const tabBadge = document.getElementById('tab-arbitrage-count');
-    if (tabBadge) {
-      const count = this.arbitrageMatrix
-        ? this.arbitrageMatrix.getTotalCount()
-        : (this.state.snapshot.arbitrageOpportunities?.length ?? 0);
-      tabBadge.textContent = count.toString();
-    }
-  }
-
-
-  private updateCcuSliderBadge(val: number): void {
-    const badge = document.getElementById('catalog-ccu-val-text');
-    if (badge) {
-      if (val === 0) {
-        badge.textContent = '0';
-      } else if (val >= 100000) {
-        badge.textContent = '100k+';
-      } else if (val >= 1000) {
-        badge.textContent = `${Math.round(val / 1000)}k`;
-      } else {
-        badge.textContent = val.toLocaleString();
-      }
-    }
-  }
-
-  private updateCatalogCountUI(): void {
-    const countText = document.getElementById('catalog-count-text');
-    const tabBadge = document.getElementById('tab-games-count');
-    const total = this.state.snapshot.games?.length || this.state.snapshot.totalGamesScanned || 0;
-    const filtered = this.gameTableView ? this.gameTableView.getFilteredCount() : total;
-
-    if (tabBadge) {
-      tabBadge.textContent = total.toString();
-    }
-    if (countText) {
-      countText.textContent = `Отображается ${filtered} из ${total}`;
-    }
   }
 
   private applyFilterFromSignal(query: string, archetype?: GameArchetype): void {
@@ -755,17 +510,21 @@ class App {
     this.renderLegend();
   }
 
+  /** Бейджи вкладок считаются по снимку, даже пока сами вкладки не смонтированы */
+  private updateTabCounts(): void {
+    this.catalog.updateCountUI();
+    this.arbitrage.updateCountUI();
+  }
+
   private applySnapshotDataToUI(): void {
     this.metrics.update();
     this.renderLegend();
     this.renderSearchTags();
     this.liveTicker?.updateData(this.state.snapshot);
     this.radarChart?.updateData(this.state.snapshot.verdicts, this.state.filters.archetype);
-    this.gameTableView?.updateData(this.state.snapshot.games || [], this.state.snapshot.verdicts || []);
-    this.updateCatalogCountUI();
-    this.arbitrageMatrix?.updateData(this.state.snapshot.arbitrageOpportunities || []);
-    this.updateArbitrageCountUI();
-    this.moversView?.updateData(this.state.snapshot, this.state.previousSnapshot);
+    this.catalog.update();
+    this.arbitrage.update();
+    this.movers.update();
     this.applyFiltersAndSort();
   }
 
