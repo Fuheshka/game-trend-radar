@@ -3,9 +3,10 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { YandexGamesCollector, parseYandexAppState } from '../src/collectors/yandex_games.js';
 import { PokiCollector } from '../src/collectors/poki.js';
+import { CrazyGamesCollector, CRAZYGAMES_HOT_URL, parseCrazyGamesNextData } from '../src/collectors/crazygames.js';
 import type { NormalizedGame } from '../src/types/index.js';
 
-// Контракт парсеров с реальной вёрсткой витрин. Снимки сняты 2026-10-18 curl'ом с тем же UA,
+// Контракт парсеров с реальной вёрсткой витрин. Снимки сняты 2026-10-18 (CrazyGames — 2026-10-19) curl'ом с тем же UA,
 // что у коллекторов, и обрезаны (без <style>, <svg>, сторонних <script>, class/style-атрибутов).
 // Сеть не трогаем: fetch подменён и отдаёт сохранённый HTML.
 // Тест упал после обновления снимка — вёрстка витрины поменялась, чинить парсер (см. implementation-notes §32).
@@ -64,5 +65,28 @@ describe('контракт: Poki (poki.com/en/popular)', () => {
     expect(games.length).toBeGreaterThanOrEqual(90);
     expectWellFormed(games, /^https:\/\/poki\.com\/en\/g\/[a-z0-9-]+$/);
     expect(games.map(g => g.metricValue)).toEqual(games.map((_, i) => i + 1));
+  });
+});
+
+describe('контракт: CrazyGames (crazygames.com/hot)', () => {
+  const hot = fixture('crazygames_hot.html');
+  const gameUrl = /^https:\/\/www\.crazygames\.com\/game\/[\w-]+$/;
+
+  it('__NEXT_DATA__ даёт ≥ 30 игр с рангами 1..N и числом лайков', () => {
+    const games = parseCrazyGamesNextData(hot, '2026-10-19T00:00:00.000Z');
+    expect(games.length).toBeGreaterThanOrEqual(30);
+    expectWellFormed(games, gameUrl);
+    expect(games.map(g => g.metricValue)).toEqual(games.map((_, i) => i + 1));
+    expect(games.filter(g => (g.votes ?? 0) > 0).length).toBeGreaterThanOrEqual(25);
+    expect(games.every(g => g.platform === 'crazygames' && g.metricType === 'rank')).toBe(true);
+  });
+
+  it('коллектор целиком собирает ≥ 30 игр, при 404 — пустой список', async () => {
+    serveHtml({ [CRAZYGAMES_HOT_URL]: hot });
+    expect((await new CrazyGamesCollector().fetchHot()).length).toBeGreaterThanOrEqual(30);
+    vi.restoreAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    serveHtml({});
+    expect(await new CrazyGamesCollector().fetchHot()).toEqual([]);
   });
 });
