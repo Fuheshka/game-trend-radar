@@ -2982,6 +2982,64 @@ button:active,
   padding: 0.85rem 1rem;
 }
 
+.drawer-history-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.drawer-history-note a {
+  color: var(--accent-cyan);
+}
+
+.drawer-history-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.drawer-history-meta strong {
+  color: var(--text-primary);
+}
+
+.drawer-history-days,
+.drawer-history-dates {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.drawer-history-chart {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.5rem;
+}
+
+.drawer-history-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Ось слева: лучшее значение сверху, худшее снизу (для позиции — тоже: #1 выше) */
+.drawer-history-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.drawer-history-dates {
+  display: flex;
+  justify-content: space-between;
+}
+
 .drawer-info-row {
   display: flex;
   align-items: center;

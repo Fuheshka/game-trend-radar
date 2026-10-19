@@ -1,9 +1,10 @@
-import { NormalizedGame, MarketVerdict, GameArchetype } from '../types.js';
+import { NormalizedGame, MarketVerdict, GameArchetype, GameHistoryResponse } from '../types.js';
 import { TickerSignal } from './LiveTicker.js';
 import { getPlatformMeta } from '../utils/labels.js';
 import { buildGameBodyHtml } from './detailDrawer/gameView.js';
 import { buildArchetypeBodyHtml } from './detailDrawer/archetypeView.js';
 import { buildSignalBodyHtml } from './detailDrawer/signalView.js';
+import { buildHistoryChartHtml, buildHistoryPlaceholderHtml } from './detailDrawer/historyChart.js';
 
 export interface DetailDrawerOptions {
   backdrop: HTMLElement;
@@ -12,6 +13,8 @@ export interface DetailDrawerOptions {
   showToast?: (message: string) => void;
   onSelectGame?: (game: NormalizedGame) => void;
   onSelectArchetype?: (archetype: GameArchetype) => void;
+  /** История игры по дням; вернуть null (не промис) — API нет (статика), показываем подсказку. */
+  loadHistory?: (gameId: string) => Promise<GameHistoryResponse | null> | null;
 }
 
 export type DrawerMode = 'game' | 'archetype' | 'signal';
@@ -23,6 +26,7 @@ export class DetailDrawerComponent {
   private showToast?: (message: string) => void;
   private onSelectGame?: (game: NormalizedGame) => void;
   private onSelectArchetype?: (archetype: GameArchetype) => void;
+  private loadHistory?: DetailDrawerOptions['loadHistory'];
 
   private boundOnKeyDown: (e: KeyboardEvent) => void;
   private currentMode: DrawerMode | null = null;
@@ -43,6 +47,7 @@ export class DetailDrawerComponent {
     this.showToast = options.showToast;
     this.onSelectGame = options.onSelectGame;
     this.onSelectArchetype = options.onSelectArchetype;
+    this.loadHistory = options.loadHistory;
 
     this.boundOnKeyDown = this.handleKeyDown.bind(this);
     this.initEvents();
@@ -92,6 +97,23 @@ export class DetailDrawerComponent {
     }
   }
 
+  /** Блок истории: подсказка без API, иначе загрузка и график, если drawer всё ещё на этой игре. */
+  private renderHistory(bodyEl: Element, game: NormalizedGame): void {
+    const el = bodyEl.querySelector<HTMLElement>('#drawer-history');
+    if (!el || !this.loadHistory) return;
+    const pending = this.loadHistory(game.id);
+    el.hidden = false;
+    if (!pending) {
+      el.innerHTML = buildHistoryPlaceholderHtml('no-api');
+      return;
+    }
+    el.innerHTML = buildHistoryPlaceholderHtml('loading');
+    void pending.then(history => {
+      if (this.currentGame !== game || !el.isConnected) return;
+      el.innerHTML = history ? buildHistoryChartHtml(history) : buildHistoryPlaceholderHtml('empty');
+    });
+  }
+
   /**
    * Opens the drawer in Game View mode
    */
@@ -123,6 +145,8 @@ export class DetailDrawerComponent {
 
     if (bodyEl) {
       bodyEl.innerHTML = buildGameBodyHtml(game, this.previousVerdict, platformMeta);
+
+      this.renderHistory(bodyEl, game);
 
       // Back navigation button
       const backBtn = bodyEl.querySelector('#drawer-back-to-archetype');

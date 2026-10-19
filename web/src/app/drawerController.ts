@@ -10,6 +10,7 @@ import { soundService } from '../services/sound.js';
 import type { AppState } from './state.js';
 import { resolveGame, getGamesForArchetype } from './gameLookup.js';
 import { showToast } from './ui.js';
+import { fetchGameHistory } from '../services/snapshotApi.js';
 
 export type DrawerView = Pick<DetailDrawerComponent, 'openGame' | 'openArchetype' | 'openSignal' | 'close'>;
 export type PromptModalView = Pick<PromptGeneratorModalComponent, 'open'>;
@@ -82,6 +83,7 @@ export class DrawerController {
         onSelectArchetype: archetype => {
           this.openArchetypeDetail(archetype);
         },
+        loadHistory: id => (this.state.apiAvailable ? fetchGameHistory(id) : null),
       });
     }
   }

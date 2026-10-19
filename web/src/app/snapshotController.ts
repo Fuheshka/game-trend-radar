@@ -57,6 +57,7 @@ export class SnapshotController {
   async fetchSnapshots(): Promise<void> {
     const list = await this.api.fetchSnapshotList();
     // /api/snapshots недоступен — статика (GitHub Pages) или сервер лежит: запускать скан некуда
+    this.state.apiAvailable = list !== null;
     this.header.setScanAvailable(list !== null);
     if (list) {
       // SSE только при живом API: на статике /api/events нет, и EventSource ретраил бы его бесконечно
