@@ -35,6 +35,7 @@ import {
 import { computeMarketMetrics } from './app/metrics.js';
 import { AppState, createAppState } from './app/state.js';
 import { showToast, updateSoundUI } from './app/ui.js';
+import { SnapshotController } from './app/snapshotController.js';
 import {
   VERDICT_SORTS,
   STATUS_FILTERS,
@@ -42,15 +43,8 @@ import {
   filterVerdicts,
   sortVerdicts,
 } from './app/verdictFilters.js';
-import {
-  fetchSnapshotList,
-  fetchSnapshotById,
-  fetchLatestSnapshot,
-  fetchStaticSnapshot,
-  requestScan,
-  storeScanToken,
-} from './services/snapshotApi.js';
-import { formatSnapshotDateRu, formatSnapshotOptionLabel, formatCompactNumber } from './utils/format.js';
+import { requestScan, storeScanToken } from './services/snapshotApi.js';
+import { formatSnapshotDateRu, formatCompactNumber } from './utils/format.js';
 
 export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu, VERDICT_SORTS, STATUS_FILTERS, PLATFORM_FILTERS };
 export type { PopularSearchTag };
@@ -87,6 +81,7 @@ class App {
   private promptModal!: PromptGeneratorModalComponent;
   private workspaceTabs!: WorkspaceTabsComponent;
   private headerStatusBar!: HeaderStatusBarComponent;
+  private snapshots!: SnapshotController;
   private currentDrawerVerdict: MarketVerdict | null = null;
 
   constructor() {
@@ -110,7 +105,7 @@ class App {
     setInterval(() => this.refreshFreshness(), 60_000);
 
     // Fetch live snapshots list & data from backend
-    await this.fetchSnapshots();
+    await this.snapshots.fetchSnapshots();
   }
 
   private initElements(): void {
@@ -451,7 +446,7 @@ class App {
       },
       onSnapshotSelect: async selectedId => {
         soundService.playClick();
-        await this.selectSnapshot(selectedId, true);
+        await this.snapshots.selectSnapshot(selectedId, true);
       },
       onExport: format => {
         soundService.playClick();
@@ -468,6 +463,13 @@ class App {
           soundService.playClick();
         }
       },
+    });
+
+    this.snapshots = new SnapshotController({
+      state: this.state,
+      header: this.headerStatusBar,
+      connectLive: () => liveEventService.connect(),
+      onApply: () => this.applySnapshotDataToUI(),
     });
 
     if (tickerTrack) {
@@ -924,100 +926,6 @@ class App {
     this.renderLegend();
   }
 
-  private async fetchSnapshots(): Promise<void> {
-    const statusDot = document.getElementById('status-dot');
-    const statusText = document.getElementById('server-status-text');
-
-    const list = await fetchSnapshotList();
-    // /api/snapshots недоступен — статика (GitHub Pages) или сервер лежит: запускать скан некуда
-    this.headerStatusBar?.setScanAvailable(list !== null);
-    if (list) {
-      // SSE только при живом API: на статике /api/events нет, и EventSource ретраил бы его бесконечно
-      liveEventService.connect();
-      this.state.snapshotsList = list;
-      statusDot?.classList.remove('offline');
-      if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
-
-      if (this.state.snapshotsList.length > 0) {
-        this.populateSnapshotSelect();
-        // Load the latest snapshot (first in list)
-        await this.selectSnapshot(this.state.snapshotsList[0].id, false);
-        return;
-      }
-    }
-
-    // Fallback: try fetching /api/snapshots/latest or static fallback
-    await this.fetchLatestSnapshot();
-  }
-
-  private populateSnapshotSelect(): void {
-    const options = this.state.snapshotsList.map(s => ({
-      id: s.id,
-      label: formatSnapshotOptionLabel(s.date, s.totalGamesScanned),
-      date: s.date,
-      gamesCount: s.totalGamesScanned,
-    }));
-    this.headerStatusBar?.setSnapshots(options, this.state.snapshotsList[0]?.id);
-  }
-
-  private async selectSnapshot(snapshotId: string, animate: boolean = true): Promise<void> {
-    if (!snapshotId) return;
-
-    const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
-    if (select && select.value !== snapshotId) {
-      select.value = snapshotId;
-    }
-
-    try {
-      const data = await fetchSnapshotById(snapshotId, this.state.snapshotsCache);
-
-      if (data) {
-        this.state.snapshot = data;
-        this.state.currentSnapshotId = snapshotId;
-
-        // Find immediately preceding snapshot in history (idx + 1 in date-descending list)
-        const currIdx = this.state.snapshotsList.findIndex(s => s.id === snapshotId);
-        if (currIdx >= 0 && currIdx + 1 < this.state.snapshotsList.length) {
-          const prevSummary = this.state.snapshotsList[currIdx + 1];
-          // Сбой загрузки предыдущего снимка не мешает показать текущий
-          const prevData = await fetchSnapshotById(prevSummary.id, this.state.snapshotsCache).catch(() => undefined);
-          this.state.previousSnapshot = prevData || null;
-        } else {
-          this.state.previousSnapshot = null;
-        }
-
-        if (animate) {
-          this.triggerSnapshotTransitionAnimation();
-        }
-
-        this.applySnapshotDataToUI();
-      }
-    } catch (err) {
-      console.error('Failed to load snapshot:', err);
-    }
-  }
-
-  private triggerSnapshotTransitionAnimation(): void {
-    const targets = [
-      document.getElementById('verdicts-grid'),
-      document.getElementById('radar-chart-container'),
-      document.getElementById('metrics-hero-grid'),
-      document.getElementById('catalog-content'),
-      document.getElementById('arbitrage-matrix-container'),
-      document.getElementById('view-movers'),
-    ].filter(Boolean) as HTMLElement[];
-
-    targets.forEach(el => {
-      el.classList.remove('snapshot-fade-update');
-      void el.offsetWidth; // Force reflow
-      el.classList.add('snapshot-fade-update');
-    });
-
-    setTimeout(() => {
-      targets.forEach(el => el.classList.remove('snapshot-fade-update'));
-    }, 400);
-  }
-
   private applySnapshotDataToUI(): void {
     this.updateGlobalMetrics();
     this.renderLegend();
@@ -1030,60 +938,6 @@ class App {
     this.updateArbitrageCountUI();
     this.moversView?.updateData(this.state.snapshot, this.state.previousSnapshot);
     this.applyFiltersAndSort();
-  }
-
-  private async fetchLatestSnapshot(): Promise<void> {
-    const statusDot = document.getElementById('status-dot');
-    const statusText = document.getElementById('server-status-text');
-
-    const data = await fetchLatestSnapshot();
-    if (data) {
-      this.state.snapshot = data;
-      this.state.currentSnapshotId = data.id;
-      this.state.snapshotsCache.set(data.id, data);
-      statusDot?.classList.remove('offline');
-      if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
-      this.headerStatusBar?.setSseStatus(true, 'SSE Live');
-
-      // Populate single fallback option if snapshotsList is empty
-      const select = document.getElementById('snapshot-select') as HTMLSelectElement | null;
-      if (select && select.options.length <= 1) {
-        this.headerStatusBar?.setSnapshots([
-          {
-            id: data.id,
-            label: formatSnapshotOptionLabel(data.timestamp, data.totalGamesScanned),
-          },
-        ], data.id);
-      }
-    } else {
-      await this.tryStaticSnapshotFallback(statusDot, statusText);
-    }
-
-    this.applySnapshotDataToUI();
-  }
-
-  private async tryStaticSnapshotFallback(
-    statusDot: HTMLElement | null,
-    statusText: HTMLElement | null
-  ): Promise<void> {
-    const staticData = await fetchStaticSnapshot();
-    if (staticData) {
-      this.state.snapshot = staticData;
-      statusDot?.classList.remove('offline');
-      if (statusText) statusText.textContent = 'GitHub Pages (Статика)';
-      this.headerStatusBar?.setSseStatus(true, 'Статика');
-      this.headerStatusBar?.setSnapshots([
-        { id: staticData.id, label: formatSnapshotOptionLabel(staticData.timestamp, staticData.totalGamesScanned) },
-      ], staticData.id);
-      return;
-    }
-
-    statusDot?.classList.add('offline');
-    if (statusText) statusText.textContent = 'Демонстрационный режим';
-    this.headerStatusBar?.setSseStatus(false, 'Оффлайн');
-    if (this.state.snapshot === FALLBACK_SNAPSHOT) {
-      this.headerStatusBar?.setSnapshots([{ id: FALLBACK_SNAPSHOT.id, label: 'Демо-данные' }], FALLBACK_SNAPSHOT.id);
-    }
   }
 
   private setupLiveEventService(): void {
@@ -1149,20 +1003,20 @@ class App {
       showToast('Сканирование завершено! Снимок обновлен.');
 
       // Автоматически обновляем срезы и применяем свежие данные ко всем вкладкам
-      await this.fetchSnapshots();
+      await this.snapshots.fetchSnapshots();
       if (data.snapshotId) {
-        await this.selectSnapshot(data.snapshotId, false);
+        await this.snapshots.selectSnapshot(data.snapshotId, false);
       } else {
-        await this.fetchLatestSnapshot();
+        await this.snapshots.fetchLatestSnapshot();
       }
     });
 
     // 5. Фоновое обновление снимка рынка (cron / другой клиент)
     liveEventService.on('snapshot:updated', async data => {
       if (!this.state.isScanning) {
-        await this.fetchSnapshots();
+        await this.snapshots.fetchSnapshots();
         if (data.snapshotId && data.snapshotId !== this.state.currentSnapshotId) {
-          await this.selectSnapshot(data.snapshotId, false);
+          await this.snapshots.selectSnapshot(data.snapshotId, false);
         }
       }
     });
