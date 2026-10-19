@@ -2,10 +2,7 @@ import {
   MarketSnapshot,
   MarketVerdict,
   GameArchetype,
-  PlatformType,
   NormalizedGame,
-  SnapshotSummary,
-  PLATFORM_TYPES,
 } from './types.js';
 import { FALLBACK_SNAPSHOT } from './fallbackData.js';
 import { escapeHtml, pickOption } from './utils/dom.js';
@@ -34,9 +31,17 @@ import {
   PopularSearchTag,
   isTagActive,
   countGamesForTag,
-  verdictMatchesQuery,
 } from './app/search.js';
 import { computeMarketMetrics } from './app/metrics.js';
+import { AppState, createAppState } from './app/state.js';
+import { showToast, updateSoundUI } from './app/ui.js';
+import {
+  VERDICT_SORTS,
+  STATUS_FILTERS,
+  PLATFORM_FILTERS,
+  filterVerdicts,
+  sortVerdicts,
+} from './app/verdictFilters.js';
 import {
   fetchSnapshotList,
   fetchSnapshotById,
@@ -47,15 +52,9 @@ import {
 } from './services/snapshotApi.js';
 import { formatSnapshotDateRu, formatSnapshotOptionLabel, formatCompactNumber } from './utils/format.js';
 
-export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu };
+export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu, VERDICT_SORTS, STATUS_FILTERS, PLATFORM_FILTERS };
 export type { PopularSearchTag };
 
-
-export const VERDICT_SORTS = ['score_desc', 'score_asc', 'ccu_desc', 'velocity_desc', 'title_asc'] as const;
-type VerdictSort = (typeof VERDICT_SORTS)[number];
-export const STATUS_FILTERS = ['all', 'GREEN_LIGHT', 'YELLOW_LIGHT', 'RED_LIGHT', 'arbitrage'] as const;
-type StatusFilter = (typeof STATUS_FILTERS)[number];
-export const PLATFORM_FILTERS = ['all', ...PLATFORM_TYPES] as const;
 
 /** Значения селекта сортировки каталога → колонка и направление таблицы. */
 export const CATALOG_SORTS: Record<string, [TableSortColumn, TableSortDirection]> = {
@@ -66,20 +65,8 @@ export const CATALOG_SORTS: Record<string, [TableSortColumn, TableSortDirection]
 };
 
 class App {
-  private snapshot: MarketSnapshot = FALLBACK_SNAPSHOT;
-  private snapshotsList: SnapshotSummary[] = [];
-  private snapshotsCache: Map<string, MarketSnapshot> = new Map();
-  private currentSnapshotId: string = '';
-  private previousSnapshot: MarketSnapshot | null = null;
-  private activePlatform: 'all' | PlatformType = 'all';
-  private activeStatus: StatusFilter = 'all';
-  private activeArchetype: GameArchetype | null = null;
-  private searchQuery: string = '';
-  private sortBy: VerdictSort = 'score_desc';
-  private isScanning: boolean = false;
-  private currentView: WorkspaceId = 'radar';
+  private state: AppState = createAppState();
   private metricsInitialized = false;
-  private localScanRequested = false;
   private prevMetrics = {
     totalGames: 0,
     totalCcu: 0,
@@ -128,7 +115,7 @@ class App {
 
   private initElements(): void {
     // Sound toggle initial state
-    this.updateSoundUI(soundService.isMuted());
+    updateSoundUI(soundService.isMuted());
 
     // Mode toggles for Radar Chart
     const toggleSpider = document.getElementById('toggle-spider');
@@ -167,10 +154,10 @@ class App {
     };
 
     searchInput?.addEventListener('input', e => {
-      this.searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
+      this.state.filters.searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
       updateSearchClearVisibility();
       this.updateActiveSearchTagUI();
-      this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+      this.radarChart?.updateData(this.getFilteredVerdicts(), this.state.filters.archetype);
       this.applyFiltersAndSort();
     });
 
@@ -179,18 +166,18 @@ class App {
         searchInput.value = '';
         searchInput.focus();
       }
-      this.searchQuery = '';
+      this.state.filters.searchQuery = '';
       updateSearchClearVisibility();
       this.updateActiveSearchTagUI();
       soundService.playClick();
-      this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+      this.radarChart?.updateData(this.getFilteredVerdicts(), this.state.filters.archetype);
       this.applyFiltersAndSort();
     });
 
     // Sort select
     const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
     sortSelect?.addEventListener('change', e => {
-      this.sortBy = pickOption((e.target as HTMLSelectElement).value, VERDICT_SORTS) ?? 'score_desc';
+      this.state.filters.sortBy = pickOption((e.target as HTMLSelectElement).value, VERDICT_SORTS) ?? 'score_desc';
       soundService.playClick();
       this.applyFiltersAndSort();
     });
@@ -201,7 +188,7 @@ class App {
       pill.addEventListener('click', () => {
         platformPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        this.activePlatform = pickOption(pill.getAttribute('data-platform'), PLATFORM_FILTERS) ?? 'all';
+        this.state.filters.platform = pickOption(pill.getAttribute('data-platform'), PLATFORM_FILTERS) ?? 'all';
         soundService.playClick();
         this.applyFiltersAndSort();
       });
@@ -213,7 +200,7 @@ class App {
       pill.addEventListener('click', () => {
         statusPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        this.activeStatus = pickOption(pill.getAttribute('data-status'), STATUS_FILTERS) ?? 'all';
+        this.state.filters.status = pickOption(pill.getAttribute('data-status'), STATUS_FILTERS) ?? 'all';
         soundService.playClick();
         this.applyFiltersAndSort();
       });
@@ -336,7 +323,7 @@ class App {
     this.workspaceTabs = new WorkspaceTabsComponent({
       initial: 'radar',
       onSwitch: (workspace: WorkspaceId) => {
-        this.currentView = workspace;
+        this.state.currentView = workspace;
         soundService.playClick();
         this.mountWorkspace(workspace);
         if (workspace === 'catalog') {
@@ -360,8 +347,8 @@ class App {
         if (searchClearBtn) searchClearBtn.classList.remove('visible');
         if (catalogSearchInput) catalogSearchInput.value = '';
         if (catalogClearBtn) catalogClearBtn.classList.remove('visible');
-        this.searchQuery = '';
-        this.activeArchetype = null;
+        this.state.filters.searchQuery = '';
+        this.state.filters.archetype = null;
         this.updateActiveSearchTagUI();
         this.radarChart?.updateData(this.getFilteredVerdicts(), null);
         this.applyFiltersAndSort();
@@ -379,7 +366,7 @@ class App {
       // Cmd/Ctrl + K to focus search
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        if (this.currentView === 'catalog') {
+        if (this.state.currentView === 'catalog') {
           const tableSearchInput = document.getElementById('catalog-search-input') as HTMLInputElement;
           if (tableSearchInput) {
             tableSearchInput.focus();
@@ -421,24 +408,15 @@ class App {
     }
   }
 
-  private updateSoundUI(muted: boolean): void {
-    const btnSoundToggle = document.getElementById('btn-sound-toggle');
-    const soundToggleLabel = document.getElementById('sound-toggle-label');
-    btnSoundToggle?.classList.toggle('active', !muted);
-    if (soundToggleLabel) {
-      soundToggleLabel.textContent = muted ? 'Mute' : 'Sound On';
-    }
-  }
-
   private exportMarketReportMd(): void {
-    const md = exportSnapshotToMarkdown(this.snapshot);
-    const filename = generateExportFilename(this.snapshot, 'md');
+    const md = exportSnapshotToMarkdown(this.state.snapshot);
+    const filename = generateExportFilename(this.state.snapshot, 'md');
     downloadBlob(md, filename, 'text/markdown;charset=utf-8');
   }
 
   private exportRawJson(): void {
-    const json = exportSnapshotToJson(this.snapshot);
-    const filename = generateExportFilename(this.snapshot, 'json');
+    const json = exportSnapshotToJson(this.state.snapshot);
+    const filename = generateExportFilename(this.state.snapshot, 'json');
     downloadBlob(json, filename, 'application/json;charset=utf-8');
   }
 
@@ -456,7 +434,7 @@ class App {
         onFilterSearch: (query, archetype) => {
           this.applyFilterFromSignal(query, archetype);
         },
-        showToast: msg => this.showToast(msg),
+        showToast: msg => showToast(msg),
         onSelectGame: game => {
           this.openGameDetail(game.title, game.archetype);
         },
@@ -485,7 +463,7 @@ class App {
       },
       onSoundToggle: () => {
         const isMuted = soundService.toggleMute();
-        this.updateSoundUI(isMuted);
+        updateSoundUI(isMuted);
         if (!isMuted) {
           soundService.playClick();
         }
@@ -495,7 +473,7 @@ class App {
     if (tickerTrack) {
       this.liveTicker = new LiveTickerComponent({
         container: tickerTrack,
-        snapshot: this.snapshot,
+        snapshot: this.state.snapshot,
         onSelectSignal: signal => {
           this.handleTickerSignalClick(signal);
         },
@@ -507,24 +485,24 @@ class App {
       this.radarOverviewView = new RadarOverviewViewComponent({
         container: radarOverviewContainer,
         verdicts: this.getFilteredVerdicts(),
-        previousVerdicts: this.previousSnapshot?.verdicts,
-        activeArchetype: this.activeArchetype,
+        previousVerdicts: this.state.previousSnapshot?.verdicts,
+        activeArchetype: this.state.filters.archetype,
         onSelectArchetype: archetype => {
-          this.activeArchetype = archetype;
+          this.state.filters.archetype = archetype;
           if (archetype) {
             soundService.playRadarPing();
             this.openArchetypeDetail(archetype);
           } else {
             soundService.playClick();
           }
-          this.radarChart.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+          this.radarChart.updateData(this.getFilteredVerdicts(), this.state.filters.archetype);
           this.applyFiltersAndSort();
           this.renderLegend();
         },
         onHoverArchetype: archetype => {
           if (archetype) {
             this.radarOverviewView?.highlightArchetype(archetype, true);
-          } else if (!this.activeArchetype) {
+          } else if (!this.state.filters.archetype) {
             this.verdictCards?.clearHighlight();
           }
         },
@@ -539,7 +517,7 @@ class App {
           const searchInput = document.getElementById('search-input') as HTMLInputElement;
           if (searchInput) {
             searchInput.value = tag;
-            this.searchQuery = tag.toLowerCase();
+            this.state.filters.searchQuery = tag.toLowerCase();
             this.applyFiltersAndSort();
           }
         },
@@ -557,25 +535,25 @@ class App {
       radarContainer?.addEventListener('click', e => {
         const target = e.target as SVGElement;
         const blip = target.closest('.radar-blip-group, .polar-blip-group') as SVGElement;
-        if (blip && this.activeArchetype) {
-          this.openArchetypeDetail(this.activeArchetype);
+        if (blip && this.state.filters.archetype) {
+          this.openArchetypeDetail(this.state.filters.archetype);
         }
       });
     } else {
       if (radarContainer) {
         this.radarChart = new RadarChartComponent({
           container: radarContainer,
-          verdicts: this.snapshot.verdicts,
-          activeArchetype: this.activeArchetype,
+          verdicts: this.state.snapshot.verdicts,
+          activeArchetype: this.state.filters.archetype,
           onSelectArchetype: archetype => {
-            this.activeArchetype = archetype;
+            this.state.filters.archetype = archetype;
             if (archetype) {
               soundService.playRadarPing();
               this.openArchetypeDetail(archetype);
             } else {
               soundService.playClick();
             }
-            this.radarChart.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+            this.radarChart.updateData(this.getFilteredVerdicts(), this.state.filters.archetype);
             this.applyFiltersAndSort();
             this.renderLegend();
           },
@@ -586,8 +564,8 @@ class App {
           const target = e.target as SVGElement;
           const blip = target.closest('.radar-blip-group, .polar-blip-group') as SVGElement;
           if (blip) {
-            if (this.activeArchetype) {
-              this.openArchetypeDetail(this.activeArchetype);
+            if (this.state.filters.archetype) {
+              this.openArchetypeDetail(this.state.filters.archetype);
             }
           }
         });
@@ -597,13 +575,13 @@ class App {
         this.verdictCards = new VerdictCardsComponent({
           container: verdictsContainer,
           verdicts: this.getFilteredVerdicts(),
-          previousVerdicts: this.previousSnapshot?.verdicts,
+          previousVerdicts: this.state.previousSnapshot?.verdicts,
           onSelectTag: tag => {
             soundService.playClick();
             const searchInput = document.getElementById('search-input') as HTMLInputElement;
             if (searchInput) {
               searchInput.value = tag;
-              this.searchQuery = tag.toLowerCase();
+              this.state.filters.searchQuery = tag.toLowerCase();
               this.applyFiltersAndSort();
             }
           },
@@ -665,7 +643,7 @@ class App {
 
     // Prompt Generator Modal Component setup
     this.promptModal = new PromptGeneratorModalComponent({
-      showToast: msg => this.showToast(msg),
+      showToast: msg => showToast(msg),
       onClose: () => soundService.playClick(),
     });
   }
@@ -680,12 +658,12 @@ class App {
     if (view === 'catalog' && !this.gameTableView && catalogContainer) {
       this.gameTableView = new GameTableViewComponent({
         container: catalogContainer,
-        games: this.snapshot.games || [],
-        verdicts: this.snapshot.verdicts || [],
+        games: this.state.snapshot.games || [],
+        verdicts: this.state.snapshot.verdicts || [],
         initialViewMode: 'table',
         onSelectGame: game => {
           soundService.playClick();
-          this.detailDrawer.openGame(game, this.snapshot.games);
+          this.detailDrawer.openGame(game, this.state.snapshot.games);
         },
         onTagClick: tag => {
           soundService.playClick();
@@ -717,10 +695,10 @@ class App {
     if (view === 'arbitrage' && !this.arbitrageMatrix && arbitrageContainer) {
       this.arbitrageMatrix = new ArbitrageMatrixComponent({
         container: arbitrageContainer,
-        opportunities: this.snapshot.arbitrageOpportunities || [],
+        opportunities: this.state.snapshot.arbitrageOpportunities || [],
         onSelectGame: game => {
           soundService.playClick();
-          this.detailDrawer.openGame(game, this.snapshot.games);
+          this.detailDrawer.openGame(game, this.state.snapshot.games);
         },
         onOpenRoblox: url => {
           soundService.playClick();
@@ -735,17 +713,17 @@ class App {
     if (view === 'movers' && !this.moversView && moversContainer) {
       this.moversView = new MoversViewComponent({
         container: moversContainer,
-        currentSnapshot: this.snapshot,
-        previousSnapshot: this.previousSnapshot,
+        currentSnapshot: this.state.snapshot,
+        previousSnapshot: this.state.previousSnapshot,
         onSelectGame: game => {
           soundService.playClick();
-          this.detailDrawer.openGame(game, this.snapshot.games);
+          this.detailDrawer.openGame(game, this.state.snapshot.games);
         },
         onSelectArchetype: archetype => {
           soundService.playClick();
-          const verdict = this.snapshot.verdicts.find(v => v.archetype === archetype);
+          const verdict = this.state.snapshot.verdicts.find(v => v.archetype === archetype);
           if (verdict) {
-            this.detailDrawer.openArchetype(verdict, this.snapshot.games);
+            this.detailDrawer.openArchetype(verdict, this.state.snapshot.games);
           }
         },
       });
@@ -762,7 +740,7 @@ class App {
     if (tabBadge) {
       const count = this.arbitrageMatrix
         ? this.arbitrageMatrix.getTotalCount()
-        : (this.snapshot.arbitrageOpportunities?.length ?? 0);
+        : (this.state.snapshot.arbitrageOpportunities?.length ?? 0);
       tabBadge.textContent = count.toString();
     }
   }
@@ -786,7 +764,7 @@ class App {
   private updateCatalogCountUI(): void {
     const countText = document.getElementById('catalog-count-text');
     const tabBadge = document.getElementById('tab-games-count');
-    const total = this.snapshot.games?.length || this.snapshot.totalGamesScanned || 0;
+    const total = this.state.snapshot.games?.length || this.state.snapshot.totalGamesScanned || 0;
     const filtered = this.gameTableView ? this.gameTableView.getFilteredCount() : total;
 
     if (tabBadge) {
@@ -798,7 +776,7 @@ class App {
   }
 
   public openArchetypeDetail(archetype: GameArchetype): void {
-    const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === archetype);
+    const verdict = (this.state.snapshot.verdicts || []).find(v => v.archetype === archetype);
     if (!verdict) return;
 
     this.currentDrawerVerdict = verdict;
@@ -812,7 +790,7 @@ class App {
     if (!titleOrId) return;
     soundService.playClick();
 
-    const games = this.snapshot.games || [];
+    const games = this.state.snapshot.games || [];
     const lower = titleOrId.toLowerCase().trim();
 
     // 1. Exact ID or Title match
@@ -826,8 +804,8 @@ class App {
     }
 
     // 3. Arbitrage match
-    if (!found && this.snapshot.arbitrageOpportunities) {
-      for (const opp of this.snapshot.arbitrageOpportunities) {
+    if (!found && this.state.snapshot.arbitrageOpportunities) {
+      for (const opp of this.state.snapshot.arbitrageOpportunities) {
         if (opp.robloxGame && opp.robloxGame.title.toLowerCase().includes(lower)) {
           found = opp.robloxGame;
           break;
@@ -843,7 +821,7 @@ class App {
             metricType: 'ccu',
             likeRatio: 0.88,
             tags: ['analog', 'arbitrage'],
-            timestamp: this.snapshot.timestamp,
+            timestamp: this.state.snapshot.timestamp,
           };
           break;
         }
@@ -853,7 +831,7 @@ class App {
     // 4. Synthesize game if not explicitly present in snapshot
     if (!found) {
       const arch = archetypeHint || 'OTHER_CASUAL';
-      const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === arch);
+      const verdict = (this.state.snapshot.verdicts || []).find(v => v.archetype === arch);
       found = {
         id: `synth_${encodeURIComponent(lower)}`,
         platform: 'roblox',
@@ -866,20 +844,20 @@ class App {
         metricType: 'ccu',
         likeRatio: 0.92,
         tags: [arch, 'Sample', 'Trending'],
-        timestamp: this.snapshot.timestamp || new Date().toISOString(),
+        timestamp: this.state.snapshot.timestamp || new Date().toISOString(),
         url: `https://www.roblox.com/discover/?Keyword=${encodeURIComponent(titleOrId)}`,
       };
     }
 
     const archetypeGames = this.getGamesForArchetype(found.archetype);
-    const parentVerdict = (this.snapshot.verdicts || []).find(v => v.archetype === found!.archetype);
+    const parentVerdict = (this.state.snapshot.verdicts || []).find(v => v.archetype === found!.archetype);
 
     this.detailDrawer.openGame(found, archetypeGames, parentVerdict);
   }
 
   private getGamesForArchetype(archetype: GameArchetype): NormalizedGame[] {
-    const games = (this.snapshot.games || []).filter(g => g.archetype === archetype);
-    const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === archetype);
+    const games = (this.state.snapshot.games || []).filter(g => g.archetype === archetype);
+    const verdict = (this.state.snapshot.verdicts || []).find(v => v.archetype === archetype);
 
     if (verdict && verdict.sampleTitles) {
       const existingTitles = new Set(games.map(g => g.title.toLowerCase().trim()));
@@ -898,7 +876,7 @@ class App {
           likeRatio: 0.91,
           url: `https://www.roblox.com/discover/?Keyword=${encodeURIComponent(sampleTitle)}`,
           tags: [archetype, 'Sample', 'Trending'],
-          timestamp: this.snapshot.timestamp || new Date().toISOString(),
+          timestamp: this.state.snapshot.timestamp || new Date().toISOString(),
         });
         existingTitles.add(sampleTitle.toLowerCase().trim());
       }
@@ -923,25 +901,25 @@ class App {
     const searchClearBtn = document.getElementById('search-clear-btn');
     if (searchInput) {
       searchInput.value = query;
-      this.searchQuery = query.toLowerCase();
+      this.state.filters.searchQuery = query.toLowerCase();
     }
     if (searchClearBtn) {
       searchClearBtn.classList.toggle('visible', !!query.trim());
     }
     if (archetype) {
-      this.activeArchetype = archetype;
+      this.state.filters.archetype = archetype;
     }
 
     // Reset status and platform filters to 'all' so matching game/verdict is visible
-    this.activePlatform = 'all';
-    this.activeStatus = 'all';
+    this.state.filters.platform = 'all';
+    this.state.filters.status = 'all';
     const platformPills = document.querySelectorAll<HTMLButtonElement>('[data-platform]');
     platformPills.forEach(p => p.classList.toggle('active', p.getAttribute('data-platform') === 'all'));
     const statusPills = document.querySelectorAll<HTMLButtonElement>('[data-status]');
     statusPills.forEach(p => p.classList.toggle('active', p.getAttribute('data-status') === 'all'));
 
     this.updateActiveSearchTagUI();
-    this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+    this.radarChart?.updateData(this.getFilteredVerdicts(), this.state.filters.archetype);
     this.applyFiltersAndSort();
     this.renderLegend();
   }
@@ -956,14 +934,14 @@ class App {
     if (list) {
       // SSE только при живом API: на статике /api/events нет, и EventSource ретраил бы его бесконечно
       liveEventService.connect();
-      this.snapshotsList = list;
+      this.state.snapshotsList = list;
       statusDot?.classList.remove('offline');
       if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
 
-      if (this.snapshotsList.length > 0) {
+      if (this.state.snapshotsList.length > 0) {
         this.populateSnapshotSelect();
         // Load the latest snapshot (first in list)
-        await this.selectSnapshot(this.snapshotsList[0].id, false);
+        await this.selectSnapshot(this.state.snapshotsList[0].id, false);
         return;
       }
     }
@@ -973,13 +951,13 @@ class App {
   }
 
   private populateSnapshotSelect(): void {
-    const options = this.snapshotsList.map(s => ({
+    const options = this.state.snapshotsList.map(s => ({
       id: s.id,
       label: formatSnapshotOptionLabel(s.date, s.totalGamesScanned),
       date: s.date,
       gamesCount: s.totalGamesScanned,
     }));
-    this.headerStatusBar?.setSnapshots(options, this.snapshotsList[0]?.id);
+    this.headerStatusBar?.setSnapshots(options, this.state.snapshotsList[0]?.id);
   }
 
   private async selectSnapshot(snapshotId: string, animate: boolean = true): Promise<void> {
@@ -991,21 +969,21 @@ class App {
     }
 
     try {
-      const data = await fetchSnapshotById(snapshotId, this.snapshotsCache);
+      const data = await fetchSnapshotById(snapshotId, this.state.snapshotsCache);
 
       if (data) {
-        this.snapshot = data;
-        this.currentSnapshotId = snapshotId;
+        this.state.snapshot = data;
+        this.state.currentSnapshotId = snapshotId;
 
         // Find immediately preceding snapshot in history (idx + 1 in date-descending list)
-        const currIdx = this.snapshotsList.findIndex(s => s.id === snapshotId);
-        if (currIdx >= 0 && currIdx + 1 < this.snapshotsList.length) {
-          const prevSummary = this.snapshotsList[currIdx + 1];
+        const currIdx = this.state.snapshotsList.findIndex(s => s.id === snapshotId);
+        if (currIdx >= 0 && currIdx + 1 < this.state.snapshotsList.length) {
+          const prevSummary = this.state.snapshotsList[currIdx + 1];
           // Сбой загрузки предыдущего снимка не мешает показать текущий
-          const prevData = await fetchSnapshotById(prevSummary.id, this.snapshotsCache).catch(() => undefined);
-          this.previousSnapshot = prevData || null;
+          const prevData = await fetchSnapshotById(prevSummary.id, this.state.snapshotsCache).catch(() => undefined);
+          this.state.previousSnapshot = prevData || null;
         } else {
-          this.previousSnapshot = null;
+          this.state.previousSnapshot = null;
         }
 
         if (animate) {
@@ -1044,13 +1022,13 @@ class App {
     this.updateGlobalMetrics();
     this.renderLegend();
     this.renderSearchTags();
-    this.liveTicker?.updateData(this.snapshot);
-    this.radarChart?.updateData(this.snapshot.verdicts, this.activeArchetype);
-    this.gameTableView?.updateData(this.snapshot.games || [], this.snapshot.verdicts || []);
+    this.liveTicker?.updateData(this.state.snapshot);
+    this.radarChart?.updateData(this.state.snapshot.verdicts, this.state.filters.archetype);
+    this.gameTableView?.updateData(this.state.snapshot.games || [], this.state.snapshot.verdicts || []);
     this.updateCatalogCountUI();
-    this.arbitrageMatrix?.updateData(this.snapshot.arbitrageOpportunities || []);
+    this.arbitrageMatrix?.updateData(this.state.snapshot.arbitrageOpportunities || []);
     this.updateArbitrageCountUI();
-    this.moversView?.updateData(this.snapshot, this.previousSnapshot);
+    this.moversView?.updateData(this.state.snapshot, this.state.previousSnapshot);
     this.applyFiltersAndSort();
   }
 
@@ -1060,9 +1038,9 @@ class App {
 
     const data = await fetchLatestSnapshot();
     if (data) {
-      this.snapshot = data;
-      this.currentSnapshotId = data.id;
-      this.snapshotsCache.set(data.id, data);
+      this.state.snapshot = data;
+      this.state.currentSnapshotId = data.id;
+      this.state.snapshotsCache.set(data.id, data);
       statusDot?.classList.remove('offline');
       if (statusText) statusText.textContent = 'HTTP :4200 (Online)';
       this.headerStatusBar?.setSseStatus(true, 'SSE Live');
@@ -1090,7 +1068,7 @@ class App {
   ): Promise<void> {
     const staticData = await fetchStaticSnapshot();
     if (staticData) {
-      this.snapshot = staticData;
+      this.state.snapshot = staticData;
       statusDot?.classList.remove('offline');
       if (statusText) statusText.textContent = 'GitHub Pages (Статика)';
       this.headerStatusBar?.setSseStatus(true, 'Статика');
@@ -1103,7 +1081,7 @@ class App {
     statusDot?.classList.add('offline');
     if (statusText) statusText.textContent = 'Демонстрационный режим';
     this.headerStatusBar?.setSseStatus(false, 'Оффлайн');
-    if (this.snapshot === FALLBACK_SNAPSHOT) {
+    if (this.state.snapshot === FALLBACK_SNAPSHOT) {
       this.headerStatusBar?.setSnapshots([{ id: FALLBACK_SNAPSHOT.id, label: 'Демо-данные' }], FALLBACK_SNAPSHOT.id);
     }
   }
@@ -1130,11 +1108,11 @@ class App {
 
     // 2. Старт сканирования
     liveEventService.on('scan:started', () => {
-      this.isScanning = true;
+      this.state.isScanning = true;
       this.headerStatusBar?.setScanning(true);
       this.headerStatusBar?.setScanProgress({ pct: 5, label: 'Инициализация мониторинга...' });
       // Фоновый автоскан не должен блокировать экран всем зрителям — оверлей только у инициатора
-      if (this.localScanRequested) {
+      if (this.state.localScanRequested) {
         document.getElementById('scan-overlay')?.classList.add('active');
       }
       const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
@@ -1143,9 +1121,9 @@ class App {
 
     // Скан отклонён валидацией или упал — снимаем блокировки и объясняем причину
     liveEventService.on('scan:failed', (data: { error?: string }) => {
-      this.localScanRequested = false;
+      this.state.localScanRequested = false;
       this.resetScanningState();
-      this.showToast(data?.error || 'Сканирование не удалось. Прежние данные сохранены.');
+      showToast(data?.error || 'Сканирование не удалось. Прежние данные сохранены.');
     });
 
     // 3. Реальный прогресс сбора данных
@@ -1156,7 +1134,7 @@ class App {
     // 4. Завершение сканирования
     liveEventService.on('scan:completed', async (data: ScanCompletedData) => {
       soundService.playScanFinish();
-      this.localScanRequested = false;
+      this.state.localScanRequested = false;
 
       const overlay = document.getElementById('scan-overlay');
       overlay?.classList.remove('active');
@@ -1164,11 +1142,11 @@ class App {
       const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
       if (btnScan) btnScan.disabled = false;
 
-      this.isScanning = false;
+      this.state.isScanning = false;
       this.headerStatusBar?.setScanning(false);
       this.headerStatusBar?.setScanProgress(null);
 
-      this.showToast('Сканирование завершено! Снимок обновлен.');
+      showToast('Сканирование завершено! Снимок обновлен.');
 
       // Автоматически обновляем срезы и применяем свежие данные ко всем вкладкам
       await this.fetchSnapshots();
@@ -1181,9 +1159,9 @@ class App {
 
     // 5. Фоновое обновление снимка рынка (cron / другой клиент)
     liveEventService.on('snapshot:updated', async data => {
-      if (!this.isScanning) {
+      if (!this.state.isScanning) {
         await this.fetchSnapshots();
-        if (data.snapshotId && data.snapshotId !== this.currentSnapshotId) {
+        if (data.snapshotId && data.snapshotId !== this.state.currentSnapshotId) {
           await this.selectSnapshot(data.snapshotId, false);
         }
       }
@@ -1191,8 +1169,8 @@ class App {
   }
 
   private async triggerLiveScan(): Promise<void> {
-    if (this.isScanning) return;
-    this.isScanning = true;
+    if (this.state.isScanning) return;
+    this.state.isScanning = true;
     this.headerStatusBar?.setScanning(true);
 
     const overlay = document.getElementById('scan-overlay');
@@ -1203,33 +1181,33 @@ class App {
 
     this.headerStatusBar?.setScanProgress({ pct: 5, label: 'Инициализация мониторинга...' });
 
-    this.localScanRequested = true;
+    this.state.localScanRequested = true;
     try {
       const result = await requestScan();
       if (result.kind === 'unauthorized') {
         const entered = window.prompt('Для запуска скана нужен токен доступа (SCAN_TOKEN):');
         storeScanToken(entered);
-        this.showToast(entered ? 'Токен сохранён — нажмите «Запустить скан» ещё раз.' : 'Нужен токен доступа.');
-        this.localScanRequested = false;
+        showToast(entered ? 'Токен сохранён — нажмите «Запустить скан» ещё раз.' : 'Нужен токен доступа.');
+        this.state.localScanRequested = false;
         this.resetScanningState();
       } else if (result.kind === 'disabled') {
-        this.showToast('Ручной скан отключён на сервере. Данные обновляются автосканом.');
-        this.localScanRequested = false;
+        showToast('Ручной скан отключён на сервере. Данные обновляются автосканом.');
+        this.state.localScanRequested = false;
         this.resetScanningState();
       } else if (result.kind === 'cooldown') {
-        this.showToast(`Скан недавно выполнялся. Повторите через ${result.retryAfterSec} с.`);
-        this.localScanRequested = false;
+        showToast(`Скан недавно выполнялся. Повторите через ${result.retryAfterSec} с.`);
+        this.state.localScanRequested = false;
         this.resetScanningState();
       } else if (result.kind === 'error') {
-        this.showToast('Сервер вернул ошибку при сканировании.');
-        this.localScanRequested = false;
+        showToast('Сервер вернул ошибку при сканировании.');
+        this.state.localScanRequested = false;
         this.resetScanningState();
       }
       // Ход и завершение транслируются через SSE (scan:progress, scan:completed, scan:failed)
     } catch (err) {
       console.warn('[App] Ошибка запуска POST /api/scan:', err);
-      this.showToast('Сервер недоступен для запуска сканирования.');
-      this.localScanRequested = false;
+      showToast('Сервер недоступен для запуска сканирования.');
+      this.state.localScanRequested = false;
       this.resetScanningState();
     }
   }
@@ -1239,7 +1217,7 @@ class App {
     const btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
     overlay?.classList.remove('active');
     if (btnScan) btnScan.disabled = false;
-    this.isScanning = false;
+    this.state.isScanning = false;
     this.headerStatusBar?.setScanning(false);
     this.headerStatusBar?.setScanProgress(null);
   }
@@ -1254,8 +1232,8 @@ class App {
 
     // База для % изменения CCU — реальный снимок, показанный ДО этого обновления
     const baselineIsReal = this.metricsSnapshotId !== null && this.metricsSnapshotId !== FALLBACK_SNAPSHOT.id;
-    const m = computeMarketMetrics(this.snapshot, this.previousSnapshot, baselineIsReal ? this.prevMetrics.totalCcu : 0);
-    this.metricsSnapshotId = this.snapshot.id;
+    const m = computeMarketMetrics(this.state.snapshot, this.state.previousSnapshot, baselineIsReal ? this.prevMetrics.totalCcu : 0);
+    this.metricsSnapshotId = this.state.snapshot.id;
     if (topGenreEl && m.topGenreTitle !== null) {
       topGenreEl.textContent = m.topGenreTitle;
     }
@@ -1299,18 +1277,18 @@ class App {
       ccuChangePercent: m.ccuChangePercent,
       arbitrageCount: m.arbitrageCount,
       topDayGameTitle: m.topGameTitle,
-      updatedText: formatMinutesAgo(this.snapshot.timestamp),
+      updatedText: formatMinutesAgo(this.state.snapshot.timestamp),
     });
-    this.headerStatusBar?.setSourceStatus(this.snapshot.sourceStatus);
+    this.headerStatusBar?.setSourceStatus(this.state.snapshot.sourceStatus);
     this.refreshFreshness();
   }
 
   /** Обновляет «N мин назад» и подсвечивает устаревшие данные (старше 3 ч). */
   private refreshFreshness(): void {
     const el = document.getElementById('kpi-updated-time');
-    const ts = Date.parse(this.snapshot?.timestamp ?? '');
+    const ts = Date.parse(this.state.snapshot?.timestamp ?? '');
     if (!el || !Number.isFinite(ts)) return;
-    el.textContent = formatMinutesAgo(this.snapshot.timestamp);
+    el.textContent = formatMinutesAgo(this.state.snapshot.timestamp);
     const stale = Date.now() - ts > 3 * 3600_000;
     el.classList.toggle('is-stale', stale);
     el.title = stale ? 'Данные устарели — снимок рынка давно не обновлялся' : '';
@@ -1331,9 +1309,9 @@ class App {
 
     legendContainer.innerHTML = '';
 
-    this.snapshot.verdicts.forEach(v => {
+    this.state.snapshot.verdicts.forEach(v => {
       const item = document.createElement('div');
-      item.className = 'legend-item' + (this.activeArchetype === v.archetype ? ' active' : '');
+      item.className = 'legend-item' + (this.state.filters.archetype === v.archetype ? ' active' : '');
 
       const color =
         v.status === 'GREEN_LIGHT'
@@ -1351,14 +1329,14 @@ class App {
       `;
 
       item.addEventListener('click', () => {
-        this.activeArchetype = this.activeArchetype === v.archetype ? null : v.archetype;
-        if (this.activeArchetype) {
+        this.state.filters.archetype = this.state.filters.archetype === v.archetype ? null : v.archetype;
+        if (this.state.filters.archetype) {
           soundService.playRadarPing();
-          this.openArchetypeDetail(this.activeArchetype);
+          this.openArchetypeDetail(this.state.filters.archetype);
         } else {
           soundService.playClick();
         }
-        this.radarChart.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+        this.radarChart.updateData(this.getFilteredVerdicts(), this.state.filters.archetype);
         this.applyFiltersAndSort();
         this.renderLegend();
       });
@@ -1368,83 +1346,31 @@ class App {
   }
 
   private getFilteredVerdicts(): MarketVerdict[] {
-    return (this.snapshot.verdicts || []).filter(v => {
-      // 1. Archetype selection filter
-      if (this.activeArchetype && v.archetype !== this.activeArchetype) {
-        return false;
-      }
-
-      // 2. Status filter
-      if (this.activeStatus !== 'all') {
-        if (this.activeStatus === 'arbitrage') {
-          if (!v.hasArbitrageOpportunity) return false;
-        } else if (v.status !== this.activeStatus) {
-          return false;
-        }
-      }
-
-      // 3. Platform filter: check if verdict has games matching platform
-      if (this.activePlatform !== 'all') {
-        const platformGames = (this.snapshot.games || []).filter(
-          g => g.platform === this.activePlatform && g.archetype === v.archetype
-        );
-        // Also allow if verdict sampleTitles has matches or if platform counts match
-        if (platformGames.length === 0 && this.activePlatform !== 'roblox') {
-          // Allow fallback pass if it matches archetype
-          const hasSamples = v.sampleTitles.some(t => t.length > 0);
-          if (!hasSamples) return false;
-        }
-      }
-
-      // 4. Search query & dynamic tags
-      if (this.searchQuery) {
-        if (!verdictMatchesQuery(v, this.searchQuery, this.snapshot.games || [])) {
-          return false;
-        }
-      }
-
-      return true;
-    });
+    return filterVerdicts(this.state.snapshot, this.state.filters);
   }
 
   private applyFiltersAndSort(): void {
     const filtered = this.getFilteredVerdicts();
 
-    // Sort filtered verdicts
-    filtered.sort((a, b) => {
-      switch (this.sortBy) {
-        case 'score_desc':
-          return b.opportunityScore.overallScore - a.opportunityScore.overallScore;
-        case 'score_asc':
-          return a.opportunityScore.overallScore - b.opportunityScore.overallScore;
-        case 'ccu_desc':
-          return b.totalAudienceCCU - a.totalAudienceCCU;
-        case 'velocity_desc':
-          return b.opportunityScore.velocityScore - a.opportunityScore.velocityScore;
-        case 'title_asc':
-          return a.titleRu.localeCompare(b.titleRu, 'ru');
-        default:
-          return 0;
-      }
-    });
+    sortVerdicts(filtered, this.state.filters.sortBy);
 
     const countText = document.getElementById('verdicts-count-text');
     if (countText) {
-      countText.textContent = `Отображается ${filtered.length} из ${this.snapshot.verdicts?.length || 0}`;
+      countText.textContent = `Отображается ${filtered.length} из ${this.state.snapshot.verdicts?.length || 0}`;
     }
 
     if (this.radarOverviewView) {
-      this.radarOverviewView.updateData(filtered, this.previousSnapshot?.verdicts, this.activeArchetype);
+      this.radarOverviewView.updateData(filtered, this.state.previousSnapshot?.verdicts, this.state.filters.archetype);
     } else {
-      this.verdictCards?.updateData(filtered, this.previousSnapshot?.verdicts);
+      this.verdictCards?.updateData(filtered, this.state.previousSnapshot?.verdicts);
     }
     this.enhanceVerdictCardsWithPromptButton();
   }
 
   public openPromptModalForArchetype(archetype: GameArchetype): void {
-    const verdict = (this.snapshot.verdicts || []).find(v => v.archetype === archetype);
+    const verdict = (this.state.snapshot.verdicts || []).find(v => v.archetype === archetype);
     const games = this.getGamesForArchetype(archetype);
-    const arbitrage = (this.snapshot.arbitrageOpportunities || []).find(
+    const arbitrage = (this.state.snapshot.arbitrageOpportunities || []).find(
       o => o.archetype === archetype
     );
     soundService.playClick();
@@ -1490,19 +1416,6 @@ class App {
     }
   }
 
-  private showToast(message: string): void {
-    const toast = document.getElementById('toast-notification');
-    const toastText = document.getElementById('toast-text');
-    if (!toast || !toastText) return;
-
-    toastText.textContent = message;
-    toast.classList.add('show');
-
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 4000);
-  }
-
   private renderSearchTags(): void {
     const scrollContainer = document.getElementById('search-tags-scroll');
     if (!scrollContainer) return;
@@ -1517,12 +1430,12 @@ class App {
       chip.setAttribute('data-query', tag.query);
       chip.setAttribute('data-label', tag.label);
 
-      const isActive = isTagActive(tag, this.searchQuery);
+      const isActive = isTagActive(tag, this.state.filters.searchQuery);
       if (isActive) {
         chip.classList.add('active');
       }
 
-      const matchCount = countGamesForTag(tag, this.snapshot);
+      const matchCount = countGamesForTag(tag, this.state.snapshot);
       const countBadge = matchCount > 0 ? `<span class="search-tag-count">${matchCount}</span>` : '';
 
       chip.innerHTML = `
@@ -1535,20 +1448,20 @@ class App {
         const searchClearBtn = document.getElementById('search-clear-btn');
         soundService.playClick();
 
-        if (isTagActive(tag, this.searchQuery)) {
+        if (isTagActive(tag, this.state.filters.searchQuery)) {
           // Toggle off if currently active
           if (searchInput) searchInput.value = '';
-          this.searchQuery = '';
+          this.state.filters.searchQuery = '';
           if (searchClearBtn) searchClearBtn.classList.remove('visible');
         } else {
           // Apply tag filter
           if (searchInput) searchInput.value = tag.label;
-          this.searchQuery = tag.query.toLowerCase();
+          this.state.filters.searchQuery = tag.query.toLowerCase();
           if (searchClearBtn) searchClearBtn.classList.add('visible');
         }
 
         this.updateActiveSearchTagUI();
-        this.radarChart?.updateData(this.getFilteredVerdicts(), this.activeArchetype);
+        this.radarChart?.updateData(this.getFilteredVerdicts(), this.state.filters.archetype);
         this.applyFiltersAndSort();
       });
 
@@ -1562,7 +1475,7 @@ class App {
       const q = chip.getAttribute('data-query') || '';
       const label = chip.getAttribute('data-label') || '';
       const tag: PopularSearchTag = { id: chip.getAttribute('data-tag-id') || '', label, query: q };
-      chip.classList.toggle('active', isTagActive(tag, this.searchQuery));
+      chip.classList.toggle('active', isTagActive(tag, this.state.filters.searchQuery));
     });
   }
 
