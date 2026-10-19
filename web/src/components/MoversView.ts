@@ -14,6 +14,8 @@ import {
   gainersFromRisers,
 } from './movers/data.js';
 import { renderMoversMarkup } from './movers/sections.js';
+import { computeArchetypeDelta } from '../utils/snapshotDiff.js';
+import { formatSnapshotDateRu } from '../utils/format.js';
 
 export type {
   GainersSortMode,
@@ -46,6 +48,7 @@ export class MoversViewComponent {
   private container: HTMLElement;
   private currentSnapshot: MarketSnapshot | null = null;
   private previousSnapshot: MarketSnapshot | null = null;
+  private explicitBase = false;
   private gainersSort: GainersSortMode = 'abs';
 
   private onSelectGame?: (game: NormalizedGame) => void;
@@ -63,6 +66,7 @@ export class MoversViewComponent {
     this.container = options.container;
     this.currentSnapshot = options.currentSnapshot || null;
     this.previousSnapshot = options.previousSnapshot || null;
+    this.explicitBase = !!options.explicitBase;
     this.gainersSort = options.initialGainersSort || 'abs';
     this.onSelectGame = options.onSelectGame;
     this.onSelectArchetype = options.onSelectArchetype;
@@ -94,13 +98,18 @@ export class MoversViewComponent {
   public setGainersSort(mode: GainersSortMode): void {
     if (this.gainersSort === mode) return;
     this.gainersSort = mode;
-    this.gainers = calculate24hGainers(this.currentSnapshot, this.previousSnapshot, this.gainersSort);
+    this.gainers = this.calculateGainers();
     this.render();
   }
 
-  public updateData(currentSnapshot: MarketSnapshot, previousSnapshot?: MarketSnapshot | null): void {
+  public updateData(
+    currentSnapshot: MarketSnapshot,
+    previousSnapshot?: MarketSnapshot | null,
+    explicitBase = false
+  ): void {
     this.currentSnapshot = currentSnapshot;
     this.previousSnapshot = previousSnapshot ?? null;
+    this.explicitBase = explicitBase;
     this.breakoutLimit = BREAKOUT_PAGE;
     this.recalculate();
     this.render();
@@ -112,11 +121,24 @@ export class MoversViewComponent {
   }
 
   private recalculate(): void {
-    this.gainers =
-      gainersFromRisers(this.currentSnapshot, this.gainersSort) ??
-      calculate24hGainers(this.currentSnapshot, this.previousSnapshot, this.gainersSort);
+    this.gainers = this.calculateGainers();
     this.viralSignals = filterViralSignals(this.currentSnapshot, 1.5);
     this.breakouts = breakoutsFromNewEntries(this.currentSnapshot) ?? filterBreakoutNewReleases(this.currentSnapshot, 14);
+  }
+
+  /** Явно выбранная база сравнения — дельта от неё; иначе окно 7 дней из снимка, если есть, или предыдущий срез. */
+  private calculateGainers(): GainerItem[] {
+    if (this.comparesWithBase()) {
+      return calculate24hGainers(this.currentSnapshot, this.previousSnapshot, this.gainersSort);
+    }
+    return (
+      gainersFromRisers(this.currentSnapshot, this.gainersSort) ??
+      calculate24hGainers(this.currentSnapshot, this.previousSnapshot, this.gainersSort)
+    );
+  }
+
+  private comparesWithBase(): boolean {
+    return this.explicitBase && !!this.previousSnapshot;
   }
 
   /** Есть ли в снимке настоящая история по играм (новые снимки) — тогда окно 7 дней, а не сравнение с прошлым срезом. */
@@ -212,6 +234,15 @@ export class MoversViewComponent {
       gainersSort: this.gainersSort,
       hasHistory: this.hasHistory(),
       breakoutLimit: this.breakoutLimit,
+      gainersBaseLabel: this.comparesWithBase() ? formatSnapshotDateRu(this.previousSnapshot!.timestamp) : null,
+      archetypeDelta:
+        this.currentSnapshot && this.previousSnapshot
+          ? {
+              baseLabel: formatSnapshotDateRu(this.previousSnapshot.timestamp),
+              currentLabel: formatSnapshotDateRu(this.currentSnapshot.timestamp),
+              rows: computeArchetypeDelta(this.currentSnapshot, this.previousSnapshot),
+            }
+          : null,
     });
   }
 }

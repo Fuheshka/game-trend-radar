@@ -4,11 +4,14 @@
  * Режимы по убыванию: API (`/api/snapshots` ответил) → `/api/snapshots/latest` → статический снимок
  * GitHub Pages → встроенные демо-данные. «Нет API» = список срезов недоступен (null): тогда скан
  * прячется и SSE не подключается. Пустой список (`[]`) — сервер жив, просто снимков ещё нет.
+ *
+ * База сравнения: срез из «Сравнить с» (`?compare=` в URL) или предыдущий; без API селектор скрыт.
  */
 import { FALLBACK_SNAPSHOT } from '../fallbackData.js';
 import * as snapshotApi from '../services/snapshotApi.js';
 import type { HeaderStatusBarComponent } from '../components/HeaderStatusBar.js';
 import { formatSnapshotOptionLabel } from '../utils/format.js';
+import { readCompareParam, resolveBaseSnapshotId, withCompareParam } from './compare.js';
 import type { AppState } from './state.js';
 import { setServerStatus, ServerStatusSetter } from './ui.js';
 
@@ -16,7 +19,15 @@ export type SnapshotApi = Pick<
   typeof snapshotApi,
   'fetchSnapshotList' | 'fetchSnapshotById' | 'fetchLatestSnapshot' | 'fetchStaticSnapshot'
 >;
-export type SnapshotHeader = Pick<HeaderStatusBarComponent, 'setScanAvailable' | 'setSnapshots' | 'setSseStatus'>;
+export type SnapshotHeader = Pick<
+  HeaderStatusBarComponent,
+  'setScanAvailable' | 'setSnapshots' | 'setSseStatus' | 'setCompareOptions'
+>;
+/** `?compare=` в адресной строке: прочитать при старте и переписать при выборе базы. */
+export interface CompareUrl {
+  read: () => string | null;
+  write: (compareId: string | null) => void;
+}
 /** Селектор срезов: нужны только value и число опций. */
 export type SnapshotSelect = Pick<HTMLSelectElement, 'value'> & { options: { length: number } };
 
@@ -31,6 +42,7 @@ export interface SnapshotControllerDeps {
   setServerStatus?: ServerStatusSetter;
   getSelect?: () => SnapshotSelect | null;
   animateTransition?: () => void;
+  compareUrl?: CompareUrl;
 }
 
 export class SnapshotController {
@@ -42,6 +54,7 @@ export class SnapshotController {
   private readonly setServerStatus: ServerStatusSetter;
   private readonly getSelect: () => SnapshotSelect | null;
   private readonly animateTransition: () => void;
+  private readonly compareUrl: CompareUrl;
 
   constructor(deps: SnapshotControllerDeps) {
     this.state = deps.state;
@@ -52,6 +65,7 @@ export class SnapshotController {
     this.setServerStatus = deps.setServerStatus ?? setServerStatus;
     this.getSelect = deps.getSelect ?? (() => document.getElementById('snapshot-select') as HTMLSelectElement | null);
     this.animateTransition = deps.animateTransition ?? triggerSnapshotTransitionAnimation;
+    this.compareUrl = deps.compareUrl ?? browserCompareUrl;
   }
 
   async fetchSnapshots(): Promise<void> {
@@ -67,6 +81,10 @@ export class SnapshotController {
 
       if (this.state.snapshotsList.length > 0) {
         this.populateSnapshotSelect();
+        // Срез из ссылки, которого нет в истории (удалён, опечатка), — молча сравниваем с предыдущим
+        const requested = this.compareUrl.read();
+        this.state.compareId = requested && list.some(s => s.id === requested) ? requested : null;
+        if (requested && !this.state.compareId) this.compareUrl.write(null);
         // Load the latest snapshot (first in list)
         await this.selectSnapshot(this.state.snapshotsList[0].id, false);
         return;
@@ -102,19 +120,12 @@ export class SnapshotController {
         this.state.snapshot = data;
         this.state.currentSnapshotId = snapshotId;
 
-        // Find immediately preceding snapshot in history (idx + 1 in date-descending list)
-        const list = this.state.snapshotsList;
-        const currIdx = list.findIndex(s => s.id === snapshotId);
-        if (currIdx >= 0 && currIdx + 1 < list.length) {
-          const prevSummary = list[currIdx + 1];
-          // Сбой загрузки предыдущего снимка не мешает показать текущий
-          const prevData = await this.api
-            .fetchSnapshotById(prevSummary.id, this.state.snapshotsCache)
-            .catch(() => undefined);
-          this.state.previousSnapshot = prevData || null;
-        } else {
-          this.state.previousSnapshot = null;
+        // Базой стал сам текущий срез — возвращаемся к «предыдущему»
+        if (this.state.compareId === snapshotId) {
+          this.state.compareId = null;
+          this.compareUrl.write(null);
         }
+        await this.loadBaseSnapshot();
 
         if (animate) {
           this.animateTransition();
@@ -125,6 +136,32 @@ export class SnapshotController {
     } catch (err) {
       console.error('Failed to load snapshot:', err);
     }
+  }
+
+  /** Выбор в «Сравнить с»: null — предыдущий срез. Пишется в URL, экран перерисовывается с новой базой. */
+  async selectCompare(compareId: string | null): Promise<void> {
+    this.state.compareId = compareId && compareId !== this.state.currentSnapshotId ? compareId : null;
+    this.compareUrl.write(this.state.compareId);
+    await this.loadBaseSnapshot();
+    this.onApply();
+  }
+
+  private async loadBaseSnapshot(): Promise<void> {
+    const list = this.state.snapshotsList;
+    const baseId = resolveBaseSnapshotId(list, this.state.currentSnapshotId, this.state.compareId);
+    // Сбой загрузки базы не мешает показать текущий срез
+    const base = baseId
+      ? await this.api.fetchSnapshotById(baseId, this.state.snapshotsCache).catch(() => undefined)
+      : undefined;
+    this.state.baseSnapshot = base || null;
+    this.populateCompareSelect();
+  }
+
+  /** Опции «Сравнить с»: «Предыдущий» и все срезы, кроме текущего. Скрыт, если сравнивать не с чем. */
+  private populateCompareSelect(): void {
+    const others = this.state.snapshotsList.filter(s => s.id !== this.state.currentSnapshotId);
+    const options = others.map(s => ({ id: s.id, label: formatSnapshotOptionLabel(s.date, s.totalGamesScanned) }));
+    this.header.setCompareOptions(options, this.state.compareId, this.state.apiAvailable && others.length > 0);
   }
 
   async fetchLatestSnapshot(): Promise<void> {
@@ -172,6 +209,14 @@ export class SnapshotController {
     }
   }
 }
+
+const browserCompareUrl: CompareUrl = {
+  read: () => (typeof window === 'undefined' ? null : readCompareParam(window.location.search)),
+  write: compareId => {
+    if (typeof window === 'undefined') return;
+    window.history.replaceState(window.history.state, '', withCompareParam(window.location.href, compareId));
+  },
+};
 
 /** Короткое затухание блоков при ручной смене среза. */
 export function triggerSnapshotTransitionAnimation(): void {

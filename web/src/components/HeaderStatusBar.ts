@@ -4,7 +4,7 @@
  * Linear Acid Lime стиль:
  * - Высококонтрастная кнопка запуска скан (#e4f222)
  * - Пульсирующий LED-индикатор SSE соединения (--status-growth #27a644)
- * - Селектор исторических снимков
+ * - Селектор исторических снимков и базы сравнения («Сравнить с»)
  * - Выпадающее меню экспорта (.md / .json)
  * - Строка ключевых KPI (Всего игр, Онлайн, Ниши арбитража, Топ дня, Обновлено)
  */
@@ -15,6 +15,8 @@ export interface HeaderKpiData {
   totalGames: number;
   totalCcu: number;
   ccuChangePercent?: number;
+  /** Подпись базы для % CCU в подсказке: '15 окт'. */
+  ccuChangeBase?: string;
   arbitrageCount: number;
   topDayGameTitle?: string;
   updatedText?: string;
@@ -54,6 +56,8 @@ export interface SnapshotOption {
 export interface HeaderStatusBarOptions {
   onScan: () => void;
   onSnapshotSelect: (snapshotId: string) => void;
+  /** null — сравнивать с предыдущим срезом. */
+  onCompareSelect?: (snapshotId: string | null) => void;
   onExport: (format: 'md' | 'json') => void;
   onSoundToggle?: () => void;
 }
@@ -102,6 +106,8 @@ export class HeaderStatusBarComponent {
   private btnScan: HTMLButtonElement | null = null;
   private scanUnavailableHint: HTMLElement | null = null;
   private snapshotSelect: HTMLSelectElement | null = null;
+  private compareWrapper: HTMLElement | null = null;
+  private compareSelect: HTMLSelectElement | null = null;
   private exportDropdownWrapper: HTMLElement | null = null;
   private btnExportDropdown: HTMLElement | null = null;
   private btnExportMd: HTMLElement | null = null;
@@ -141,6 +147,8 @@ export class HeaderStatusBarComponent {
     this.btnScan = document.getElementById('btn-live-scan') as HTMLButtonElement | null;
     this.scanUnavailableHint = document.getElementById('scan-unavailable-hint');
     this.snapshotSelect = document.getElementById('snapshot-select') as HTMLSelectElement | null;
+    this.compareWrapper = document.getElementById('compare-selector-wrapper');
+    this.compareSelect = document.getElementById('compare-select') as HTMLSelectElement | null;
     this.exportDropdownWrapper = document.getElementById('export-dropdown-wrapper');
     this.btnExportDropdown = document.getElementById('btn-export-dropdown');
     this.btnExportMd = document.getElementById('btn-export-md');
@@ -198,6 +206,11 @@ export class HeaderStatusBarComponent {
       if (val) {
         this.options.onSnapshotSelect(val);
       }
+    });
+
+    this.compareSelect?.addEventListener('change', (e: Event) => {
+      const val = (e.target as HTMLSelectElement).value;
+      this.options.onCompareSelect?.(val || null);
     });
 
     // Export dropdown toggle
@@ -365,6 +378,20 @@ export class HeaderStatusBarComponent {
     }
   }
 
+  /** «Сравнить с»: первая опция — предыдущий срез (value ''). visible=false — сравнивать не с чем или нет API. */
+  public setCompareOptions(snapshots: SnapshotOption[], selectedId: string | null, visible: boolean): void {
+    if (this.compareWrapper) this.compareWrapper.hidden = !visible;
+    if (!this.compareSelect) return;
+    this.compareSelect.innerHTML = '';
+    for (const snap of [{ id: '', label: 'Предыдущий' }, ...snapshots]) {
+      const opt = document.createElement('option');
+      opt.value = snap.id;
+      opt.textContent = snap.label;
+      this.compareSelect.appendChild(opt);
+    }
+    this.compareSelect.value = selectedId ?? '';
+  }
+
   /**
    * Обновляет ключевые показатели в узкой строке KPI
    */
@@ -381,6 +408,7 @@ export class HeaderStatusBarComponent {
       } else {
         this.kpiTotalCcu.textContent = formattedCcu;
       }
+      this.kpiTotalCcu.title = data.ccuChangeBase ? `Изменение относительно среза ${data.ccuChangeBase}` : '';
     }
 
     if (this.kpiArbitrageCount) {

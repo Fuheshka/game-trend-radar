@@ -1,6 +1,6 @@
 /**
  * Вкладка «Лидеры роста» (DefiLlama Movers & Shakers): монтируется при первом открытии,
- * сравнивает текущий снимок с предыдущим срезом истории.
+ * сравнивает текущий снимок с базой из «Сравнить с» (по умолчанию — предыдущий срез).
  */
 import { MoversViewComponent } from '../../components/MoversView.js';
 import type { AppState } from '../state.js';
@@ -23,7 +23,8 @@ export class MoversWorkspace implements Workspace {
     this.moversView = new MoversViewComponent({
       container: moversContainer,
       currentSnapshot: state.snapshot,
-      previousSnapshot: state.previousSnapshot,
+      previousSnapshot: state.baseSnapshot,
+      explicitBase: state.compareId !== null,
       onSelectGame: game => {
         drawer.openGameFromList(game);
       },
@@ -34,6 +35,7 @@ export class MoversWorkspace implements Workspace {
   }
 
   update(): void {
-    this.moversView?.updateData(this.deps.state.snapshot, this.deps.state.previousSnapshot);
+    const { state } = this.deps;
+    this.moversView?.updateData(state.snapshot, state.baseSnapshot, state.compareId !== null);
   }
 }

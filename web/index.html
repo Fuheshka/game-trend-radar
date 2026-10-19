@@ -52,6 +52,15 @@
             </select>
           </div>
 
+          <!-- БАЗА СРАВНЕНИЯ: только с API (на статике один снимок) -->
+          <div class="snapshot-selector-wrapper compare-selector-wrapper" id="compare-selector-wrapper" title="Срез, с которым сравниваются KPI, лидеры роста, архетипы и ниши" hidden>
+            <span class="snapshot-label">Сравнить с:</span>
+            <span class="compare-label-short" aria-hidden="true">vs</span>
+            <select id="compare-select" class="snapshot-select" aria-label="Сравнить с срезом">
+              <option value="">Предыдущий</option>
+            </select>
+          </div>
+
           <!-- SOUND TOGGLE BUTTON -->
           <button class="btn-sound-toggle" id="btn-sound-toggle" aria-label="Переключатель звуковых эффектов" title="Звуковые эффекты интерфейса (Web Audio API)">
             <span class="sound-icon-wrapper">
@@ -488,6 +497,8 @@
     <!-- 4. МАТРИЦА АРБИТРАЖА (tab 4) -->
     <section id="view-arbitrage" class="view-panel" style="display: none;">
       <section class="arbitrage-content-section">
+        <!-- Новые / исчезнувшие ниши относительно базы сравнения -->
+        <div id="arbitrage-compare" class="arbitrage-compare" hidden></div>
         <div id="arbitrage-matrix-container" class="arbitrage-matrix-container">
           <!-- Rendered dynamically by ArbitrageMatrixComponent -->
         </div>

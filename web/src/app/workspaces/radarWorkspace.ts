@@ -119,7 +119,7 @@ export class RadarWorkspace implements Workspace {
     this.radarOverviewView = new RadarOverviewViewComponent({
       container: radarOverviewContainer,
       verdicts: this.getFilteredVerdicts(),
-      previousVerdicts: state.previousSnapshot?.verdicts,
+      previousVerdicts: state.baseSnapshot?.verdicts,
       activeArchetype: state.filters.archetype,
       onSelectArchetype: archetype => this.selectArchetype(archetype),
       onHoverArchetype: archetype => {
@@ -284,9 +284,9 @@ export class RadarWorkspace implements Workspace {
     }
 
     if (this.radarOverviewView) {
-      this.radarOverviewView.updateData(filtered, state.previousSnapshot?.verdicts, state.filters.archetype);
+      this.radarOverviewView.updateData(filtered, state.baseSnapshot?.verdicts, state.filters.archetype);
     } else {
-      this.verdictCards?.updateData(filtered, state.previousSnapshot?.verdicts);
+      this.verdictCards?.updateData(filtered, state.baseSnapshot?.verdicts);
     }
     this.enhanceVerdictCardsWithPromptButton();
   }

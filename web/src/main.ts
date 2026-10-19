@@ -181,6 +181,10 @@ class App {
         soundService.playClick();
         await this.snapshots.selectSnapshot(selectedId, true);
       },
+      onCompareSelect: async compareId => {
+        soundService.playClick();
+        await this.snapshots.selectCompare(compareId);
+      },
       onExport: format => {
         soundService.playClick();
         const snapshot = this.state.snapshot;
