@@ -86,6 +86,39 @@ test('drawer открывается по строке и закрывается 
   await expect(drawer).toHaveAttribute('aria-hidden', 'true');
 });
 
+test('«ТЗ для ИИ» в drawer архетипа с вкладки «Лидеры» — для этого архетипа, а не открытого раньше', async ({ page }) => {
+  await openDashboard(page);
+  const modalTitle = page.locator('#prompt-modal-dialog .prompt-modal-title');
+  const withVerdict = await page
+    .locator('#verdicts-container .verdict-card')
+    .evaluateAll(cards => cards.map(c => c.getAttribute('data-archetype')));
+  const moversTags = async () =>
+    page.locator('#view-movers .archetype-tag').evaluateAll(tags => tags.map(t => t.getAttribute('data-archetype')));
+
+  // Сначала архетип A с радара: раньше кнопка ТЗ запоминала его
+  const archA = withVerdict[0]!;
+  await page.locator(`#verdicts-container .verdict-card[data-archetype="${archA}"]`).click();
+  await expect(page.locator('#game-drawer')).toHaveAttribute('aria-hidden', 'false');
+  await page.keyboard.press('Escape');
+
+  await page.keyboard.press('2');
+  const archB = (await moversTags()).find(a => a && a !== archA && withVerdict.includes(a));
+  expect(archB, 'на «Лидерах» есть тег другого архетипа с вердиктом').toBeTruthy();
+
+  // Эталон: генератор для B прямо с карточки радара
+  await page.keyboard.press('1');
+  await page.locator(`#verdicts-container .btn-generate-ai-spec[data-archetype="${archB}"]`).click();
+  const expected = await modalTitle.textContent();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#prompt-modal-backdrop')).not.toHaveClass(/active/);
+
+  await page.keyboard.press('2');
+  await page.locator(`#view-movers .archetype-tag[data-archetype="${archB}"]`).first().click();
+  await expect(page.locator('#game-drawer')).toHaveAttribute('aria-hidden', 'false');
+  await page.locator('#drawer-btn-generate-spec').dispatchEvent('click');
+  await expect(modalTitle).toHaveText(expected!);
+});
+
 test('мобильная шапка 390px: без горизонтального скролла, название и все вкладки видны', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openDashboard(page);

@@ -2,7 +2,7 @@
  * Боковой drawer (игра / архетип / сигнал тикера) и модалка генератора ТЗ для ИИ.
  * Кнопка «Сгенерировать ТЗ для ИИ» вставляется в подвал drawer'а архетипа отсюда, а не компонентом.
  */
-import { MarketVerdict, GameArchetype, NormalizedGame } from '../types.js';
+import { GameArchetype, NormalizedGame } from '../types.js';
 import { DetailDrawerComponent } from '../components/DetailDrawer.js';
 import { PromptGeneratorModalComponent } from '../components/PromptGeneratorModal.js';
 import type { TickerSignal } from '../components/LiveTicker.js';
@@ -26,15 +26,17 @@ export class DrawerController {
   private detailDrawer!: DrawerView;
   private promptModal!: PromptModalView;
   private drawerEl: HTMLElement | null = null;
-  /** Вердикт, для которого кнопка ТЗ в подвале drawer'а открывает генератор. */
-  private currentDrawerVerdict: MarketVerdict | null = null;
 
   constructor(deps: DrawerControllerDeps) {
     this.state = deps.state;
     this.onFilterSearch = deps.onFilterSearch;
   }
 
-  /** Делегирование клика по кнопке ТЗ и её возврат после перерисовки drawer'а. */
+  /**
+   * Делегирование клика по кнопке ТЗ и её возврат после перерисовки drawer'а.
+   * Архетип кнопки берётся из открытого drawer'а (`data-archetype` кнопки фильтра): drawer архетипа
+   * открывают и в обход контроллера — вкладка «Лидеры», «← к архетипу» внутри drawer'а.
+   */
   bindDrawerEvents(gameDrawerEl: HTMLElement | null = document.getElementById('game-drawer')): void {
     this.drawerEl = gameDrawerEl;
     gameDrawerEl?.addEventListener('click', e => {
@@ -42,20 +44,17 @@ export class DrawerController {
       const specBtn = target.closest('#drawer-btn-generate-spec');
       if (specBtn) {
         e.stopPropagation();
-        if (this.currentDrawerVerdict) {
-          this.openPromptModalForArchetype(this.currentDrawerVerdict.archetype);
+        const archetype = this.shownArchetype();
+        if (archetype) {
+          this.openPromptModalForArchetype(archetype);
         }
       }
     });
 
     if (gameDrawerEl) {
       const observer = new MutationObserver(() => {
-        if (this.currentDrawerVerdict) {
-          const footerActions = gameDrawerEl.querySelector('.drawer-footer-actions');
-          const filterBtn = gameDrawerEl.querySelector('#drawer-btn-filter-archetype');
-          if (footerActions && filterBtn && !footerActions.querySelector('#drawer-btn-generate-spec')) {
-            this.injectDrawerPromptButton(this.currentDrawerVerdict);
-          }
+        if (this.shownArchetype()) {
+          this.injectDrawerPromptButton();
         }
       });
       observer.observe(gameDrawerEl, { childList: true, subtree: true });
@@ -110,11 +109,10 @@ export class DrawerController {
     const verdict = (this.state.snapshot.verdicts || []).find(v => v.archetype === archetype);
     if (!verdict) return;
 
-    this.currentDrawerVerdict = verdict;
     soundService.playRadarPing();
     const games = getGamesForArchetype(this.state.snapshot, archetype);
     this.detailDrawer.openArchetype(verdict, games);
-    this.injectDrawerPromptButton(verdict);
+    this.injectDrawerPromptButton();
   }
 
   openGameDetail(titleOrId: string, archetypeHint?: GameArchetype): void {
@@ -167,8 +165,13 @@ export class DrawerController {
     this.promptModal.open(verdict, games, arbitrage);
   }
 
-  private injectDrawerPromptButton(verdict: MarketVerdict): void {
-    this.currentDrawerVerdict = verdict;
+  /** Архетип, открытый в drawer'е сейчас; null — drawer показывает игру или сигнал. */
+  private shownArchetype(): GameArchetype | null {
+    const filterBtn = this.drawerEl?.querySelector('#drawer-btn-filter-archetype');
+    return (filterBtn?.getAttribute('data-archetype') as GameArchetype | null | undefined) || null;
+  }
+
+  private injectDrawerPromptButton(): void {
     const footerActions = this.drawerEl?.querySelector<HTMLElement>('.drawer-footer-actions');
     if (footerActions && !footerActions.querySelector('#drawer-btn-generate-spec')) {
       const btn = document.createElement('button');

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { resolveGame, getGamesForArchetype } from '../web/src/app/gameLookup.js';
 import { DrawerController } from '../web/src/app/drawerController.js';
 import { createAppState } from '../web/src/app/state.js';
@@ -116,5 +116,41 @@ describe('DrawerController', () => {
     expect(verdict?.archetype).toBe(opp.archetype);
     expect(games.length).toBeGreaterThan(0);
     expect(arbitrage).toBe(opp);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('кнопка ТЗ открывает генератор для архетипа, который drawer показывает сейчас, а не открытого раньше', () => {
+    const t = setup();
+    let onClick: (e: unknown) => void = () => {};
+    vi.stubGlobal('MutationObserver', class { observe() {} });
+    // Разметка drawer'а: кнопка фильтра несёт архетип (её нет в drawer'е игры), кнопка ТЗ уже вставлена
+    let shown: string | null = 'SURVIVAL_HORROR';
+    const drawerEl = {
+      addEventListener: (_: string, cb: (e: unknown) => void) => (onClick = cb),
+      querySelector: (sel: string) => {
+        if (sel === '#drawer-btn-filter-archetype') return shown ? { getAttribute: () => shown } : null;
+        if (sel === '.drawer-footer-actions') return { querySelector: () => ({}) };
+        return null;
+      },
+    };
+    const clickSpec = () => onClick({ target: { closest: () => ({}) }, stopPropagation: () => {} });
+    t.controller.bindDrawerEvents(drawerEl as never);
+
+    t.controller.openArchetypeDetail('SURVIVAL_HORROR');
+    clickSpec();
+    expect(t.modal.open.mock.calls[0][0]?.archetype).toBe('SURVIVAL_HORROR');
+
+    // Архетип открыт в обход openArchetypeDetail — с вкладки «Лидеры» (или «← к архетипу» в drawer'е)
+    t.controller.openArchetypeFromMovers('OBBY_PARKOUR');
+    shown = 'OBBY_PARKOUR';
+    clickSpec();
+    expect(t.modal.open.mock.calls[1][0]?.archetype).toBe('OBBY_PARKOUR');
+
+    shown = null; // drawer игры
+    clickSpec();
+    expect(t.modal.open).toHaveBeenCalledTimes(2);
   });
 });
