@@ -152,6 +152,8 @@ test('GitHub Pages без API: вместо «Запустить скан» — 
     },
   });
   await expect(page.locator('#btn-live-scan')).toBeHidden();
+  // На статике один снимок — сравнивать не с чем
+  await expect(page.locator('#compare-selector-wrapper')).toBeHidden();
   const hint = page.locator('#scan-unavailable-hint');
   await expect(hint).toBeVisible();
   await expect(hint).toHaveText('Скан доступен на radar.fuheshka.qd.je');
@@ -256,4 +258,104 @@ test('drawer игры без API: вместо графика — ссылка �
   await expect(block.locator('a')).toHaveAttribute('href', 'https://radar.fuheshka.qd.je');
   await expect(block.locator('svg.drawer-history-svg')).toHaveCount(0);
   expect(historyRequests).toEqual([]);
+});
+
+// Три среза истории: 18 окт (текущий), 17 окт (предыдущий), 15 окт. Отличаются CCU, score архетипа и нишами.
+const [NICHE_A, NICHE_B] = FALLBACK_SNAPSHOT.arbitrageOpportunities ?? [];
+const HISTORY: Record<string, typeof FALLBACK_SNAPSHOT> = {
+  'snapshot-2026-10-18': historySnap('2026-10-18', 1_200_000, 80, [NICHE_A, NICHE_B]),
+  'snapshot-2026-10-17': historySnap('2026-10-17', 1_000_000, 70, [NICHE_A, NICHE_B]),
+  'snapshot-2026-10-15': historySnap('2026-10-15', 1_500_000, 50, [NICHE_A]),
+};
+
+function historySnap(date: string, ccu: number, topScore: number, niches: typeof NICHE_A[]): typeof FALLBACK_SNAPSHOT {
+  const [first, ...rest] = FALLBACK_SNAPSHOT.verdicts;
+  return {
+    ...FALLBACK_SNAPSHOT,
+    id: `snapshot-${date}`,
+    timestamp: `${date}T03:00:00.000Z`,
+    robloxTotalCCU: ccu,
+    risers: undefined,
+    verdicts: [{ ...first, opportunityScore: { ...first.opportunityScore, overallScore: topScore } }, ...rest],
+    arbitrageOpportunities: niches,
+  };
+}
+
+async function openWithHistory(page: Page, query = ''): Promise<void> {
+  pageErrors = [];
+  page.on('pageerror', e => pageErrors.push(e.message));
+  await page.route('**/api/**', route => route.abort());
+  await page.route('**/api/snapshots', route =>
+    route.fulfill({
+      json: Object.values(HISTORY).map(s => ({
+        id: s.id,
+        timestamp: s.timestamp,
+        date: s.timestamp.slice(0, 10),
+        totalGamesScanned: s.totalGamesScanned,
+        filename: `${s.id}.json`,
+      })),
+    })
+  );
+  await page.route('**/api/snapshots/snapshot-*', route => {
+    const id = new URL(route.request().url()).pathname.split('/').pop()!;
+    return HISTORY[id] ? route.fulfill({ json: HISTORY[id] }) : route.fulfill({ status: 404 });
+  });
+  await page.goto(`/${query}`);
+  await expect(page.locator('#snapshot-select option:checked')).toHaveText(/18 окт/);
+}
+
+test('сравнение срезов: смена базы меняет KPI, лидеров, дельту архетипов, ниши и URL', async ({ page }) => {
+  await openWithHistory(page);
+  const compare = page.locator('#compare-select');
+  await expect(page.locator('#compare-selector-wrapper')).toBeVisible();
+  await expect(compare.locator('option:checked')).toHaveText('Предыдущий');
+  // Текущего среза среди баз нет
+  await expect(compare.locator('option')).toHaveText(['Предыдущий', /^17 окт/, /^15 окт/]);
+  const ccu = page.locator('#kpi-total-ccu');
+  await expect(ccu).toHaveText('1.20M (+20.0%)');
+
+  await page.keyboard.press('2');
+  const delta = page.locator('#archetype-delta');
+  await expect(delta.locator('[data-role="archetype-delta-range"]')).toContainText('17 окт → 18 окт');
+  await expect(delta.locator('tbody tr').first()).toContainText('70 → 80');
+
+  await compare.selectOption('snapshot-2026-10-15');
+  await expect(ccu).toHaveText('1.20M (-20.0%)');
+  await expect(ccu).toHaveAttribute('title', 'Изменение относительно среза 15 окт');
+  await expect(page).toHaveURL(/\?compare=snapshot-2026-10-15$/);
+  await expect(delta.locator('[data-role="archetype-delta-range"]')).toContainText('15 окт → 18 окт');
+  await expect(delta.locator('tbody tr').first()).toContainText('50 → 80');
+  await expect(page.locator('.movers-section-gainers .section-title')).toHaveText('Топ лидеров роста CCU (vs 15 окт)');
+
+  await page.keyboard.press('4');
+  await expect(page.locator('[data-role="niches-added"]')).toHaveText('Новых ниш: 1');
+  await expect(page.locator('[data-role="niches-removed"]')).toHaveText('Исчезло: 0');
+
+  // «Предыдущий» убирает параметр
+  await compare.selectOption('');
+  await expect(ccu).toHaveText('1.20M (+20.0%)');
+  await expect(page).not.toHaveURL(/compare=/);
+  await expect(page.locator('[data-role="niches-added"]')).toHaveText('Новых ниш: 0');
+});
+
+test('сравнение по ссылке ?compare=: база выбрана сразу', async ({ page }) => {
+  await openWithHistory(page, '?compare=snapshot-2026-10-15');
+  await expect(page.locator('#compare-select option:checked')).toHaveText(/^15 окт/);
+  await expect(page.locator('#kpi-total-ccu')).toHaveText('1.20M (-20.0%)');
+});
+
+test('мобильная шапка 390px со вторым селектором: без горизонтального скролла, оба селектора видны', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openWithHistory(page);
+  await expect(page.locator('#compare-selector-wrapper')).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+  await expect(page.locator('#snapshot-selector-wrapper')).toBeInViewport({ ratio: 1 });
+  await expect(page.locator('#compare-selector-wrapper')).toBeInViewport({ ratio: 1 });
+  await expect(page.locator('.brand-name')).toBeVisible();
+  for (const id of ['radar', 'movers', 'catalog', 'arbitrage']) {
+    await expect(page.locator(`#tab-btn-${id}`)).toBeInViewport({ ratio: 1 });
+  }
 });

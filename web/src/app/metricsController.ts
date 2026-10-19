@@ -5,7 +5,7 @@ import { MarketSnapshot } from '../types.js';
 import { FALLBACK_SNAPSHOT } from '../fallbackData.js';
 import { formatMinutesAgo, HeaderStatusBarComponent } from '../components/HeaderStatusBar.js';
 import { animateCounter } from '../utils/animation.js';
-import { formatCompactNumber } from '../utils/format.js';
+import { formatCompactNumber, formatSnapshotDateRu } from '../utils/format.js';
 import { computeMarketMetrics, MarketMetrics } from './metrics.js';
 import type { AppState } from './state.js';
 
@@ -70,7 +70,7 @@ export class MetricsController {
     const arbitrageCountEl = document.getElementById('metric-arbitrage-count');
     const platformsHintEl = document.getElementById('metric-platforms-hint');
 
-    const { metrics: m, from } = this.tracker.next(state.snapshot, state.previousSnapshot);
+    const { metrics: m, from } = this.tracker.next(state.snapshot, state.baseSnapshot);
     if (topGenreEl && m.topGenreTitle !== null) {
       topGenreEl.textContent = m.topGenreTitle;
     }
@@ -98,6 +98,7 @@ export class MetricsController {
       totalGames: m.totalGames,
       totalCcu: m.totalCcu,
       ccuChangePercent: m.ccuChangePercent,
+      ccuChangeBase: state.baseSnapshot ? formatSnapshotDateRu(state.baseSnapshot.timestamp) : undefined,
       arbitrageCount: m.arbitrageCount,
       topDayGameTitle: m.topGameTitle,
       updatedText: formatMinutesAgo(state.snapshot.timestamp),

@@ -1,4 +1,6 @@
 import { BreakoutItem, GainerItem, GainersSortMode, ViralSignalItem } from './types.js';
+import type { ArchetypeDeltaRow } from '../../utils/snapshotDiff.js';
+import { escapeHtml } from '../../utils/dom.js';
 import { ICONS } from './constants.js';
 import { cleanDisplayTitle, formatCCU } from './format.js';
 import { renderBreakoutCards, renderGainersCards, renderViralCards } from './cards.js';
@@ -11,13 +13,74 @@ export interface MoversMarkupState {
   hasHistory: boolean;
   /** Сколько карточек новинок рендерить; остальные — по кнопке */
   breakoutLimit: number;
+  /** Лидеры роста считаются от явно выбранной базы ('15 окт'); null — окно 7 дней / предыдущий срез. */
+  gainersBaseLabel?: string | null;
+  /** «Было → стало» по архетипам; null — сравнивать не с чем. */
+  archetypeDelta?: { baseLabel: string; currentLabel: string; rows: ArchetypeDeltaRow[] } | null;
+}
+
+function formatScoreDelta(before: number | null, after: number | null): string {
+  if (before === null) return '<span class="delta-new">новый</span>';
+  if (after === null) return '<span class="delta-gone">исчез</span>';
+  const d = after - before;
+  if (d === 0) return '<span class="delta-flat">0</span>';
+  return `<span class="${d > 0 ? 'delta-up' : 'delta-down'}">${d > 0 ? '+' : '−'}${Math.abs(d)}</span>`;
+}
+
+function formatCcuDelta(before: number | null, after: number | null): string {
+  if (before === null || after === null || before === 0) return '';
+  const pct = ((after - before) / before) * 100;
+  if (Math.abs(pct) < 0.05) return '';
+  return ` <span class="${pct > 0 ? 'delta-up' : 'delta-down'}">${pct > 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%</span>`;
+}
+
+const dash = (v: number | null, fmt: (n: number) => string) => (v === null ? '—' : fmt(v));
+
+/** Таблица «было → стало» по архетипам: opportunityScore и аудитория CCU двух срезов. */
+export function renderArchetypeDeltaSection(delta: NonNullable<MoversMarkupState['archetypeDelta']>): string {
+  const rows = delta.rows
+    .map(
+      r => `
+        <tr data-archetype="${escapeHtml(r.archetype)}">
+          <td class="archetype-delta-name">${escapeHtml(r.titleRu)}</td>
+          <td class="archetype-delta-num">${dash(r.scoreBefore, String)} → ${dash(r.scoreAfter, String)}</td>
+          <td class="archetype-delta-num">${formatScoreDelta(r.scoreBefore, r.scoreAfter)}</td>
+          <td class="archetype-delta-num">${dash(r.ccuBefore, formatCCU)} → ${dash(r.ccuAfter, formatCCU)}${formatCcuDelta(r.ccuBefore, r.ccuAfter)}</td>
+        </tr>`
+    )
+    .join('');
+  return `
+    <section class="movers-section movers-section-archetypes" data-section="archetype-delta" id="archetype-delta">
+      <div class="movers-section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon">${ICONS.TRENDING_UP}</div>
+          <div>
+            <h3 class="section-title">Архетипы: было → стало</h3>
+            <span class="section-subtitle" data-role="archetype-delta-range">${escapeHtml(delta.baseLabel)} → ${escapeHtml(delta.currentLabel)} · Opportunity Score и аудитория CCU</span>
+          </div>
+        </div>
+      </div>
+      <div class="archetype-delta-scroll">
+        <table class="archetype-delta-table">
+          <thead>
+            <tr><th>Архетип</th><th>Score</th><th>Δ</th><th>CCU</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </section>`;
 }
 
 /**
  * Собирает HTML всего экрана лидеров роста (шапка, KPI и три секции)
  */
 export function renderMoversMarkup(state: MoversMarkupState): string {
-  const { gainers, viralSignals, breakouts, gainersSort, hasHistory, breakoutLimit } = state;
+  const { gainers, viralSignals, breakouts, gainersSort, hasHistory, breakoutLimit, gainersBaseLabel, archetypeDelta } = state;
+  const gainersWindow = gainersBaseLabel
+    ? { title: `vs ${escapeHtml(gainersBaseLabel)}`, subtitle: `с ${escapeHtml(gainersBaseLabel)}` }
+    : hasHistory
+      ? { title: '7 дней', subtitle: 'последние 7 дней' }
+      : { title: '24h Gainers', subtitle: 'последние 24 часа' };
   const hiddenBreakouts = breakouts.length - breakoutLimit;
   const topGainer = gainers[0];
   const topGainerLabel = topGainer
@@ -62,8 +125,8 @@ export function renderMoversMarkup(state: MoversMarkupState): string {
         <div class="section-title-wrap">
           <div class="section-icon">${ICONS.TRENDING_UP}</div>
           <div>
-            <h3 class="section-title">Топ лидеров роста CCU (${hasHistory ? '7 дней' : '24h Gainers'})</h3>
-            <span class="section-subtitle">Проекты с максимальным абсолютным и процентным приростом за ${hasHistory ? 'последние 7 дней' : 'последние 24 часа'}</span>
+            <h3 class="section-title">Топ лидеров роста CCU (${gainersWindow.title})</h3>
+            <span class="section-subtitle">Проекты с максимальным абсолютным и процентным приростом за ${gainersWindow.subtitle}</span>
           </div>
         </div>
         <div class="gainers-sort-controls">
@@ -93,6 +156,7 @@ export function renderMoversMarkup(state: MoversMarkupState): string {
         ${renderGainersCards(gainers)}
       </div>
     </section>
+    ${archetypeDelta ? renderArchetypeDeltaSection(archetypeDelta) : ''}
 
     <!-- 2. СЕКЦИЯ: ВИРУСНЫЕ СИГНАЛЫ YOUTUBE SHORTS (> 1.5x) -->
     <section class="movers-section movers-section-viral" data-section="viral">

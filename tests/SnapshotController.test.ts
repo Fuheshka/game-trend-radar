@@ -15,7 +15,7 @@ function summary(id: string, date: string): SnapshotSummary {
 /** Контроллер с подменёнными сетью, шапкой и селектором; DOM не нужен. */
 function setup(api: Partial<SnapshotApi>, selectOptions = 1) {
   const state = createAppState();
-  const header = { setScanAvailable: vi.fn(), setSnapshots: vi.fn(), setSseStatus: vi.fn() };
+  const header = { setScanAvailable: vi.fn(), setSnapshots: vi.fn(), setSseStatus: vi.fn(), setCompareOptions: vi.fn() };
   const select: SnapshotSelect = { value: '', options: { length: selectOptions } };
   const deps = {
     connectLive: vi.fn(),
@@ -102,7 +102,7 @@ describe('SnapshotController: выбор режима данных', () => {
     expect(t.header.setSnapshots.mock.calls[0][0].map((o: { id: string }) => o.id)).toEqual(['s2', 's1']);
     expect(t.select.value).toBe('s2');
     expect(t.state.snapshot.id).toBe('s2');
-    expect(t.state.previousSnapshot?.id).toBe('s1');
+    expect(t.state.baseSnapshot?.id).toBe('s1');
     // Начальная загрузка без анимации перехода
     expect(t.animateTransition).not.toHaveBeenCalled();
     expect(t.onApply).toHaveBeenCalledTimes(1);
@@ -117,11 +117,11 @@ describe('SnapshotController: выбор режима данных', () => {
       },
     });
     t.state.snapshotsList = list;
-    t.state.previousSnapshot = snap('stale');
+    t.state.baseSnapshot = snap('stale');
 
     await t.controller.selectSnapshot('s1', true);
     expect(t.state.snapshot.id).toBe('s1');
-    expect(t.state.previousSnapshot).toBeNull();
+    expect(t.state.baseSnapshot).toBeNull();
     expect(t.animateTransition).toHaveBeenCalledTimes(1);
 
     const t2 = setup({
@@ -133,7 +133,7 @@ describe('SnapshotController: выбор режима данных', () => {
     t2.state.snapshotsList = list;
     await t2.controller.selectSnapshot('s2', false);
     expect(t2.state.snapshot.id).toBe('s2');
-    expect(t2.state.previousSnapshot).toBeNull();
+    expect(t2.state.baseSnapshot).toBeNull();
     expect(t2.onApply).toHaveBeenCalledTimes(1);
   });
 

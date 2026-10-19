@@ -10,8 +10,10 @@ import type { RadarFilters } from './verdictFilters.js';
 export interface AppState {
   /** Снимок на экране; до загрузки — встроенные демо-данные. */
   snapshot: MarketSnapshot;
-  /** Предыдущий срез истории для дельт («было/стало»); null — истории нет. */
-  previousSnapshot: MarketSnapshot | null;
+  /** База для дельт («было/стало»): выбранный в «Сравнить с» срез или предыдущий; null — истории нет. */
+  baseSnapshot: MarketSnapshot | null;
+  /** Явно выбранная база (`?compare=`); null — предыдущий срез. */
+  compareId: string | null;
   snapshotsList: SnapshotSummary[];
   snapshotsCache: Map<string, MarketSnapshot>;
   currentSnapshotId: string;
@@ -28,7 +30,8 @@ export interface AppState {
 export function createAppState(): AppState {
   return {
     snapshot: FALLBACK_SNAPSHOT,
-    previousSnapshot: null,
+    baseSnapshot: null,
+    compareId: null,
     snapshotsList: [],
     snapshotsCache: new Map(),
     currentSnapshotId: '',

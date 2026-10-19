@@ -51,7 +51,7 @@ export function mountRadarLegacyLayout(deps: RadarLegacyLayoutDeps): {
     verdictCards = new VerdictCardsComponent({
       container: verdictsContainer,
       verdicts: deps.getFilteredVerdicts(),
-      previousVerdicts: state.previousSnapshot?.verdicts,
+      previousVerdicts: state.baseSnapshot?.verdicts,
       onSelectTag: tag => deps.onSelectTag(tag),
     });
 

@@ -51,6 +51,8 @@ export interface MoversViewOptions {
   container: HTMLElement;
   currentSnapshot?: MarketSnapshot | null;
   previousSnapshot?: MarketSnapshot | null;
+  /** База выбрана явно («Сравнить с»): лидеры роста считаются от неё, а не по окну 7 дней. */
+  explicitBase?: boolean;
   initialGainersSort?: GainersSortMode;
   onSelectGame?: (game: NormalizedGame) => void;
   onSelectArchetype?: (archetype: GameArchetype) => void;

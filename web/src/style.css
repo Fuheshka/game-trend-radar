@@ -456,6 +456,20 @@ button:active,
   padding: 0.5rem;
 }
 
+/* «Сравнить с»: на узком экране вместо подписи — короткое «vs» */
+.compare-label-short {
+  display: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .compare-label-short {
+    display: inline;
+  }
+}
+
 /* Sound Toggle Button */
 .btn-sound-toggle {
   display: inline-flex;
@@ -6368,6 +6382,19 @@ kbd.tab-hotkey {
     flex: 1 1 100%;
   }
 
+  /* Срез и база делят одну строку */
+  .header-right .snapshot-selector-wrapper:has(~ .compare-selector-wrapper:not([hidden])),
+  .header-right .compare-selector-wrapper {
+    flex: 1 1 calc(50% - 0.2rem);
+    min-width: 0;
+  }
+
+  .header-right .snapshot-selector-wrapper .snapshot-select {
+    min-width: 0;
+    width: 100%;
+    text-overflow: ellipsis;
+  }
+
   .header-right .btn-scan-lime,
   .header-right .btn-scan-hint {
     flex: 1;
@@ -6408,5 +6435,114 @@ kbd.tab-hotkey {
 
   kbd.tab-hotkey {
     display: none;
+  }
+}
+
+
+/* ==========================================================================
+   СРАВНЕНИЕ СРЕЗОВ: «Архетипы: было → стало», ниши vs база
+   ========================================================================== */
+.delta-up { color: var(--status-growth); }
+.delta-down { color: var(--status-danger); }
+.delta-flat { color: var(--text-ash); }
+.delta-new { color: var(--status-green-light); font-size: 0.72rem; }
+.delta-gone { color: var(--status-red-light); font-size: 0.72rem; }
+
+.archetype-delta-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-control);
+}
+
+.archetype-delta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.archetype-delta-table th,
+.archetype-delta-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-hairline);
+  white-space: nowrap;
+}
+
+.archetype-delta-table th {
+  color: var(--text-fog);
+  font-weight: 500;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.archetype-delta-table tbody tr {
+  cursor: pointer;
+}
+
+.archetype-delta-table tbody tr:hover {
+  background: var(--surface-tint);
+}
+
+.archetype-delta-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.archetype-delta-name {
+  color: var(--text-mist);
+}
+
+.archetype-delta-num {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum';
+}
+
+.arbitrage-compare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.85rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-control);
+  background: var(--surface-carbon);
+  font-size: 0.8rem;
+}
+
+.arbitrage-compare[hidden] {
+  display: none;
+}
+
+.arbitrage-compare-base {
+  color: var(--text-fog);
+  font-family: var(--font-mono);
+}
+
+.arbitrage-compare-item {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.arbitrage-compare-names {
+  flex-basis: 100%;
+  color: var(--text-fog);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .archetype-delta-table {
+    font-size: 0.72rem;
+  }
+
+  .archetype-delta-table th,
+  .archetype-delta-table td {
+    padding: 0.45rem 0.4rem;
+  }
+
+  /* td-правило выше (0,1,1) перебивает одиночный класс */
+  .archetype-delta-table .archetype-delta-name {
+    white-space: normal;
+    min-width: 6.5rem;
   }
 }
