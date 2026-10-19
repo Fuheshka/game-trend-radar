@@ -79,6 +79,8 @@ export class GameTableView {
     if (verdicts) {
       this.setVerdicts(verdicts);
     }
+    // Новый снимок — с первой страницы, как и при смене фильтра (иначе «Показать ещё/все» переживал смену среза)
+    this.displayLimit = CATALOG_PAGE_SIZE;
     this.render();
     this.notifyFilterChange();
   }

@@ -72,6 +72,23 @@ describe('контроллеры вкладок: ленивое монтиров
     expect(catalogContainer.addEventListener).toHaveBeenCalledTimes(1); // смонтирован один раз
   });
 
+  it('каталог: «Показать ещё» сбрасывается на первую страницу при смене снимка', () => {
+    const state = createAppState();
+    state.snapshot = snap('a', games('a', 60));
+    const catalog = new CatalogWorkspace({ state, drawer: { openGameFromList: vi.fn() } });
+    catalog.show();
+
+    const loadMore = { closest: (sel: string) => (sel === '#btn-table-load-more' ? loadMore : null) };
+    listeners['click']({ target: loadMore, stopPropagation: vi.fn() });
+    expect(rows()).toBe(60);
+
+    state.snapshot = snap('b', games('b', 70));
+    catalog.update();
+    expect(rows()).toBe(50);
+    expect(catalogContainer.innerHTML).toContain('b game');
+    expect(elements['catalog-count-text'].textContent).toBe('Отображается 70 из 70');
+  });
+
   it('арбитраж: бейдж по снимку без монтирования матрицы', () => {
     const state = createAppState();
     const arbitrage = new ArbitrageWorkspace({ state, drawer: { openGameFromList: vi.fn() } });
