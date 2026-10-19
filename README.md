@@ -96,11 +96,13 @@ Set env vars in `.env` on the server (see [`.env.example`](.env.example); `ecosy
 | `SCAN_COOLDOWN_MS` | Min pause between manual scans (429 + `Retry-After` otherwise). |
 | `SSE_MAX_CLIENTS` | Max concurrent `/api/events` connections (default 100; 503 + `Retry-After` beyond). |
 | `CORS_ORIGIN` | Restrict CORS to your domain (default `*`). |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Telegram alerts after each saved snapshot (see below). Both empty = alerts off. |
 
 - `POST /api/scan` returns `202` immediately; progress arrives over SSE. Use `?wait=1` to block until the snapshot is returned.
 - A scan with an empty Roblox response is **rejected** (nothing is saved, `scan:failed` is broadcast) — a bad API day cannot overwrite good data. Per-source status is stored in `snapshot.sourceStatus`.
 - `GET /healthz` — status (`ok`/`stale`/`empty`), snapshot age, next auto-scan, per-source collector status (`sources`; `warning` when a storefront parser suddenly collects far fewer games). Use it for uptime monitors.
 - `GET /api/history?hours=24` — intraday time series.
+- **Telegram alerts** (`src/alerts/`): on `snapshot:updated` the server sends one message in Russian with new arbitrage niches, sharp risers (×3 in 7 days: Roblox CCU with ≥ 5 000 online, Yandex ratings count; Poki rank moves are not alerted) and sources that went to `warning`/failure or recovered. Nothing changed — nothing is sent. Already sent events are kept in `data/alerts_state.json` (not in git) and repeat only after being absent for 7 days; the very first run only records a baseline. A failed send is logged and never affects the scan; the events are retried with the next scan. Token from @BotFather, chat id from `getUpdates` after sending `/start` to the bot; put both into `.env` on the server, never into the repo. Manual CLI scans (`npm run scan`) do not send alerts.
 - SSE events carry `id:`; reconnecting clients replay missed events via `Last-Event-ID`.
 - Static files and API JSON are gzip-compressed with ETag; hashed assets are `immutable`.
 

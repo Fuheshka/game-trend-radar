@@ -11,6 +11,7 @@ import { MarketSnapshot } from './types/index.js';
 import { MarketEventBus } from './events/event_bus.js';
 import { AutoScanner } from './cron/auto_scan.js';
 import { TrendScheduler } from './cron/trend_scheduler.js';
+import { attachSnapshotAlerts, SnapshotAlerter } from './alerts/index.js';
 
 export { MarketEventBus };
 
@@ -34,6 +35,8 @@ export interface RadarServerOptions {
   maxSseClients?: number;
   /** Production-режим: без scanToken ручной POST /api/scan запрещён (по умолчанию NODE_ENV === 'production'). */
   production?: boolean;
+  /** Telegram-алерты по snapshot:updated; по умолчанию включены, если заданы TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID. */
+  alerter?: SnapshotAlerter;
 }
 
 export function openBrowser(url: string): void {
@@ -147,6 +150,10 @@ export function createRadarServer(options: RadarServerOptions = {}) {
   if (manualScanDisabled) {
     console.warn('⚠️  SCAN_TOKEN не задан: в production ручной POST /api/scan отключён (автоскан работает).');
   }
+
+  const alerter = options.alerter ?? new SnapshotAlerter({ log });
+  attachSnapshotAlerts(eventBus, store, alerter);
+  if (alerter.enabled) log('🔔 Telegram-алерты включены');
 
   const startedAt = Date.now();
   let activeScanPromise: Promise<MarketSnapshot> | null = null;
