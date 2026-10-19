@@ -255,7 +255,7 @@ export class TrendScheduler {
               id: 'temp_snapshot',
               timestamp: nowIso,
               totalGamesScanned: robloxGames.length,
-              platformCounts: { roblox: robloxGames.length, yandex_games: 0, poki: 0, youtube_trends: 0 },
+              platformCounts: { roblox: robloxGames.length, yandex_games: 0, poki: 0, crazygames: 0, youtube_trends: 0 },
               robloxTotalCCU: robloxGames.reduce((acc, g) => acc + (g.metricValue || 0), 0),
               games: robloxGames,
               verdicts: [],

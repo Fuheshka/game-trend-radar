@@ -68,6 +68,7 @@ export function exportSnapshotToMarkdown(snapshot: MarketSnapshot): string {
     roblox: 0,
     yandex_games: 0,
     poki: 0,
+    crazygames: 0,
     youtube_trends: 0,
   };
 
@@ -84,7 +85,7 @@ export function exportSnapshotToMarkdown(snapshot: MarketSnapshot): string {
   md += `> [!info] Сводка сканирования рынка\n`;
   md += `> - **Всего игр проанализировано:** ${totalGames}\n`;
   md += `> - **Roblox активный онлайн (CCU в выборке):** ${robloxCcu} игроков\n`;
-  md += `> - **Охват платформ:** Roblox (${counts.roblox || 0}), Яндекс Игры (${counts.yandex_games || 0}), Poki (${counts.poki || 0}), YouTube Shorts (${counts.youtube_trends || 0})\n`;
+  md += `> - **Охват платформ:** Roblox (${counts.roblox || 0}), Яндекс Игры (${counts.yandex_games || 0}), Poki (${counts.poki || 0}), CrazyGames (${counts.crazygames || 0}), YouTube Shorts (${counts.youtube_trends || 0})\n`;
   md += `> - **Дата среза:** ${dateStr}\n\n`;
   md += `---\n\n`;
 

@@ -4,6 +4,7 @@ export const PLATFORM_NAMES: Record<PlatformType, string> = {
   roblox: 'Roblox',
   yandex_games: 'Яндекс',
   poki: 'Poki',
+  crazygames: 'CrazyGames',
   youtube_trends: 'YouTube',
 };
 

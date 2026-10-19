@@ -8,6 +8,7 @@ export const FALLBACK_SNAPSHOT: MarketSnapshot = {
     roblox: 214,
     yandex_games: 75,
     poki: 100,
+    crazygames: 0,
     youtube_trends: 12,
   },
   robloxTotalCCU: 9946321,

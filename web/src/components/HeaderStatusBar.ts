@@ -26,6 +26,7 @@ const SOURCE_SHORT_LABEL: Record<string, string> = {
   roblox: 'Roblox',
   yandex_games: 'Яндекс',
   poki: 'Poki',
+  crazygames: 'CrazyGames',
   youtube_shorts: 'YouTube',
 };
 
