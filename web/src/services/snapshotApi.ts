@@ -2,7 +2,7 @@
  * HTTP-клиент дашборда к API сервера радара (и к статическому снимку GitHub Pages).
  * Только сеть: состояние и DOM остаются в App.
  */
-import { MarketSnapshot, SnapshotSummary } from '../types.js';
+import { GameHistoryResponse, MarketSnapshot, SnapshotSummary } from '../types.js';
 
 const SCAN_TOKEN_KEY = 'radar_scan_token';
 
@@ -45,6 +45,16 @@ export async function fetchStaticSnapshot(): Promise<MarketSnapshot | null> {
   try {
     const res = await fetch('./data/latest_snapshot.json');
     return res.ok ? ((await res.json()) as MarketSnapshot) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** История игры по дням; null — истории нет (404) или запрос не удался. */
+export async function fetchGameHistory(id: string): Promise<GameHistoryResponse | null> {
+  try {
+    const res = await fetch(`/api/games/${encodeURIComponent(id)}/history`);
+    return res.ok ? ((await res.json()) as GameHistoryResponse) : null;
   } catch {
     return null;
   }

@@ -21,7 +21,8 @@ export interface GameHistory {
   games: Record<string, GameTrack>;
 }
 
-const MAX_POINTS = 45;
+/** Не больше точек (дней) на игру — это и лимит `days` для /api/games/:id/history. */
+export const MAX_POINTS = 45;
 const FORGET_AFTER_DAYS = 30;
 const DAY_MS = 86_400_000;
 

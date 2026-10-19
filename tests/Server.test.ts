@@ -230,6 +230,85 @@ describe('Radar HTTP Server (порт 4200)', () => {
     });
   });
 
+  describe('2.3. Эндпоинт GET /api/games/:id/history (история игры по дням)', () => {
+    beforeAll(() => {
+      const yandexGame = {
+        ...mockSnapshot.games[0],
+        id: 'yandex_99',
+        platform: 'yandex_games' as const,
+        title: 'Кото-ферма',
+        metricType: 'rating' as const,
+        metricValue: 4.6,
+      };
+      // 50 дней подряд: в истории остаётся последние 45 точек (MAX_POINTS)
+      for (let d = 0; d < 50; d++) {
+        const timestamp = new Date(Date.UTC(2026, 8, 1 + d, 12)).toISOString();
+        store.updateGameHistory({
+          ...mockSnapshot,
+          timestamp,
+          games: [
+            { ...mockSnapshot.games[0], metricValue: 1000 + d },
+            { ...yandexGame, votes: 100 + d * 10 },
+          ],
+        });
+      }
+    });
+
+    it('отдаёт точки по дням с метрикой и голосами, по умолчанию — все 45 дней', async () => {
+      const res = await fetch(`${baseUrl}/api/games/yandex_99/history`);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json).toMatchObject({ id: 'yandex_99', platform: 'yandex_games', title: 'Кото-ферма', metricType: 'rating' });
+      expect(json.lastSeen).toBe('2026-10-20');
+      expect(json.points).toHaveLength(45);
+      expect(json.points[44]).toEqual({ date: '2026-10-20', value: 4.6, votes: 590 });
+    });
+
+    it('?days=7 ограничивает окно последними 7 днями; у Roblox голосов нет', async () => {
+      const res = await fetch(`${baseUrl}/api/games/roblox-1/history?days=7`);
+      expect(res.status).toBe(400); // дефис — не формат id витрин
+      const ok = await fetch(`${baseUrl}/api/games/roblox_1/history?days=7`);
+      expect(ok.status).toBe(404);
+
+      store.updateGameHistory({
+        ...mockSnapshot,
+        timestamp: '2026-10-21T12:00:00.000Z',
+        games: [{ ...mockSnapshot.games[0], id: 'roblox_1', metricValue: 5 }],
+      });
+      const json = await (await fetch(`${baseUrl}/api/games/roblox_1/history?days=7`)).json();
+      expect(json.points).toEqual([{ date: '2026-10-21', value: 5 }]);
+
+      const week = await (await fetch(`${baseUrl}/api/games/yandex_99/history?days=7`)).json();
+      expect(week.points.map((p: { date: string }) => p.date)).toEqual([
+        '2026-10-14', '2026-10-15', '2026-10-16', '2026-10-17', '2026-10-18', '2026-10-19', '2026-10-20',
+      ]);
+    });
+
+    it('days вне 1..45 обрезается до границ, мусор — значение по умолчанию', async () => {
+      const big = await (await fetch(`${baseUrl}/api/games/yandex_99/history?days=1000`)).json();
+      expect(big.points).toHaveLength(45);
+      const zero = await (await fetch(`${baseUrl}/api/games/yandex_99/history?days=-3`)).json();
+      expect(zero.points).toHaveLength(1);
+      const junk = await (await fetch(`${baseUrl}/api/games/yandex_99/history?days=abc`)).json();
+      expect(junk.points).toHaveLength(45);
+    });
+
+    it('404 на неизвестную игру, 400 на невалидный id', async () => {
+      const unknown = await fetch(`${baseUrl}/api/games/poki_unknown-game/history`);
+      expect(unknown.status).toBe(404);
+      expect((await unknown.json()).error).toBeDefined();
+
+      // `%2F` после декодирования — лишний сегмент пути: это уже не этот роут
+      expect((await fetch(`${baseUrl}/api/games/..%2F..%2Fetc/history`)).status).toBe(404);
+      for (const bad of ['__proto__', 'constructor', '%20', 'x'.repeat(200)]) {
+        const res = await fetch(`${baseUrl}/api/games/${bad}/history`);
+        expect(res.status, bad).toBe(400);
+      }
+      const empty = await fetch(`${baseUrl}/api/games//history`);
+      expect(empty.status).toBe(400);
+    });
+  });
+
   describe('3. Эндпоинт GET /api/verdicts', () => {
     it('должен возвращать список вердиктов со статусами и скорингом', async () => {
       const res = await fetch(`${baseUrl}/api/verdicts`);

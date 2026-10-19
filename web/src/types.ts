@@ -104,6 +104,17 @@ export interface Riser {
   days: number;
 }
 
+/** GET /api/games/:id/history — точки по дням: метрика витрины и число оценок (Яндекс). */
+export interface GameHistoryResponse {
+  id: string;
+  platform: PlatformType;
+  title: string;
+  metricType: string;
+  firstSeen: string;
+  lastSeen: string;
+  points: { date: string; value: number; votes?: number }[];
+}
+
 export interface MarketSnapshot {
   id: string;
   timestamp: string;

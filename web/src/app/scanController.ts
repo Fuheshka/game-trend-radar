@@ -80,6 +80,7 @@ export class ScanController {
     this.liveEvents.onStatusChange(status => {
       this.header.setSseStatus(status);
       if (status === 'connected') {
+        this.state.apiAvailable = true;
         this.header.setScanAvailable(true); // сервер поднялся после загрузки страницы
         this.setServerStatus(true, 'HTTP :4200 (SSE Live)');
       } else if (status === 'reconnecting') {

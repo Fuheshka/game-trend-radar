@@ -200,3 +200,60 @@ test('с API кнопка скана на месте, без проблем с �
   await expect(page.locator('#scan-unavailable-hint')).toBeHidden();
   await expect(page.locator('#kpi-source-warning')).toBeHidden();
 });
+
+test('drawer игры: график истории из /api/games/:id/history; на статике — подсказка', async ({ page }) => {
+  const historyRequests: string[] = [];
+  await openDashboard(page, { snapshotList: [] });
+  await page.route('**/api/games/*/history', route => {
+    historyRequests.push(new URL(route.request().url()).pathname);
+    return route.fulfill({
+      json: {
+        id: 'x',
+        platform: 'roblox',
+        title: 'x',
+        metricType: 'ccu',
+        firstSeen: '2026-10-05',
+        lastSeen: '2026-10-07',
+        points: [
+          { date: '2026-10-05', value: 12_000 },
+          { date: '2026-10-06', value: 9_500 },
+          { date: '2026-10-07', value: 31_200 },
+        ],
+      },
+    });
+  });
+  await page.keyboard.press('3');
+  await page.locator('.steamdb-table-row').first().click();
+  const block = page.locator('#drawer-history');
+  await expect(block.locator('.drawer-history-svg path')).toBeVisible();
+  await expect(block.locator('[data-role="best"]')).toHaveText('31.2k');
+  await expect(block.locator('[data-role="worst"]')).toHaveText('9.5k');
+  await expect(block.locator('.drawer-history-dates')).toHaveText(/5 окт\s*7 окт/);
+  expect(historyRequests).toHaveLength(1);
+  expect(historyRequests[0]).toMatch(/^\/api\/games\/[^/]+\/history$/);
+
+  // Мобильный drawer: график не вылезает за ширину (ресайз при закрытом drawer — без анимации выезда)
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('.steamdb-table-row').first().click();
+  await expect(page.locator('#game-drawer')).toHaveAttribute('aria-hidden', 'false');
+  await expect(block.locator('.drawer-history-svg')).toBeInViewport({ ratio: 1 });
+  const box = await block.locator('.drawer-history-chart').boundingBox();
+  expect(box!.x).toBeGreaterThanOrEqual(0);
+  expect(box!.x + box!.width).toBeLessThanOrEqual(390);
+});
+
+test('drawer игры без API: вместо графика — ссылка на сервер, запросов истории нет', async ({ page }) => {
+  const historyRequests: string[] = [];
+  page.on('request', req => {
+    if (req.url().includes('/history')) historyRequests.push(req.url());
+  });
+  await openDashboard(page);
+  await page.keyboard.press('3');
+  await page.locator('.steamdb-table-row').first().click();
+  const block = page.locator('#drawer-history');
+  await expect(block).toBeVisible();
+  await expect(block.locator('a')).toHaveAttribute('href', 'https://radar.fuheshka.qd.je');
+  await expect(block.locator('svg.drawer-history-svg')).toHaveCount(0);
+  expect(historyRequests).toEqual([]);
+});

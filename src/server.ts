@@ -12,6 +12,7 @@ import { MarketEventBus } from './events/event_bus.js';
 import { AutoScanner } from './cron/auto_scan.js';
 import { TrendScheduler } from './cron/trend_scheduler.js';
 import { attachSnapshotAlerts, SnapshotAlerter } from './alerts/index.js';
+import { MAX_POINTS as MAX_HISTORY_DAYS } from './analyzer/game_history.js';
 
 export { MarketEventBus };
 
@@ -79,6 +80,7 @@ const MIME_TYPES: Record<string, string> = {
 
 const COMPRESSIBLE = /^(text\/|application\/(javascript|json)|image\/svg)/;
 const TRENDS_MAX_AGE_MS = 24 * 3600_000;
+const GAME_ID_RE = /^[a-z][a-z_]{1,20}_[A-Za-z0-9._-]{1,120}$/;
 
 const corsOrigin = () => process.env.CORS_ORIGIN || '*';
 
@@ -281,6 +283,32 @@ export function createRadarServer(options: RadarServerOptions = {}) {
         if (pathname === '/api/history' && req.method === 'GET') {
           const hours = Math.min(Math.max(parseInt(reqUrl.searchParams.get('hours') || '24', 10) || 24, 1), 24 * 14);
           await sendJson(req, res, 200, store.getHistory(hours));
+          return;
+        }
+
+        const gameHistoryMatch = /^\/api\/games\/([^/]*)\/history$/.exec(pathname);
+        if (gameHistoryMatch && req.method === 'GET') {
+          const id = gameHistoryMatch[1];
+          // id витрин: `roblox_123`, `yandex_456`, `poki_slug`, `crazygames_slug`
+          if (!GAME_ID_RE.test(id)) {
+            await sendJson(req, res, 400, { error: 'Invalid game id' });
+            return;
+          }
+          const days = Math.min(Math.max(parseInt(reqUrl.searchParams.get('days') || '', 10) || MAX_HISTORY_DAYS, 1), MAX_HISTORY_DAYS);
+          const track = store.getGameTrack(id, days);
+          if (!track) {
+            await sendJson(req, res, 404, { error: `No history for game '${id}'` });
+            return;
+          }
+          await sendJson(req, res, 200, {
+            id,
+            platform: track.platform,
+            title: track.title,
+            metricType: track.metricType,
+            firstSeen: track.firstSeen,
+            lastSeen: track.lastSeen,
+            points: track.points.map(([date, value, votes]) => (votes === undefined ? { date, value } : { date, value, votes })),
+          });
           return;
         }
 

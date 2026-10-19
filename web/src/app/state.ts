@@ -17,6 +17,8 @@ export interface AppState {
   currentSnapshotId: string;
   /** Фильтры вкладки «Радар». */
   filters: RadarFilters;
+  /** /api/snapshots ответил: работаем с сервером, а не со статикой Pages или демо. */
+  apiAvailable: boolean;
   isScanning: boolean;
   /** Скан запущен из этой вкладки браузера: только инициатору показываем оверлей. */
   localScanRequested: boolean;
@@ -37,6 +39,7 @@ export function createAppState(): AppState {
       searchQuery: '',
       sortBy: 'score_desc',
     },
+    apiAvailable: false,
     isScanning: false,
     localScanRequested: false,
     currentView: 'radar',

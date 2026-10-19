@@ -1,6 +1,6 @@
 import { MarketSnapshot, MarketVerdict, NewEntry, Riser, SnapshotSummary } from '../types/index.js';
 import { ArbitrageAnalyzer } from '../analyzer/arbitrage.js';
-import { GameHistory, findNewEntries, findRisers, recordSnapshot } from '../analyzer/game_history.js';
+import { GameHistory, GameTrack, findNewEntries, findRisers, recordSnapshot } from '../analyzer/game_history.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -87,6 +87,15 @@ export class SnapshotStore {
       fs.renameSync(this.gameHistoryPath, `${this.gameHistoryPath}.corrupt-${Date.now()}`);
       return null;
     }
+  }
+
+  /** Трек одной игры с точками за последние `days` дней (от её последнего появления); null — игры нет в истории. */
+  getGameTrack(id: string, days: number): GameTrack | null {
+    const games = this.loadGameHistory()?.games;
+    if (!games || !Object.hasOwn(games, id)) return null;
+    const track = games[id];
+    const from = new Date(Date.parse(track.lastSeen) - (days - 1) * 86_400_000).toISOString().slice(0, 10);
+    return { ...track, points: track.points.filter(p => p[0] >= from) };
   }
 
   /** История по каждой игре: добавляет снимок и возвращает новинки и растущие за 7 дней. */

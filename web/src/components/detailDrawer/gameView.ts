@@ -75,6 +75,12 @@ export function buildGameBodyHtml(
           </div>
         </div>
 
+        ${
+          game.metricType !== 'viral_score'
+            ? '<!-- История по дням: заполняет DetailDrawer --><div class="drawer-section drawer-history" id="drawer-history" hidden></div>'
+            : ''
+        }
+
         <!-- Platform & Genre Meta -->
         <div class="drawer-section">
           <div class="drawer-info-row">
