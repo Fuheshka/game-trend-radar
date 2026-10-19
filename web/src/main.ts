@@ -4,7 +4,6 @@ import {
   GameArchetype,
   NormalizedGame,
 } from './types.js';
-import { FALLBACK_SNAPSHOT } from './fallbackData.js';
 import { escapeHtml, pickOption } from './utils/dom.js';
 import { RadarChartComponent, ChartMode } from './components/RadarChart.js';
 import { VerdictCardsComponent } from './components/VerdictCards.js';
@@ -16,8 +15,7 @@ import { ArbitrageMatrixComponent } from './components/ArbitrageMatrix.js';
 import { MoversViewComponent } from './components/MoversView.js';
 import { PromptGeneratorModalComponent } from './components/PromptGeneratorModal.js';
 import { WorkspaceTabsComponent, WorkspaceId } from './components/WorkspaceTabs.js';
-import { HeaderStatusBarComponent, formatMinutesAgo } from './components/HeaderStatusBar.js';
-import { animateCounter } from './utils/animation.js';
+import { HeaderStatusBarComponent } from './components/HeaderStatusBar.js';
 import { soundService } from './services/sound.js';
 import { liveEventService } from './services/liveEventService.js';
 import {
@@ -32,11 +30,11 @@ import {
   isTagActive,
   countGamesForTag,
 } from './app/search.js';
-import { computeMarketMetrics } from './app/metrics.js';
 import { AppState, createAppState } from './app/state.js';
 import { showToast, updateSoundUI } from './app/ui.js';
 import { SnapshotController } from './app/snapshotController.js';
 import { ScanController } from './app/scanController.js';
+import { MetricsController } from './app/metricsController.js';
 import {
   VERDICT_SORTS,
   STATUS_FILTERS,
@@ -44,7 +42,7 @@ import {
   filterVerdicts,
   sortVerdicts,
 } from './app/verdictFilters.js';
-import { formatSnapshotDateRu, formatCompactNumber } from './utils/format.js';
+import { formatSnapshotDateRu } from './utils/format.js';
 
 export { POPULAR_SEARCH_TAGS, formatSnapshotDateRu, VERDICT_SORTS, STATUS_FILTERS, PLATFORM_FILTERS };
 export type { PopularSearchTag };
@@ -60,16 +58,6 @@ export const CATALOG_SORTS: Record<string, [TableSortColumn, TableSortDirection]
 
 class App {
   private state: AppState = createAppState();
-  private metricsInitialized = false;
-  private prevMetrics = {
-    totalGames: 0,
-    totalCcu: 0,
-    topScore: 0,
-    arbitrageCount: 0,
-  };
-  /** Снимок, чьи метрики сейчас на экране — демо-данные не годятся базой для % изменения CCU. */
-  private metricsSnapshotId: string | null = null;
-
   private radarOverviewView?: RadarOverviewViewComponent;
   private radarChart!: RadarChartComponent;
   private verdictCards!: VerdictCardsComponent;
@@ -83,6 +71,7 @@ class App {
   private headerStatusBar!: HeaderStatusBarComponent;
   private snapshots!: SnapshotController;
   private scan!: ScanController;
+  private metrics!: MetricsController;
   private currentDrawerVerdict: MarketVerdict | null = null;
 
   constructor() {
@@ -97,13 +86,13 @@ class App {
     // Initial render with fallback data while fetching live snapshot
     this.setupComponents();
     this.enhanceVerdictCardsWithPromptButton();
-    this.updateGlobalMetrics();
+    this.metrics.update();
     this.renderLegend();
     this.renderSearchTags();
 
     // Подписки на SSE; подключается fetchSnapshots, когда API доступен
     this.scan.subscribe();
-    setInterval(() => this.refreshFreshness(), 60_000);
+    setInterval(() => this.metrics.refreshFreshness(), 60_000);
 
     // Fetch live snapshots list & data from backend
     await this.snapshots.fetchSnapshots();
@@ -466,6 +455,14 @@ class App {
       },
     });
 
+    this.metrics = new MetricsController({
+      state: this.state,
+      header: this.headerStatusBar,
+      onCountsChanged: () => {
+        this.updateCatalogCountUI();
+        this.updateArbitrageCountUI();
+      },
+    });
     this.snapshots = new SnapshotController({
       state: this.state,
       header: this.headerStatusBar,
@@ -935,7 +932,7 @@ class App {
   }
 
   private applySnapshotDataToUI(): void {
-    this.updateGlobalMetrics();
+    this.metrics.update();
     this.renderLegend();
     this.renderSearchTags();
     this.liveTicker?.updateData(this.state.snapshot);
@@ -946,87 +943,6 @@ class App {
     this.updateArbitrageCountUI();
     this.moversView?.updateData(this.state.snapshot, this.state.previousSnapshot);
     this.applyFiltersAndSort();
-  }
-
-  private updateGlobalMetrics(): void {
-    const totalGamesEl = document.getElementById('metric-total-games');
-    const totalCcuEl = document.getElementById('metric-total-ccu');
-    const topScoreEl = document.getElementById('metric-top-score');
-    const topGenreEl = document.getElementById('metric-top-genre');
-    const arbitrageCountEl = document.getElementById('metric-arbitrage-count');
-    const platformsHintEl = document.getElementById('metric-platforms-hint');
-
-    // База для % изменения CCU — реальный снимок, показанный ДО этого обновления
-    const baselineIsReal = this.metricsSnapshotId !== null && this.metricsSnapshotId !== FALLBACK_SNAPSHOT.id;
-    const m = computeMarketMetrics(this.state.snapshot, this.state.previousSnapshot, baselineIsReal ? this.prevMetrics.totalCcu : 0);
-    this.metricsSnapshotId = this.state.snapshot.id;
-    if (topGenreEl && m.topGenreTitle !== null) {
-      topGenreEl.textContent = m.topGenreTitle;
-    }
-
-    const first = !this.metricsInitialized;
-    const from = first
-      ? { totalGames: m.totalGames, totalCcu: m.totalCcu, topScore: m.topScore, arbitrageCount: m.arbitrageCount }
-      : this.prevMetrics;
-    this.metricsInitialized = true;
-
-    if (totalGamesEl) {
-      animateCounter(totalGamesEl, from.totalGames, m.totalGames, 1000, val => Math.round(val).toLocaleString());
-    }
-    if (totalCcuEl) {
-      animateCounter(totalCcuEl, from.totalCcu, m.totalCcu, 1000, val => formatCompactNumber(val));
-    }
-    if (topScoreEl) {
-      animateCounter(topScoreEl, from.topScore, m.topScore, 1000, val => `${Math.round(val)}/100`);
-    }
-    if (arbitrageCountEl) {
-      animateCounter(arbitrageCountEl, from.arbitrageCount, m.arbitrageCount, 1000, val => Math.round(val).toString());
-    }
-    if (platformsHintEl) {
-      platformsHintEl.textContent = m.platformsHint;
-    }
-
-    this.prevMetrics = {
-      totalGames: m.totalGames,
-      totalCcu: m.totalCcu,
-      topScore: m.topScore,
-      arbitrageCount: m.arbitrageCount,
-    };
-
-    this.updateCatalogCountUI();
-    this.updateArbitrageCountUI();
-    this.triggerMetricCardsPulse();
-
-    this.headerStatusBar?.updateKpi({
-      totalGames: m.totalGames,
-      totalCcu: m.totalCcu,
-      ccuChangePercent: m.ccuChangePercent,
-      arbitrageCount: m.arbitrageCount,
-      topDayGameTitle: m.topGameTitle,
-      updatedText: formatMinutesAgo(this.state.snapshot.timestamp),
-    });
-    this.headerStatusBar?.setSourceStatus(this.state.snapshot.sourceStatus);
-    this.refreshFreshness();
-  }
-
-  /** Обновляет «N мин назад» и подсвечивает устаревшие данные (старше 3 ч). */
-  private refreshFreshness(): void {
-    const el = document.getElementById('kpi-updated-time');
-    const ts = Date.parse(this.state.snapshot?.timestamp ?? '');
-    if (!el || !Number.isFinite(ts)) return;
-    el.textContent = formatMinutesAgo(this.state.snapshot.timestamp);
-    const stale = Date.now() - ts > 3 * 3600_000;
-    el.classList.toggle('is-stale', stale);
-    el.title = stale ? 'Данные устарели — снимок рынка давно не обновлялся' : '';
-  }
-
-  private triggerMetricCardsPulse(): void {
-    const cards = document.querySelectorAll<HTMLElement>('.metrics-grid .metric-card');
-    cards.forEach(card => {
-      card.classList.remove('glow-pulse');
-      void card.offsetWidth;
-      card.classList.add('glow-pulse');
-    });
   }
 
   private renderLegend(): void {
