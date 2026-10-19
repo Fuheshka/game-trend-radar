@@ -8,13 +8,13 @@
 - **Название:** Game Trend Radar
 - **Путь:** `/Users/fuheshka/Documents/GitHub/game-trend-radar`
 - **Стек:** TypeScript (Node.js 20+), tsx, модульные коллекторы данных, скоринговый калькулятор, CLI интерфейс.
-- **Целевые платформы:** Roblox (Explore API), Яндекс Игры (Каталог), Poki (Чарт), YouTube Shorts (Тренды).
+- **Целевые платформы:** Roblox (Explore API), Яндекс Игры (Каталог), Poki (Чарт), CrazyGames (`/hot`, `__NEXT_DATA__`), YouTube Shorts (Тренды).
 
 ---
 
 ## 2. Структура директорий
 - `src/types/` — строгая типизация нормализованных и сырых данных.
-- `src/collectors/` — сборщики данных для каждой платформы (Roblox, Яндекс Игры, Poki, YouTube Shorts).
+- `src/collectors/` — сборщики данных для каждой платформы (Roblox, Яндекс Игры, Poki, CrazyGames, YouTube Shorts).
 - `src/analyzer/` — скоринг Opportunity Score, классификатор архетипов, генератор вердиктов, детектор арбитражных ниш (Roblox ➔ Яндекс Игры).
 - `src/storage/` — управление снимками рынка (JSON snapshots) и Markdown отчетами.
 - `src/cli.ts` — точка входа командной строки (scan, report, recommend).
@@ -68,7 +68,9 @@
 - [x] **Алерты о новых арбитражных нишах / резких ростах.** (2026-10-19) Telegram-бот по `snapshot:updated` (`src/alerts/`): новые ниши, рост ×3 за 7 дней (Roblox CCU ≥ 5 000, Яндекс по оценкам, без Poki), деградация/восстановление источников; анти-спам — `data/alerts_state.json` (окно 7 дней), первый запуск — только база. Включается `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` в `.env` на сервере (кладёт владелец). §35.
 - [ ] Страница игры с историей CCU по дням (`data/game_history.json` уже копится на сервере).
 - [ ] Сравнение двух произвольных снимков (сейчас только «текущий vs предыдущий»).
-- [ ] Новые витрины: CrazyGames, VK Play.
+- [~] **Новые витрины: CrazyGames, VK Play.** (2026-10-19) CrazyGames готов: `src/collectors/crazygames.ts`, `/hot` из `__NEXT_DATA__`, 36 игр, метрика — ранг (+ лайки в `votes`), минимум 20, контракт на снимке, фильтры в UI. §36. VK Play — не начат.
+- [ ] CrazyGames как вторая целевая витрина арбитража (сейчас только Roblox → Яндекс). §36.
+- [ ] Каталог: ранговые витрины (Poki, CrazyGames) при сортировке «Онлайн CCU (убыв.)» идут задом наперёд; «7D тренд» — синтетика, а не история. §36.
 
 ### Состояние прода на 2026-10-18 21:09 UTC
 - `https://radar.fuheshka.qd.je/healthz` — ok, автоскан каждые 30 мин, все 4 источника `ok` (Roblox 279, Яндекс 153, Poki 100, YouTube 5).

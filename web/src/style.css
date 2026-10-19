@@ -2732,6 +2732,11 @@ button:active,
   border-color: rgba(167, 139, 250, 0.4);
   background: rgba(167, 139, 250, 0.12);
 }
+.drawer-tag.badge-crazygames {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(52, 211, 153, 0.12);
+}
 
 .drawer-tag.badge-shorts {
   color: #fb7185;
@@ -3025,6 +3030,11 @@ button:active,
   color: #a78bfa;
   border: 1px solid rgba(167, 139, 250, 0.35);
 }
+.drawer-platform-pill.badge-crazygames {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
 
 .drawer-platform-pill.badge-shorts {
   background: rgba(239, 68, 68, 0.15);
@@ -3042,6 +3052,7 @@ button:active,
 .drawer-platform-dot.badge-roblox { background: var(--status-danger); box-shadow: none; }
 .drawer-platform-dot.badge-yandex { background: var(--status-warning); box-shadow: none; }
 .drawer-platform-dot.badge-poki { background: var(--accent-indigo); box-shadow: none; }
+.drawer-platform-dot.badge-crazygames { background: #34d399; box-shadow: none; }
 .drawer-platform-dot.badge-shorts { background: var(--status-danger); box-shadow: none; }
 .drawer-platform-dot.badge-neutral { background: var(--text-muted); }
 
@@ -4266,6 +4277,11 @@ kbd.tab-hotkey {
   background: rgba(167, 139, 250, 0.12);
   color: #c4b5fd;
   border: 1px solid rgba(167, 139, 250, 0.3);
+}
+.catalog-platform-badge.badge-crazygames {
+  background: rgba(52, 211, 153, 0.12);
+  color: #6ee7b7;
+  border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
 .catalog-platform-badge.badge-shorts {

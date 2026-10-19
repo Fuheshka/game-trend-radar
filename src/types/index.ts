@@ -1,4 +1,4 @@
-export type PlatformType = 'roblox' | 'yandex_games' | 'poki' | 'youtube_trends';
+export type PlatformType = 'roblox' | 'yandex_games' | 'poki' | 'crazygames' | 'youtube_trends';
 
 export type GameArchetype =
   | 'SIMULATION_INCREMENTAL'   // +1, Evolution, Simulator, Mining, Steal
@@ -18,10 +18,10 @@ export interface NormalizedGame {
   title: string;
   genre: string;
   archetype: GameArchetype;
-  metricValue: number; // Roblox CCU, Yandex Rating (0-100), Poki Rank
+  metricValue: number; // Roblox CCU, Yandex Rating (0-100), Poki/CrazyGames Rank
   metricType: 'ccu' | 'rating' | 'rank' | 'viral_score';
   likeRatio?: number; // 0.0 to 1.0
-  votes?: number; // Yandex: число оценок (ratingCount) — растёт с аудиторией
+  votes?: number; // Yandex: число оценок (ratingCount), CrazyGames: число лайков — растёт с аудиторией
   url?: string;
   tags: string[];
   sortSource?: string;

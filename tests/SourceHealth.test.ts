@@ -39,6 +39,12 @@ describe('assessSourceHealth: порог деградации', () => {
     expect(assessSourceHealth('yandex_games', { ok: true, count: 49 }).warning).toBeDefined();
   });
 
+  it('CrazyGames: /hot отдаёт ~36 игр, минимум 20', () => {
+    expect(assessSourceHealth('crazygames', { ok: true, count: 36 })).toEqual({ ok: true, count: 36 });
+    expect(assessSourceHealth('crazygames', { ok: true, count: 19 }).warning).toMatch(/19 игр.*не меньше 20/);
+    expect(assessSourceHealth('crazygames', { ok: true, count: 20 }, { ok: true, count: 36 }).warning).toBeUndefined();
+  });
+
   it('падение ниже 50% от прошлого здорового скана — warning с базой; ровно 50% — норма', () => {
     const prev = { ok: true, count: 150 };
     const degraded = assessSourceHealth('yandex_games', { ok: true, count: 74 }, prev);
@@ -82,6 +88,7 @@ describe('деградация источника в скане, /healthz и ш�
       robloxCollector: { fetchAllKeySorts: async () => games(200, 'roblox') },
       yandexCollector: { fetchCatalog: async () => games(150, 'yandex_games') },
       pokiCollector: { fetchPopular: async () => games(poki, 'poki') },
+      crazyGamesCollector: { fetchHot: async () => games(36, 'crazygames') },
       youtubeAnalyzer: {
         getViralShortsTrends: async () => games(3, 'youtube_trends'),
         scanTrendingSlices: async () => [],

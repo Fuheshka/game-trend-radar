@@ -2,6 +2,7 @@ import { EventEmitter } from 'node:events';
 import { RobloxCollector } from './collectors/roblox.js';
 import { YandexGamesCollector } from './collectors/yandex_games.js';
 import { PokiCollector } from './collectors/poki.js';
+import { CrazyGamesCollector } from './collectors/crazygames.js';
 import { YouTubeShortsAnalyzer } from './collectors/youtube_shorts.js';
 import { OpportunityScorer } from './analyzer/scorer.js';
 import { VerdictEngine } from './analyzer/verdict.js';
@@ -18,7 +19,7 @@ import {
 } from './types/index.js';
 import { MarketEventBus } from './events/event_bus.js';
 
-export type CollectorSource = 'roblox' | 'yandex_games' | 'poki' | 'youtube_shorts';
+export type CollectorSource = 'roblox' | 'yandex_games' | 'poki' | 'crazygames' | 'youtube_shorts';
 
 export interface CollectorProgressEvent {
   source: CollectorSource;
@@ -30,8 +31,8 @@ export type { SourceStatus };
 
 export const MIN_TOTAL_GAMES = 5;
 
-/** Минимум игр с витрины, ниже которого сбор считается неполным (типичный объём: Roblox ~280, Яндекс ~150, Poki 100). */
-export const SOURCE_MIN_COUNT: Partial<Record<CollectorSource, number>> = { roblox: 50, yandex_games: 50, poki: 30 };
+/** Минимум игр с витрины, ниже которого сбор считается неполным (типичный объём: Roblox ~280, Яндекс ~150, Poki 100, CrazyGames 36). */
+export const SOURCE_MIN_COUNT: Partial<Record<CollectorSource, number>> = { roblox: 50, yandex_games: 50, poki: 30, crazygames: 20 };
 /** Падение ниже этой доли от последнего здорового скана — предупреждение. YouTube не проверяется: 5±3 позиций — норма. */
 export const SOURCE_DROP_RATIO = 0.5;
 
@@ -89,6 +90,7 @@ export interface MarketScannerOptions extends ScanOptions {
   robloxCollector?: { fetchAllKeySorts: () => Promise<NormalizedGame[]> };
   yandexCollector?: { fetchCatalog: () => Promise<NormalizedGame[]> };
   pokiCollector?: { fetchPopular: () => Promise<NormalizedGame[]> };
+  crazyGamesCollector?: { fetchHot: () => Promise<NormalizedGame[]> };
   youtubeAnalyzer?: {
     getViralShortsTrends: () => Promise<NormalizedGame[]>;
     scanTrendingSlices: (tags: string[]) => Promise<ShortsVideoItem[]>;
@@ -152,6 +154,7 @@ export class MarketScanner extends EventEmitter {
     const robloxCollector = this.options.robloxCollector ?? new RobloxCollector();
     const yandexCollector = this.options.yandexCollector ?? new YandexGamesCollector();
     const pokiCollector = this.options.pokiCollector ?? new PokiCollector();
+    const crazyGamesCollector = this.options.crazyGamesCollector ?? new CrazyGamesCollector();
     const youtubeAnalyzer = this.options.youtubeAnalyzer ?? new YouTubeShortsAnalyzer();
     const scorer = this.options.scorer ?? new OpportunityScorer();
     const verdictEngine = this.options.verdictEngine ?? new VerdictEngine();
@@ -192,6 +195,7 @@ export class MarketScanner extends EventEmitter {
     const robloxP = settle('roblox', () => robloxCollector.fetchAllKeySorts());
     const yandexP = settle('yandex_games', () => yandexCollector.fetchCatalog());
     const pokiP = settle('poki', () => pokiCollector.fetchPopular());
+    const crazyP = settle('crazygames', () => crazyGamesCollector.fetchHot());
     const youtubeP = Promise.all([
       settle('youtube_shorts', () => youtubeAnalyzer.getViralShortsTrends()),
       Promise.resolve()
@@ -217,7 +221,13 @@ export class MarketScanner extends EventEmitter {
     cumulativeCount += pokiGames.length;
     this.emitProgress('poki', cumulativeCount, 75);
 
-    // 4. YouTube Shorts (pct: 90)
+    // 4. CrazyGames (pct: 82)
+    const crazyGames = await crazyP;
+    log(`  [+] CrazyGames: получено ${crazyGames.length} игр из Trending`);
+    cumulativeCount += crazyGames.length;
+    this.emitProgress('crazygames', cumulativeCount, 82);
+
+    // 5. YouTube Shorts (pct: 90)
     const [ytTrends, shortsVideos] = await youtubeP;
     log(`  [+] YouTube Shorts: получено ${ytTrends.length} вирусных позиций`);
     cumulativeCount += ytTrends.length;
@@ -244,7 +254,7 @@ export class MarketScanner extends EventEmitter {
       }
     }
 
-    const allGames: NormalizedGame[] = [...robloxGames, ...yandexGames, ...pokiGames, ...ytTrends];
+    const allGames: NormalizedGame[] = [...robloxGames, ...yandexGames, ...pokiGames, ...crazyGames, ...ytTrends];
     log(`\n📊 Всего собрано: ${allGames.length} игровых позиций`);
 
     // Aggregate by archetype
@@ -262,6 +272,7 @@ export class MarketScanner extends EventEmitter {
       roblox: robloxGames.length,
       yandex_games: yandexGames.length,
       poki: pokiGames.length,
+      crazygames: crazyGames.length,
       youtube_trends: ytTrends.length,
     };
 

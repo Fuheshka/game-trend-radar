@@ -42,6 +42,12 @@ export function getPlatformMeta(platform: PlatformType): PlatformMeta {
         badgeClass: 'badge-poki',
         iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>`,
       };
+    case 'crazygames':
+      return {
+        label: 'CrazyGames',
+        badgeClass: 'badge-crazygames',
+        iconSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>`,
+      };
     case 'youtube_trends':
       return {
         label: 'Shorts',
@@ -67,6 +73,8 @@ export function generatePlatformSearchUrl(platform: PlatformType, title: string)
       return `https://yandex.ru/games/search?query=${encoded}`;
     case 'poki':
       return `https://poki.com/en/g/${encodeURIComponent(title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}`;
+    case 'crazygames':
+      return `https://www.crazygames.com/search?q=${encoded}`;
     case 'youtube_trends':
       return `https://www.youtube.com/results?search_query=${encoded}+game`;
     default:

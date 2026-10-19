@@ -18,6 +18,7 @@ const PLATFORM_LABEL: Record<string, string> = {
   roblox: 'Roblox',
   yandex_games: 'Яндекс',
   poki: 'Poki',
+  crazygames: 'CrazyGames',
   youtube_trends: 'YouTube',
 };
 
@@ -253,7 +254,7 @@ export class SnapshotStore {
     md += `> [!info] Сводка сканирования\n`;
     md += `> - **Всего игр проанализировано:** ${snapshot.totalGamesScanned}\n`;
     md += `> - **Roblox активный онлайн (CCU в выборке):** ${snapshot.robloxTotalCCU.toLocaleString()} игроков\n`;
-    md += `> - **Платформы:** Roblox (${snapshot.platformCounts.roblox || 0}), Яндекс Игры (${snapshot.platformCounts.yandex_games || 0}), Poki (${snapshot.platformCounts.poki || 0}), YouTube Shorts (${snapshot.platformCounts.youtube_trends || 0})\n\n`;
+    md += `> - **Платформы:** Roblox (${snapshot.platformCounts.roblox || 0}), Яндекс Игры (${snapshot.platformCounts.yandex_games || 0}), Poki (${snapshot.platformCounts.poki || 0}), CrazyGames (${snapshot.platformCounts.crazygames || 0}), YouTube Shorts (${snapshot.platformCounts.youtube_trends || 0})\n\n`;
     md += `---\n\n`;
 
     // Сначала то, что изменилось: новинки и растущие. Абсолютный топ меняется редко и идёт ниже.
@@ -267,7 +268,7 @@ export class SnapshotStore {
     }
     if (snapshot.risers?.length) {
       md += `## 📈 Растущие за 7 дней\n\n`;
-      md += `> Рост, а не размер: Roblox — CCU, Яндекс — число оценок, Poki — позиция в топе.\n\n`;
+      md += `> Рост, а не размер: Roblox — CCU, Яндекс — число оценок, Poki и CrazyGames — позиция в топе.\n\n`;
       md += `| Платформа | Игра | Рост | Было → стало | Окно |\n|---|---|---|---|---|\n`;
       md += snapshot.risers.slice(0, 25).map(formatRiser).join('\n') + '\n\n';
     }

@@ -63,6 +63,6 @@ export function computeMarketMetrics(
     arbitrageCount,
     topGameTitle,
     ccuChangePercent,
-    platformsHint: `Roblox: ${counts.roblox || 0} · Yandex: ${counts.yandex_games || 0} · Poki: ${counts.poki || 0}`,
+    platformsHint: `Roblox: ${counts.roblox || 0} · Yandex: ${counts.yandex_games || 0} · Poki: ${counts.poki || 0} · CrazyGames: ${counts.crazygames || 0}`,
   };
 }

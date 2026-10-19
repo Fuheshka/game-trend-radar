@@ -9,6 +9,7 @@ const SOURCE_LABEL: Record<string, string> = {
   roblox: 'Roblox',
   yandex_games: 'Яндекс Игры',
   poki: 'Poki',
+  crazygames: 'CrazyGames',
   youtube_shorts: 'YouTube Shorts',
 };
 

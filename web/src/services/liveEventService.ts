@@ -61,6 +61,8 @@ export function formatSourceLabel(source: string): string {
       return 'Парсинг Яндекс Игр...';
     case 'poki':
       return 'Парсинг Poki...';
+    case 'crazygames':
+      return 'Парсинг CrazyGames...';
     case 'youtube_shorts':
     case 'youtube':
       return 'Анализ YouTube Shorts...';

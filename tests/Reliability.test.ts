@@ -53,6 +53,7 @@ describe('валидация скана', () => {
       robloxCollector: { fetchAllKeySorts: async () => [] },
       yandexCollector: { fetchCatalog: async () => games(50, 'yandex_games') },
       pokiCollector: { fetchPopular: async () => games(50, 'poki') },
+      crazyGamesCollector: { fetchHot: async () => games(5, 'crazygames') },
       youtubeAnalyzer: youtube,
     });
 
@@ -73,6 +74,7 @@ describe('валидация скана', () => {
         },
       },
       pokiCollector: { fetchPopular: async () => games(20, 'poki') },
+      crazyGamesCollector: { fetchHot: async () => games(5, 'crazygames') },
       youtubeAnalyzer: youtube,
     });
 
@@ -92,13 +94,14 @@ describe('SnapshotStore история', () => {
       robloxCollector: { fetchAllKeySorts: async () => games(10, 'roblox') },
       yandexCollector: { fetchCatalog: async () => games(5, 'yandex_games') },
       pokiCollector: { fetchPopular: async () => games(5, 'poki') },
+      crazyGamesCollector: { fetchHot: async () => games(5, 'crazygames') },
       youtubeAnalyzer: youtube,
     });
     await scanner.scan();
     await scanner.scan();
     const points = store.getHistory(1);
     expect(points).toHaveLength(2);
-    expect(points[0].totalGames).toBe(22);
+    expect(points[0].totalGames).toBe(27);
     expect(points[0].verdicts.length).toBeGreaterThan(0);
   });
 });

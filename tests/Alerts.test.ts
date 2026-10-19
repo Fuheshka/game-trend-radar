@@ -314,6 +314,7 @@ describe('Скан + snapshot:updated: сеть Telegram упала, скан и
       robloxCollector: { fetchAllKeySorts: async () => games(60, 'roblox') },
       yandexCollector: { fetchCatalog: async () => games(60, 'yandex_games') },
       pokiCollector: { fetchPopular: async () => { throw new Error('Poki 500'); } },
+      crazyGamesCollector: { fetchHot: async () => games(36, 'crazygames') },
       youtubeAnalyzer: {
         getViralShortsTrends: async () => [],
         scanTrendingSlices: async () => [],

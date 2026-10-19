@@ -48,7 +48,8 @@ describe('MarketScanner Events Integration (TDD)', () => {
       // roblox: 120 (pct: 25)
       // yandex_games: 120 -> кумулятивно 240 (pct: 55)
       // poki: 70 -> кумулятивно 310 (pct: 75)
-      // youtube_shorts: 163 -> кумулятивно 473 (pct: 90)
+      // crazygames: 30 -> кумулятивно 340 (pct: 82)
+      // youtube_shorts: 163 -> кумулятивно 503 (pct: 90)
       const scanner = new MarketScanner({
         store,
         silent: true,
@@ -62,6 +63,9 @@ describe('MarketScanner Events Integration (TDD)', () => {
         pokiCollector: {
           fetchPopular: async () => createMockGames(70, 'poki'),
         },
+        crazyGamesCollector: {
+          fetchHot: async () => createMockGames(30, 'crazygames'),
+        },
         youtubeAnalyzer: {
           getViralShortsTrends: async () => createMockGames(163, 'youtube_trends'),
           scanTrendingSlices: async () => [],
@@ -73,10 +77,10 @@ describe('MarketScanner Events Integration (TDD)', () => {
       const snapshot = await scanner.scan();
 
       expect(snapshot).toBeDefined();
-      expect(snapshot.totalGamesScanned).toBe(473);
+      expect(snapshot.totalGamesScanned).toBe(503);
 
       // Проверяем события
-      expect(eventsSequence.length).toBeGreaterThanOrEqual(6);
+      expect(eventsSequence.length).toBeGreaterThanOrEqual(7);
 
       // 1. scan:started
       expect(eventsSequence[0].event).toBe('scan:started');
@@ -106,18 +110,26 @@ describe('MarketScanner Events Integration (TDD)', () => {
         pct: 75,
       });
 
-      // 5. collector:progress (youtube_shorts)
+      // 5. collector:progress (crazygames)
       expect(eventsSequence[4].event).toBe('collector:progress');
       expect(eventsSequence[4].data).toEqual({
+        source: 'crazygames',
+        count: 340,
+        pct: 82,
+      });
+
+      // 6. collector:progress (youtube_shorts)
+      expect(eventsSequence[5].event).toBe('collector:progress');
+      expect(eventsSequence[5].data).toEqual({
         source: 'youtube_shorts',
-        count: 473,
+        count: 503,
         pct: 90,
       });
 
-      // 6. scan:completed
+      // 7. scan:completed
       const completedEvent = eventsSequence.find(e => e.event === 'scan:completed');
       expect(completedEvent).toBeDefined();
-      expect(completedEvent!.data.totalGames).toBe(473);
+      expect(completedEvent!.data.totalGames).toBe(503);
       expect(completedEvent!.data.snapshotId).toBe(snapshot.id);
     });
 
@@ -152,6 +164,9 @@ describe('MarketScanner Events Integration (TDD)', () => {
         pokiCollector: {
           fetchPopular: async () => createMockGames(20, 'poki'),
         },
+        crazyGamesCollector: {
+          fetchHot: async () => createMockGames(10, 'crazygames'),
+        },
         youtubeAnalyzer: {
           getViralShortsTrends: async () => createMockGames(30, 'youtube_trends'),
           scanTrendingSlices: async () => [],
@@ -169,11 +184,12 @@ describe('MarketScanner Events Integration (TDD)', () => {
         { source: 'roblox', count: 50, pct: 25 },
         { source: 'yandex_games', count: 100, pct: 55 },
         { source: 'poki', count: 120, pct: 75 },
-        { source: 'youtube_shorts', count: 150, pct: 90 },
+        { source: 'crazygames', count: 130, pct: 82 },
+        { source: 'youtube_shorts', count: 160, pct: 90 },
       ]);
 
       expect(completedPayload).not.toBeNull();
-      expect(completedPayload!.totalGames).toBe(150);
+      expect(completedPayload!.totalGames).toBe(160);
     });
   });
 
@@ -194,6 +210,9 @@ describe('MarketScanner Events Integration (TDD)', () => {
         pokiCollector: {
           fetchPopular: async () => createMockGames(30, 'poki'),
         },
+        crazyGamesCollector: {
+          fetchHot: async () => createMockGames(10, 'crazygames'),
+        },
         youtubeAnalyzer: {
           getViralShortsTrends: async () => createMockGames(40, 'youtube_trends'),
           scanTrendingSlices: async () => [],
@@ -204,11 +223,12 @@ describe('MarketScanner Events Integration (TDD)', () => {
 
       await scanner.scan();
 
-      expect(progressLogs).toHaveLength(4);
+      expect(progressLogs).toHaveLength(5);
       expect(progressLogs[0]).toEqual({ source: 'roblox', count: 10, pct: 25 });
       expect(progressLogs[1]).toEqual({ source: 'yandex_games', count: 30, pct: 55 });
       expect(progressLogs[2]).toEqual({ source: 'poki', count: 60, pct: 75 });
-      expect(progressLogs[3]).toEqual({ source: 'youtube_shorts', count: 100, pct: 90 });
+      expect(progressLogs[3]).toEqual({ source: 'crazygames', count: 70, pct: 82 });
+      expect(progressLogs[4]).toEqual({ source: 'youtube_shorts', count: 110, pct: 90 });
     });
 
     it('должен позволять передачу onProgress вторым аргументом конструктора', async () => {
@@ -229,6 +249,9 @@ describe('MarketScanner Events Integration (TDD)', () => {
           pokiCollector: {
             fetchPopular: async () => createMockGames(5, 'poki'),
           },
+          crazyGamesCollector: {
+            fetchHot: async () => createMockGames(5, 'crazygames'),
+          },
           youtubeAnalyzer: {
             getViralShortsTrends: async () => createMockGames(5, 'youtube_trends'),
             scanTrendingSlices: async () => [],
@@ -241,8 +264,8 @@ describe('MarketScanner Events Integration (TDD)', () => {
 
       await scanner.scan();
 
-      expect(progressLogs).toHaveLength(4);
-      expect(progressLogs[3]).toEqual({ source: 'youtube_shorts', count: 20, pct: 90 });
+      expect(progressLogs).toHaveLength(5);
+      expect(progressLogs[4]).toEqual({ source: 'youtube_shorts', count: 25, pct: 90 });
     });
 
     it('должен позволять передачу eventBus напрямую первым аргументом конструктора', async () => {
@@ -281,6 +304,9 @@ describe('MarketScanner Events Integration (TDD)', () => {
         pokiCollector: {
           fetchPopular: async () => createMockGames(10, 'poki'),
         },
+        crazyGamesCollector: {
+          fetchHot: async () => createMockGames(10, 'crazygames'),
+        },
         youtubeAnalyzer: {
           getViralShortsTrends: async () => createMockGames(10, 'youtube_trends'),
           scanTrendingSlices: async () => [],
@@ -290,7 +316,7 @@ describe('MarketScanner Events Integration (TDD)', () => {
       });
 
       expect(snapshot).toBeDefined();
-      expect(progressEvents).toHaveLength(4);
+      expect(progressEvents).toHaveLength(5);
       expect(completedCalled).toBe(true);
     });
   });
@@ -312,6 +338,9 @@ describe('MarketScanner Events Integration (TDD)', () => {
         pokiCollector: {
           fetchPopular: async () => createMockGames(35, 'poki'),
         },
+        crazyGamesCollector: {
+          fetchHot: async () => createMockGames(5, 'crazygames'),
+        },
         youtubeAnalyzer: {
           getViralShortsTrends: async () => createMockGames(45, 'youtube_trends'),
           scanTrendingSlices: async () => [],
@@ -331,10 +360,11 @@ describe('MarketScanner Events Integration (TDD)', () => {
       expect(directEvents[1].data).toEqual({ source: 'roblox', count: 15, pct: 25 });
       expect(directEvents[2].data).toEqual({ source: 'yandex_games', count: 40, pct: 55 });
       expect(directEvents[3].data).toEqual({ source: 'poki', count: 75, pct: 75 });
-      expect(directEvents[4].data).toEqual({ source: 'youtube_shorts', count: 120, pct: 90 });
-      expect(directEvents[5].data).toEqual({
+      expect(directEvents[4].data).toEqual({ source: 'crazygames', count: 80, pct: 82 });
+      expect(directEvents[5].data).toEqual({ source: 'youtube_shorts', count: 125, pct: 90 });
+      expect(directEvents[6].data).toEqual({
         snapshotId: 'snapshot-2026-10-04',
-        totalGames: 120,
+        totalGames: 125,
         timestamp: snapshot.timestamp,
       });
     });
